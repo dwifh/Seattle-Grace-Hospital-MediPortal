@@ -1,14 +1,71 @@
-<!-- ======================== -->
-<!--   AYUSH SECTIONS        -->
-<!-- ======================== -->
-<div id="dashboard-login"> ... </div>
-<div id="dashboard-admin" hidden> ... </div>
-<div id="dashboard-nurse" hidden> ... </div>
-<div id="dashboard-receptionist" hidden> ... </div>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    </head>
 
-<!-- ======================== -->
-<!--   TIANA SECTIONS        -->
-<!-- ======================== -->
-<div id="dashboard-patient" hidden> ... </div>
-<div id="dashboard-doctor" hidden> ... </div>
-<div id="dashboard-guardian" hidden> ... </div>
+    <body>
+        <!-- ======================== -->
+        <!--   SHARED SECTIONS        -->
+        <!-- ======================== -->
+        
+        <!-- ======================================================
+                                SIDEBAR
+            Role-specific nav items shown/hidden via JS in auth.js
+        ====================================================== -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar_logo">
+            <div class="sidebar_logo-name">Seattle Grace Hospital</div>
+            </div>
+        
+            <!-- Admin nav — visible when role == 'admin' -->
+            <nav class="sidebar_section" id="admin-nav">
+                <div class="sidebar_section-label">Main</div>
+                <a class="sidebar_item" href="#">Dashboard</a>
+                <div class="sidebar_section-label">Management</div>
+                <a class="sidebar_item" href="#">Patients</a>
+                <a class="sidebar_item" href="#">Doctors</a>
+                <a class="sidebar_item" href="#">Staff</a>
+                <a class="sidebar_item" href="#">Appointments</a>
+            </nav>
+            
+            <!-- footer for logout button (Remains the same for all sidebar navs) -->
+            <div class="sidebar_footer">
+            <div class="sidebar_logout">Logout</div>
+            </div>
+        </div>
+ 
+<!-- ==================================================================================================================================== -->
+
+        <!-- ======================== -->
+        <!--      AYUSH SECTIONS      -->
+        <!-- ======================== -->
+        <div id="dashboard-login" hidden> ... </div>
+        <div id="dashboard-admin" hidden> ... </div>
+        <div id="dashboard-nurse" hidden> ... </div>
+        <div id="dashboard-receptionist" hidden> ... </div>
+
+<!-- ==================================================================================================================================== -->
+
+        <!-- ======================== -->
+        <!--   TIANA SECTIONS        -->
+        <!-- ======================== -->
+        <div id="dashboard-patient" hidden> ... </div>
+        <div id="dashboard-doctor" hidden> ... </div>
+        <div id="dashboard-guardian" hidden> ... </div>
+
+    </body>
+
+<!-- ==================================================================================================================================== -->
+    <!-- ======================== -->
+    <!--   SCRIPT SECTIONS        -->
+    <!-- ======================== -->
+
+    <script src="../js/dummy-data.js"></script>
+    <script src="../js/validate.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin.js"></script>
+    
+</html>
