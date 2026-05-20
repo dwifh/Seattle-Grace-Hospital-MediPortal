@@ -15,15 +15,15 @@
                                 SIDEBAR
             Role-specific nav items shown/hidden via JS in auth.js
         ====================================================== -->
-        <div class="sidebar" id="sidebar">
+        <div class="sidebar" id="sidebar" hidden>
             <div class="sidebar_logo">
             <div class="sidebar_logo-name">Seattle Grace Hospital</div>
             </div>
         
-            <!-- Admin nav — visible when role == 'admin' -->
-            <nav class="sidebar_section" id="admin-nav">
+            <!-- Admin nav — visible when role === 'admin' -->
+            <nav class="sidebar_section" id="admin-nav" hidden>
                 <div class="sidebar_section-label">Main</div>
-                <a class="sidebar_item" href="#">Dashboard</a>
+                <a class="sidebar_item sidebar__item--active" href="#">Dashboard</a>
                 <div class="sidebar_section-label">Management</div>
                 <a class="sidebar_item" href="#">Patients</a>
                 <a class="sidebar_item" href="#">Doctors</a>
@@ -33,7 +33,7 @@
             
             <!-- footer for logout button (Remains the same for all sidebar navs) -->
             <div class="sidebar_footer">
-            <div class="sidebar_logout">Logout</div>
+            <div class="sidebar_logout" id=""logoutBtn>Logout</div>
             </div>
         </div>
  
@@ -42,7 +42,71 @@
         <!-- ======================== -->
         <!--      AYUSH SECTIONS      -->
         <!-- ======================== -->
-        <div id="dashboard-login" hidden> ... </div>
+
+        <!--The login dashboard-->
+        <div id="dashboard-login" >
+            <div class="login_page">
+                <div class="login_card">
+ 
+                    <div class="login_header">
+                        <div class="login_logo">Seattle Grace Hospital</div>
+                        <h1 class="login_title">Portal Login</h1>
+                        <p class="login_subtitle">Sign in to access your portal</p>
+                    </div>
+                    
+                    <!--Using novalidate to remove the automatic browser validation logic (we have a custom one)-->
+                    <form class="login_form" id="loginForm" novalidate>
+ 
+                        <div class="login_field">
+                            <label class="login_label" for="username">Username</label>
+                            <!--Username input field-->
+                            <input
+                                class="login_input"
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="username"
+                                required
+                            />
+                        </div>
+ 
+                        <div class="login_field">
+                            <label class="login_label" for="password">Password</label>
+                            <!--Password input field-->
+                            <input
+                                class="login_input"
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="password"
+                                required
+                            />
+                        </div>
+ 
+                        <!-- Error message — shown by auth.js on failed login -->
+                        <div class="login_error" id="loginError" hidden>
+                            Invalid username or password. Please try again.
+                        </div>
+ 
+                        <!-- Lockout message — placeholder for the rate-limit logic -->
+                        <div class="login_lockout" id="loginLockout" hidden>
+                            Too many failed attempts. Please wait before trying again.
+                        </div>
+ 
+                        <button class="login_btn" type="submit" id="loginBtn">
+                            Sign In
+                        </button>
+ 
+                    </form>
+ 
+                    <div class="login_footer">
+                        <p>Forgot your credentials? Contact your system administrator.</p>
+                    </div>
+ 
+                </div>
+            </div>
+ 
+        </div>
         <div id="dashboard-admin" hidden> ... </div>
         <div id="dashboard-nurse" hidden> ... </div>
         <div id="dashboard-receptionist" hidden> ... </div>
