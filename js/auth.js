@@ -1,10 +1,41 @@
-// ============================================================
 // auth.js - To edit once indexDB is implemented
-// ============================================================
 
-// ----------------------------------------------------------
+// ROLE HANDLING - harcoded to display within the topbar 
+
+const ROLE_LABELS = {
+    admin:          "Hospital Admin",
+    doctor:         "Doctor",
+    nurse:          "Nurse",
+    receptionist:   "Receptionist",
+    patient:        "Patient",
+    guardian:       "Guardian"
+};
+ 
+const ROLE_BREADCRUMBS = {
+    admin:          "Admin Panel · Overview",
+    doctor:         "Doctor Panel · Overview",
+    nurse:          "Nurse Panel · Overview",
+    receptionist:   "Reception · Overview",
+    patient:        "Patient Portal · Overview",
+    guardian:       "Guardian Portal · Overview"
+
+    
+}
+
+function updateTopbar(user) {
+    // for page title and breadcrumb
+    document.getElementById('topbar-title').textContent = 'Dashboard';
+    document.getElementById('topbar-breadcrumb').textContent = ROLE_BREADCRUMBS[user.role] || '';
+ 
+    // for username
+    document.getElementById('topbar-username').textContent = user.username;
+ 
+    // for role label
+    document.getElementById('topbar-role').textContent = ROLE_LABELS[user.role] || user.role;
+}
+
 // SESSION SAVER - Tiana don't edit this, or else users will have to login everytime the tab is refreshed
-// ----------------------------------------------------------
+
 
 function saveSession(user) {
     //Save the current user in the session storage as a JSON string
@@ -22,11 +53,11 @@ function clearSession() {
     sessionStorage.removeItem('currentUser');
 }
 
-// ----------------------------------------------------------
+
 // DASHBOARD ROUTING
 // Hides all dashboard divs, then shows the correct one when it gets the role.
 // Also shows/hides the sidebar and correct nav section depending on the user that logged in.
-// ----------------------------------------------------------
+
 
 function showDashboard(role) {
     // Hide all dashboard sections during login
@@ -58,6 +89,18 @@ function showDashboard(role) {
     if (sidebar) {
         sidebar.hidden = false;
     }
+
+    // Show topbar
+    const topbar = document.getElementById('topbar');
+    if (topbar) {
+        topbar.hidden = false;
+    }
+ 
+    // Get the current session to update the topbar
+    const currentUser = getSession();
+    if (currentUser) {
+        updateTopbar(currentUser);
+    }
 }
 
 // Force this as the starting page
@@ -68,23 +111,29 @@ function showLogin() {
         dashboard.hidden = true;
     });
 
-    // Hide sidebar in login page
+    // Hide sidebar
     const sidebar = document.getElementById('sidebar');
     if (sidebar) {
         sidebar.hidden = true;
     }
 
-    // Show login page
+    // Hide topbar
+    const topbar = document.getElementById('topbar');
+    if (topbar) {
+        topbar.hidden = true;
+    }
+
+    // force login page
     const loginPage = document.getElementById('dashboard-login');
     if (loginPage) {
         loginPage.hidden = false;
     }
 }
 
-// ----------------------------------------------------------
-// LOGIN LOGIC
-// Checks submitted credentials against USERS in dummy-data.js (To edit once i receive your dummy-data.js)
-// ----------------------------------------------------------
+
+// LOGIN ALGORITHM
+// Checks submitted credentials against USERS in dummy-data.js (Edited to handle tiana's dummy data)
+
 
 function handleLogin(event) {
     event.preventDefault();
@@ -133,9 +182,7 @@ function handleLogin(event) {
     showDashboard(matchedUser.role);
 }
 
-// ----------------------------------------------------------
 // LOGOUT LOGIC
-// ----------------------------------------------------------
 
 function handleLogout() {
     //clear user from current session
@@ -144,12 +191,10 @@ function handleLogout() {
     showLogin();
 }
 
-// ----------------------------------------------------------
 // INITIALISE the inputs and the buttons
 // Check if a session already exists 
 // If yes, go straight to the correct dashboard
 // If no, show the login page
-// ----------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', function() {
 
