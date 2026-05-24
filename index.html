@@ -7,51 +7,46 @@
     </head>
 
     <body>
-        <!-- ======================== -->
-        <!--   SHARED SECTIONS        -->
-        <!-- ======================== -->
+        <!--   SHARED SECTIONS   -->
         
         <!-- ======================================================
                                 SIDEBAR
-            Role-specific nav items shown/hidden via JS in auth.js
+            We can use this for all dashboards, just add dashboard specific navigation items when youre making yours
         ====================================================== -->
         <div class="sidebar" id="sidebar" hidden>
-            <div class="sidebar_logo">
-            <div class="sidebar_logo-name">Seattle Grace Hospital</div>
-            </div>
+            <div class="sidebar-name">Seattle Grace Hospital</div>
         
-            <!-- Admin nav — visible when role === 'admin' -->
-            <nav class="sidebar_section" id="nav-admin" hidden>
-                <div class="sidebar_section-label">Main</div>
-                <a class="sidebar_item sidebar__item--active" href="#">Dashboard</a>
-                <div class="sidebar_section-label">Management</div>
+            <!-- Admin nav -->
+            <nav class="sidebar_type" id="nav-admin" hidden>
+                <div class="sidebar-label">Main</div>
+                <a class="sidebar_item" href="#">Dashboard</a>
+                <div class="sidebar-label">Management</div>
                 <a class="sidebar_item" href="#">Patients</a>
                 <a class="sidebar_item" href="#">Doctors</a>
                 <a class="sidebar_item" href="#">Staff</a>
                 <a class="sidebar_item" href="#">Appointments</a>
             </nav>
-
-            <nav class="sidebar_section" id="nav-nurse" hidden>
-                <div class="sidebar_section-label">Main</div>
-                <a class="sidebar_item sidebar__item--active" href="#">Dashboard</a>
-                <div class="sidebar_section-label">Management</div>
+            <!-- Nurse nav -->
+            <nav class="sidebar_type" id="nav-nurse" hidden>
+                <div class="sidebar-label">Main</div>
+                <a class="sidebar_item" href="#">Dashboard</a>
+                <div class="sidebar-label">Management</div>
                 <a class="sidebar_item" href="#">Patients</a>
                 <a class="sidebar_item" href="#">Doctors</a>
                 <a class="sidebar_item" href="#">Rooms</a>
                 <a class="sidebar_item" href="#">Appointments</a>
             </nav>
             
-            <!-- footer for logout button (Remains the same for all sidebar navs) -->
+            <!-- footer section for logout button (I may add the profile here instead when we decide the CSS)-->
             <div class="sidebar_footer">
             <div class="sidebar_logout" id="logoutBtn">Logout</div>
             </div>
         </div>
 
-        <!-- ======================================================
-                                TOPBAR
-        ====================================================== -->
+        <!--TOPBAR SECTION-->
         <div class="topbar" id="topbar" hidden>
- 
+            
+            <!---->
             <div class="topbar_left">
                 <span class="topbar_title" id="topbar-title">Dashboard</span>
                 <!--auth.js will be chainging this breadcrumb section to automatically project the type of dashboard (don't play with this tiana)-->
@@ -75,10 +70,10 @@
 <!-- ==================================================================================================================================== -->
 
         <!-- ======================== -->
-        <!--      AYUSH SECTIONS      -->
+        <!--      AYUSH      -->
         <!-- ======================== -->
 
-        <!--The login dashboard-->
+        <!--The login PAGE SECTION-->
         <div id="dashboard-login" >
             <div class="login_page">
                 <div class="login_card">
@@ -142,24 +137,21 @@
             </div>
  
         </div>
-        <div id="dashboard-admin" hidden> ... </div>
-        <div id="dashboard-nurse" hidden> ... </div>
-        <div id="dashboard-receptionist" hidden> ... </div>
+        <div id="dashboard-admin" hidden></div>
+        <div id="dashboard-nurse" hidden></div>
+        <div id="dashboard-receptionist" hidden></div>
 
 <!-- ==================================================================================================================================== -->
 
-        <!-- ======================== -->
-        <!--   TIANA SECTIONS        -->
-        <!-- ======================== -->
-        <div id="dashboard-patient" hidden> ... </div>
-        <div id="dashboard-doctor" hidden> ... </div>
-        <div id="dashboard-guardian" hidden> ... </div>
+        <!--   TIANA   -->
+
+        <div id="dashboard-patient" hidden></div>
+        <div id="dashboard-doctor" hidden></div>
+        <div id="dashboard-guardian" hidden></div>
 
 
 <!-- ==================================================================================================================================== -->
-    <!-- ======================== -->
-    <!--   SCRIPT SECTIONS        -->
-    <!-- ======================== -->
+    <!--   SCRIPTS    -->
 
     <script src="js/dummy-data.js"></script>
     <script src="js/validate.js"></script>
