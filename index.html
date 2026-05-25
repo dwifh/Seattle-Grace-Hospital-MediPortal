@@ -25,6 +25,21 @@
                 <a class="sidebar_item" href="#">Staff</a>
                 <a class="sidebar_item" href="#">Appointments</a>
             </nav>
+<<<<<<< HEAD
+
+            <!--Patient Nav - visible when role === patient-->>
+              <nav class="sidebar_section" id="nav-patient" hidden>
+                <div class="sidebar_section-label">Main</div>
+                <a class="sidebar_item sidebar__item--active" data-section="overview" href="#">Overview</a>
+                <div class="sidebar_section-label">Health</div>
+                <a class="sidebar_item" data-section="appointments" href="#">Appointments</a>
+                <a class="sidebar_item" data-section="prescriptions" href="#">Prescriptions</a>
+                <a class="sidebar_item" data-section="history" href="#">Medical History</a>
+                <a class="sidebar_item" data-section="profile" href="#">Profile</a>
+            </nav>
+
+            <!-- footer for logout button (Remains the same for all sidebar navs) -->
+=======
             <!-- Nurse nav -->
             <nav class="sidebar_type" id="nav-nurse" hidden>
                 <div class="sidebar-label">Main</div>
@@ -37,6 +52,7 @@
             </nav>
             
             <!-- footer section for logout button (I may add the profile here instead when we decide the CSS)-->
+>>>>>>> faa558ef16b1e02634cf84e97943392417334148
             <div class="sidebar_footer">
             <div class="sidebar_logout" id="logoutBtn">Logout</div>
             </div>
@@ -141,11 +157,130 @@
 
 <!-- ==================================================================================================================================== -->
 
-        <!--   TIANA   -->
+        <!-- ======================== -->
+        <!--   TIANA SECTIONS        -->
+        <!-- ======================== -->
+        <!--Patient Dashboard-->
+        <div id="dashboard-patient" class="dashboard_patient" hidden>
+            <header class="dashboard_topbar">
+                <h1 class="dashboard_title">Patient Dashboard</h1>
+                <div class="dashboard_greeting">
+                    <p class="dashboard_welcome">Welcome back,</p>
+                    <h1 class="patientFirstName" class="dashboard_name">Patient</h1>
+                </div>
+                <div class="dashboard_actions">
+                    <input type="text" id="searchInput" class="dashboard_search" placeholder="Search..."/>
+                    <button  class="dashboard_btn" id="searchBtn">🔍</button>
 
-        <div id="dashboard-patient" hidden></div>
-        <div id="dashboard-doctor" hidden></div>
-        <div id="dashboard-guardian" hidden></div>
+                    <button class="btn_theme" id="themeToggle" aria-label="Toggle light or dark mode" type="button">
+                        <span class="btn_theme_sun">☀️</span>
+                        <span class="btn_theme_moon">🌙</span>
+                    </button>
+                </div>
+            </header>
+
+            <!--I used <main> instead of <div> everywhere because it's more suitable for representing main content and has better structure-->>
+            <main class="dashboard_grid">
+                <section class="dashboard_stats" aria-label="Health Overview">
+                <!--article because each stat is a distinct piece of information-->
+                <!--Patient main details-->>
+                <article class="stat_card_accent">
+                    <p class="stat_card_label">Next Appointment</p>
+                    <p class="stat_card_value"> id="statNextAppt"></p>
+                    <p class="stat_card_sub"> id="statNextApptMeta"></p>
+                </article>
+                <article class="stat_card">
+                    <p class="stat_card_label">Active Prescriptions</p>
+                    <p class="stat_card_value"> id="statRxCount"></p>
+                    <p class="stat_card_sub"> id="statRxSub"></p>
+                </article>
+                <article class="stat_card">
+                    <p class="stat_card_label">Blood Group</p>
+                    <p class="stat_card_value"> id="statBloodGroup"></p>
+                    <p class="stat_card_sub"> id="statVitalsDate"></p>
+                </article>
+                <article class="stat_card_warn">
+                    <p class="stat_card_label">Allergies</p>
+                    <p class="stat_card_value"> id="statAllergiesCount"></p>
+                    <p class="stat_card_sub"> id="statAllergiesList"></p>
+                </article>
+                <!--Doctor details-->
+                <section class="doctor_card" aria-label="Your registered doctor">
+                    <div class="doctor_card_icon">
+                        <img src="C:\Users\User\OneDrive\Desktop\MedicalPortal Project\Seattle-Grace-Hospital-MediPortal\doctors-transparent-icon-10.png" alt="Doctor Icon" class="doctor_icon_img"/>
+                    </div>
+                    <div class="doctor_card_info">
+                        <h2 class="doctor_card_name" id="doctorName"></h2>
+                        <p class="doctor_card_speciality"> id="doctorSpeciality"></p>
+                        <p class="doctor_card_meta">GMC <span id="doctorGmc"></span></p>
+                        <div class="doctor_card_actions">
+                            <button class="btn_icon" type="button" aria-label="Message doctor">💬</button>
+                            <button class="btn_icon" type="button" aria-label="Call doctor">☎️</button>
+                        </div>
+                    </div>
+                </section>
+                <!--Appointment details-->
+                <section class="booking_card" aria-label="Book a new appointment">
+                    <div class="booking_card_header">
+                        <h2>Book an Appointment</h2>
+                        <p>Available slots for this week: 7am - 8pm</p>
+                    </div>
+                    <!--form because it collects user input & novalidate so we can handle validation manually via validate.js-->
+                    <form class="booking_form" id="bookingForm" novalidate>
+                        <div class="booking_form_row">
+                            <label for="apptData">Date</label>
+                            <input type="date" id="apptDate" name="apptDate" required/>
+                        </div>
+                        <div class="booking-form_row">
+                            <label for="apptDoctor">Doctor</label>
+                            <select id="apptDoctor" name="apptDoctor" required>
+                                <option value="">Select a doctor...</option>
+                            </select>
+                        </diV>
+                        <div class="booking_form_row">
+                            <label for="apptReason">Reason for visit?</label>
+                            <input type="text" id="apptReason" name="apptReason" placeholder="e.g. Routine Check-up" required/>
+                        </div>
+                        <p class="booking_form_errormsg" id="bookingError" hidden>Please fill out all fields correctly!</p>
+                        <p class="booking_form_OKmsg" id="bookingSuccess" hidden>Appointment booked successfully! Awaiting confirmation.</p>
+                        <button class="btn_primary_booking_form_submit" type="submit">Create Appointment</button>
+                    </form>
+                </section>
+                <!--Booking week details-->
+                <section class="week_strip" aria-label="This week's appointments">
+                    <div class="week-strip_header">
+                        <h2>This Week</h2>
+                        <p> id="currentMonthYear"></p>
+                    </div>
+                    <div class="week_strip_days" id="bookingWeek"></div>
+                    <div class="week_strip_detail" id="weekStripDetail"></div>
+                </section>
+                <!--Medical history details-->
+                <section class="history" aria-label="Medical History">
+                    <div class="history_header">
+                        <h2>Medical History</h2>
+                    </div>
+                    <div class="history_filters" id="historyFilters" role="tablist">
+                        <button class="filter_pill_active" data-filter="all">ALL</button>
+                        <button class="filter_pill" data-filter="diagnosis">Diagnosis</button>
+                        <button class="filter_pill" data-filter="vaccination">Vaccines</button>
+                        <button class="filter_pill" data-filter="test_results">Test Results</button>
+                    </div>
+                    <ol class="timeline" id="historyTimeline"></ol>
+                </section>
+                <!--Prescription details-->
+                <section class="rx_panel" aria-label="Active Prescriptions">
+                    <div class="rx_panel_header">
+                        <h2>Prescriptions</h2>
+                        <button class="btn_primary" id="newRxBtn">Request Refill</button>
+                    </div>
+                    <ul class="rx_list" id="rxList"></ul>
+                </section>
+            </main>
+        </div>
+
+        <div id="dashboard-doctor" hidden> ... </div>
+        <div id="dashboard-guardian" hidden> ... </div>
 
 
 <!-- ==================================================================================================================================== -->
@@ -155,6 +290,7 @@
     <script src="js/validate.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/patient.js"></script>
 
     </body>
 
