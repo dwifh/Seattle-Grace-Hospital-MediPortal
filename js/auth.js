@@ -140,15 +140,15 @@ function handleLogin(event) {
 
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
-    const errorBox      = document.getElementById('loginError');
-    const lockoutBox    = document.getElementById('loginLockout');
+    const errorBox = document.getElementById('loginError');
+    const lockoutBox = document.getElementById('loginLockout');
 
     //sanitise the input and remove whitespace from both ends
     const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
 
     // Hide previous error messages
-    errorBox.hidden  = true;
+    errorBox.hidden = true;
     lockoutBox.hidden = true;
 
     // -- Tiana's rate-limit check goes here --
