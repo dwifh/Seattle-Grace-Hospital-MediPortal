@@ -3,24 +3,22 @@
 // ROLE HANDLING - harcoded to display within the topbar 
 
 const ROLE_LABELS = {
-    admin:          "Hospital Admin",
-    doctor:         "Doctor",
-    nurse:          "Nurse",
-    receptionist:   "Receptionist",
-    patient:        "Patient",
-    guardian:       "Guardian"
+    admin: "Hospital Admin",
+    doctor: "Doctor",
+    nurse: "Nurse",
+    receptionist: "Receptionist",
+    patient: "Patient",
+    guardian: "Guardian"
 };
  
 const ROLE_BREADCRUMBS = {
-    admin:          "Admin Panel · Overview",
-    doctor:         "Doctor Panel · Overview",
-    nurse:          "Nurse Panel · Overview",
-    receptionist:   "Reception · Overview",
-    patient:        "Patient Portal · Overview",
-    guardian:       "Guardian Portal · Overview"
-
-    
-}
+    admin: "Admin Panel · Overview",
+    doctor: "Doctor Panel · Overview",
+    nurse: "Nurse Panel · Overview",
+    receptionist: "Reception · Overview",
+    patient: "Patient Portal · Overview",
+    guardian: "Guardian Portal · Overview"
+};
 
 function updateTopbar(user) {
     // for page title and breadcrumb
@@ -35,8 +33,6 @@ function updateTopbar(user) {
 }
 
 // SESSION SAVER - Tiana don't edit this, or else users will have to login everytime the tab is refreshed
-
-
 function saveSession(user) {
     //Save the current user in the session storage as a JSON string
     sessionStorage.setItem('currentUser', JSON.stringify(user));
@@ -100,6 +96,10 @@ function showDashboard(role) {
     const currentUser = getSession();
     if (currentUser) {
         updateTopbar(currentUser);
+    }
+
+    if (role === 'admin') {
+    loadAdminDashboard();
     }
 }
 
