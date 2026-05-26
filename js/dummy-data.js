@@ -115,7 +115,6 @@ const DOCTORS = [
     gmcNumber: "GMC7421988",
     specialty: "General Practice",        
     email: "priya.patel@mediportal.us",
-    workingDays: ["Mon", "Tue", "Wed", "Fri"]
   },
 
  {
@@ -126,7 +125,6 @@ const DOCTORS = [
     gmcNumber: "GMC8993211",
     specialty: "General Practice",
     email: "james.whitfield@mediportal.us",
-    workingDays: ["Mon", "Tue", "Thu", "Fri"]
   },
 
   {
@@ -137,7 +135,6 @@ const DOCTORS = [
     gmcNumber: "GMC6112847",
     specialty: "Paediatrics",              //child specialist for Liam
     email: "aisha.khan@mediportal.us",
-    workingDays: ["Tue", "Wed", "Thu"]
   }
 ];
 

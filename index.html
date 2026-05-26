@@ -147,7 +147,6 @@
         <!-- ======================== -->
         <!--Patient Dashboard-->
         <div id="dashboard-patient" hidden>
-
             <header class="dashboard_topbar">
                 <h1 class="dashboard_title">Patient Dashboard</h1>
                 <div class="dashboard_greeting">
@@ -168,36 +167,36 @@
             <!--I used <main> instead of <div> everywhere because it's more suitable for representing main content and has better structure-->>
             <main class="dashboard_grid">
                 <section class="dashboard_stats">
-                <!--article because each stat is a distinct piece of information-->
-                <!--Patient main details-->>
-                <div class="stat_card" id="card_appointment">
-                    <p>Next Appointment</p>
-                    <h2 id="statNextAppt"></h2>
-                    <p id="statNextApptMeta"></p>
-                </div>
-                <div class="stat_card" id="card_prescriptions">
-                    <p>Active Prescriptions</p>
-                    <h2 id="statRxCount"></h2>
-                    <p id="statRxSub"></p>
-                </div>
-                <div class="stat_card" id="card_bloodgroup">
-                    <p>Blood Group</p>
-                    <h2 id="statBloodGroup"></h2>
-                    <p id="statVitalsDate"></p>
-                </div>
-                <div class="stat_card" id="card_allergies">
-                    <p>Allergies</p>
-                    <h2 id="statAllergiesCount"></h2>
-                    <p id="statAllergiesList"></p>
-                </div>
+                    <!--Patient main details-->>
+                    <div class="stat_card" id="card_appointment">
+                        <p>Next Appointment</p>
+                        <h2 id="statNextAppt"></h2>
+                        <p id="statNextApptMeta"></p>
+                    </div>
+                    <div class="stat_card" id="card_prescriptions">
+                        <p>Active Prescriptions</p>
+                        <h2 id="statRxCount"></h2>
+                        <p id="statRxSub"></p>
+                    </div>
+                    <div class="stat_card" id="card_bloodgroup">
+                        <p>Blood Group</p>
+                        <h2 id="statBloodGroup"></h2>
+                        <p id="statVitalsDate"></p>
+                    </div>
+                    <div class="stat_card" id="card_allergies">
+                        <p>Allergies</p>
+                        <h2 id="statAllergiesCount"></h2>
+                        <p id="statAllergiesList"></p>
+                    </div>
+                </section>
                 <!--Doctor details-->
                 <section class="doctor_card">
-                    <div class="doctor_card_icon">
-                        <img src="C:\Users\User\OneDrive\Desktop\MedicalPortal Project\Seattle-Grace-Hospital-MediPortal\doctors-transparent-icon-10.png" alt="Doctor Icon" class="doctor_icon_img"/>
+                    <div class="doctor_card_avatar">
+                        <span id="doctorInitials"></span>
                     </div>
-                    
+                    <div>
                         <h2 id="doctorName"></h2>
-                        <p id="doctorSpeciality"></p>
+                        <p id="doctorSpecialty"></p>
                         <p>GMC <span id="doctorGmc"></span></p>
                         <div class="doctor_card_actions">
                             <button type="button">Message Doctor</button>
@@ -209,33 +208,32 @@
                 <section class="booking_card">
                         <h2>Book an Appointment</h2>
                         <p>Available slots for this week: 7am - 8pm</p>
-                    </div>
                     <!--form because it collects user input & novalidate so we can handle validation manually via validate.js-->
                     <form class="booking_form" id="bookingForm" novalidate>
                         <div class="booking_form_row">
                             <label for="apptData">Date</label>
                             <input type="date" id="apptDate" name="apptDate" required/>
                         </div>
-                        <div class="booking-form_row">
+                        <div class="booking_form_row">
                             <label for="apptDoctor">Doctor</label>
                             <select id="apptDoctor" name="apptDoctor" required>
                                 <option value="">Select a doctor...</option>
                             </select>
-                        </diV>
+                        </div>
                         <div class="booking_form_row">
                             <label for="apptReason">Reason for visit?</label>
                             <input type="text" id="apptReason" name="apptReason" placeholder="e.g. Routine Check-up" required/>
                         </div>
                         <p id="bookingError" hidden>Please fill out all fields correctly!</p>
-                        <p id="bookingSuccess" hidden>Appointment booked successfully! Awaiting confirmation.</p>
+                        <p id="bookingOk" hidden>Appointment booked successfully! Awaiting confirmation.</p>
                         <button type="submit">Create Appointment</button>
                     </form>
                 </section>
                 <!--Booking week details-->
                 <section class="week_strip">
-                    <div class="week-strip_header">
+                    <div class="week_strip_header">
                         <h2>This Week</h2>
-                        <p> id="currentMonthYear"></p>
+                        <p id="currentMonthYear"></p>
                     </div>
                     <div id="bookingWeek"></div>
                     <div id="weekStripDetail"></div>
@@ -246,10 +244,10 @@
                         <h2>Medical History</h2>
                     </div>
                     <div id="historyFilters">
-                        <button class="filter_pill_active" data-filter="all">ALL</button>
+                        <button class="filter pill filter_pill_active" data-filter="all">ALL</button>
                         <button class="filter_pill" data-filter="diagnosis">Diagnosis</button>
                         <button class="filter_pill" data-filter="vaccination">Vaccines</button>
-                        <button class="filter_pill" data-filter="test_results">Test Results</button>
+                        <button class="filter_pill" data-filter="test_result">Test Results</button>
                     </div>
                     <ol id="historyTimeline"></ol>
                 </section>
