@@ -26,7 +26,7 @@
                 <a class="sidebar_item" href="#">Appointments</a>
             </nav>
 
-            <!--Patient Nav - visible when role === patient-->>
+            <!--Patient Nav - visible when role === patient-->
               <nav class="sidebar_section" id="nav-patient" hidden>
                 <div class="sidebar_section-label">Main</div>
                 <a class="sidebar_item sidebar__item--active" data-section="overview" href="#">Overview</a>
@@ -39,7 +39,7 @@
 
             <!-- footer for logout button (Remains the same for all sidebar navs) -->
             <div class="sidebar_footer">
-            <div class="sidebar_logout" id="logoutBtn">Logout</div>
+                <div class="sidebar_logout" id="logoutBtn">Logout</div>
             </div>
         </div>
 
@@ -58,8 +58,8 @@
                 <div class="topbar_user">
                     <div class="topbar_user-info">
                         <!--Will change according to the user that is logged in too-->
-                        <div class="topbar_user-name" id="topbar-username">--</div>
-                        <div class="topbar_user-role" id="topbar-role">--</div>
+                        <div class="topbar_user-name" id="topbar-username"></div>
+                        <div class="topbar_user-role" id="topbar-role"></div>
                     </div>
                 </div>
 
@@ -136,7 +136,163 @@
             </div>
  
         </div>
-        <div id="dashboard-admin" hidden></div>
+        <div id="dashboard-admin" hidden>
+            <div class="admin_layout">
+
+                <!-- STATS ROW at the top of the dashboard -->
+                <div class="admin_stats">
+            
+                    <div class="stat_card">
+                        <div class="stat_title">Total Patients</div>
+                        <div class="stat_value" id="totalPatients"></div>
+                    </div>
+
+                    <div class="stat_card">
+                        <div class="stat_title">Appointments</div>
+                        <div class="stat_value" id="totalAppointments"></div>
+                    </div>
+            
+                    <div class="stat_card">
+                        <div class="stat_title">Available Beds</div>
+                        <div class="stat_value" id="availableBeds"></div>
+                    </div>
+            
+                    <div class="stat_card">
+                        <div class="stat_title">Registered Doctors</div>
+                        <div class="stat_value" id="totalDoctors"></div>
+                    </div>
+            
+                </div>
+            
+            
+                <!-- USER MANAGEMENT -->
+                <div class="adminSection">
+                    <div class="adminSection-header">
+                        <span class="adminSection-title">User Management</span>
+                    </div>
+            
+                    <!-- DOCTORS -->
+                    <div class="adminSectionUser">
+                        <div class="adminSectionUser-header">
+                            <span class="adminSectionUser-title">Doctors</span>
+                            <button class="adminAddBtn" onclick="alert('Add Doctor — available after backend implementation')">+ Add Doctor</button>
+                        </div>
+                        <table class="data_table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Specialty</th>
+                                    <th>GMC Number</th>
+                                    <th>Working Days</th>
+                                    <th>Patients Assigned</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminDoctorsTbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+            
+                    <!-- NURSES -->
+                    <div class="adminSectionUser">
+                        <div class="adminSectionUser-header">
+                            <span class="adminSectionUser-title">Nurses</span>
+                            <button class="adminAddBtn" onclick="alert('Add Nurse — available after backend implementation')">+ Add Nurse</button>
+                        </div>
+                        <table class="data_table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>NMC Number</th>
+                                    <th>Email</th>
+                                    <th>Patients Assigned</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminNursesTbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+            
+                    <!-- RECEPTIONISTS -->
+                    <div class="adminSectionUser">
+                        <div class="adminSectionUser-header">
+                            <span class="adminSectionUser-title">Receptionists</span>
+                            <button class="adminAddBtn" onclick="alert('Add Receptionist — available after backend implementation')">+ Add Receptionist</button>
+                        </div>
+                        <table class="data_table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Desk</th>
+                                    <th>Can Cancel Appointments</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminReceptionistsTbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+            
+                    <!-- PATIENTS -->
+                    <div class="adminSectionUser">
+                        <div class="adminSectionUser-header">
+                            <span class="adminSectionUser-title">Patients</span>
+                            <button class="adminAddBtn" onclick="alert('Add Patient — available after backend implementation')">+ Add Patient</button>
+                        </div>
+                        <table class="data_table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>DOB</th>
+                                    <th>Registered Doctor</th>
+                                    <th>Guardian</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminPatientsTbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+            
+                    <!-- GUARDIANS -->
+                    <div class="adminSectionUser">
+                        <div class="adminSectionUser-header">
+                            <span class="adminSectionUser-title">Guardians</span>
+                            <button class="adminAddBtn" onclick="alert('Add Guardian — available after backend implementation')">+ Add Guardian</button>
+                        </div>
+                        <table class="data_table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Relationship</th>
+                                    <th>Linked Patient</th>
+                                    <th>Email</th>
+                                    <th>Consent Granted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminGuardiansTbody">
+                                <!-- Populated by admin.js -->
+                            </tbody>
+                        </table>
+                    </div>
+            
+                </div>
+ 
+</div>
+
+        </div>
         <div id="dashboard-nurse" hidden></div>
         <div id="dashboard-receptionist" hidden></div>
 
