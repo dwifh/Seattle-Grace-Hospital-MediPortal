@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+     <!--<link rel="stylesheet" href="css/styles.css"/>-->
+    <link rel="stylesheet" href="css/dashboard.css"/>
+
     </head>
 
     <body>
@@ -304,26 +307,20 @@
         <!--Patient Dashboard-->
         <div id="dashboard-patient" hidden>
             <header class="dashboard_topbar">
-                <h1 class="dashboard_title">Patient Dashboard</h1>
                 <div class="dashboard_greeting">
                     <p >Welcome back,</p>
-                    <h1 id="patientName"></h1>
+                    <h2 id="patientName"></h2>
                 </div>
                 <div class="dashboard_actions">
                     <input type="text" id="searchInput" placeholder="Search..."/>
                     <button id="searchBtn">Search</button>
-
-                    <button id="themeToggle" type="button">
-                        <span class="btn_theme_sun">Light Mode</span>
-                        <span class="btn_theme_moon">Dark Mode</span>
-                    </button>
                 </div>
             </header>
 
-            <!--I used <main> instead of <div> everywhere because it's more suitable for representing main content and has better structure-->>
+            <!--I used <main> instead of <div> everywhere because it's more suitable for representing main content and has better structure-->
             <main class="dashboard_grid">
                 <section class="dashboard_stats">
-                    <!--Patient main details-->>
+                    <!--Patient main details-->
                     <div class="stat_card" id="card_appointment">
                         <p>Next Appointment</p>
                         <h2 id="statNextAppt"></h2>
@@ -400,10 +397,10 @@
                         <h2>Medical History</h2>
                     </div>
                     <div id="historyFilters">
-                        <button class="filter pill filter_pill_active" data-filter="all">ALL</button>
+                        <button class="filter_pill filter_pill_active" data-filter="all">ALL</button>
                         <button class="filter_pill" data-filter="diagnosis">Diagnosis</button>
                         <button class="filter_pill" data-filter="vaccination">Vaccines</button>
-                        <button class="filter_pill" data-filter="test_result">Test Results</button>
+                        <button class="filter_pill" data-filter="test_result">Tests</button>
                     </div>
                     <ol id="historyTimeline"></ol>
                 </section>
