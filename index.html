@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-     <!--<link rel="stylesheet" href="css/styles.css"/>-->
-    <!--<link rel="stylesheet" href="css/dashboard.css"/>-->
+    <link rel="stylesheet" href="css/styles.css"/>
+    <link rel="stylesheet" href="css/dashboard.css"/>
 
     </head>
 
@@ -16,47 +16,149 @@
                                 SIDEBAR (gonna sit on the left side of all dashboards)
         ====================================================== -->
         <div class="sidebar" id="sidebar" hidden>
-            <div class="sidebar-name">Seattle Grace Hospital</div>
-        
-            <!-- Admin nav -->
-            <nav class="sidebar_type" id="nav-admin" hidden>
-                <div class="sidebar-label">Main</div>
-                <a class="sidebar_item" href="#">Dashboard</a>
-                <div class="sidebar-label">Management</div>
-                <a class="sidebar_item" href="#">Patients</a>
-                <a class="sidebar_item" href="#">Doctors</a>
-                <a class="sidebar_item" href="#">Staff</a>
-                <a class="sidebar_item" href="#">Appointments</a>
-            </nav>
-
-            <!--Patient Nav - visible when role === patient-->
-              <nav class="sidebar_section" id="nav-patient" hidden>
-                <div class="sidebar_section-label">Main</div>
-                <a class="sidebar_item sidebar__item--active" data-section="overview" href="#">Overview</a>
-                <div class="sidebar_section-label">Health</div>
-                <a class="sidebar_item" data-section="appointments" href="#">Appointments</a>
-                <a class="sidebar_item" data-section="prescriptions" href="#">Prescriptions</a>
-                <a class="sidebar_item" data-section="history" href="#">Medical History</a>
-                <a class="sidebar_item" data-section="profile" href="#">Profile</a>
-            </nav>
-            
-            <!-- Nurse nav -->
-            <nav class="sidebar_type" id="nav-nurse" hidden>
-                <div class="sidebar-label">Main</div>
-                    <a class="sidebar_item" href="#">Dashboard</a>
-                <div class="sidebar-label">Ward</div>
-                    <a class="sidebar_item" href="#">My Patients</a>
-                    <a class="sidebar_item" href="#">Vitals</a>
-                    <a class="sidebar_item" href="#">Appointments</a>
-                    <a class="sidebar_item" href="#">Prescriptions</a>
-                    <a class="sidebar_item" href="#">Medical History</a>
-            </nav>
-
-            <!-- footer for logout button (Remains the same for all sidebar navs) -->
-            <div class="sidebar_footer">
-                <div class="sidebar_logout" id="logoutBtn">Logout</div>
+ 
+    <!-- Logo block -->
+    <div class="sidebar_logo">
+        <div class="sidebar_logo-initials">SG</div>
+        <div class="sidebar_logo-text">
+            <div class="sidebar_logo-name">Seattle Grace</div>
+            <div class="sidebar_logo-sub" id="sidebar-role-label">MediPortal</div>
+        </div>
+    </div>
+ 
+    <!-- Admin nav — visible when role === 'admin' -->
+    <nav class="sidebar_type" id="nav-admin" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)" onclick="scrollToSection('adminDashboardTop')">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Management</span>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionDoctors')">
+            <i class="ti ti-stethoscope"></i> Doctors
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionNurses')">
+            <i class="ti ti-heart-handshake"></i> Nurses
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionReceptionists')">
+            <i class="ti ti-user-check"></i> Receptionists
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionPatients')">
+            <i class="ti ti-users"></i> Patients
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionGuardians')">
+            <i class="ti ti-shield-check"></i> Guardians
+        </a>
+    </nav>
+ 
+    <!-- Nurse nav — visible when role === 'nurse' -->
+    <nav class="sidebar_type" id="nav-nurse" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)" onclick="scrollToSection('nurseDashboardTop')">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Ward</span>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nursePatients')">
+            <i class="ti ti-users"></i> My Patients
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nurseVitals')">
+            <i class="ti ti-activity"></i> Vitals
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nurseAppointments')">
+            <i class="ti ti-calendar"></i> Appointments
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nursePrescriptions')">
+            <i class="ti ti-pill"></i> Prescriptions
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nurseHistory')">
+            <i class="ti ti-clipboard-list"></i> Medical History
+        </a>
+    </nav>
+ 
+    <!-- Receptionist nav — visible when role === 'receptionist' -->
+    <nav class="sidebar_type" id="nav-receptionist" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Front Desk</span>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-calendar"></i> Appointments
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-user-check"></i> Patient Check-in
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-list"></i> Schedule
+        </a>
+    </nav>
+ 
+    <!-- Doctor nav — visible when role === 'doctor' (Tiana) -->
+    <nav class="sidebar_type" id="nav-doctor" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Clinical</span>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-users"></i> My Patients
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-pill"></i> Prescriptions
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-flask"></i> Lab Orders
+        </a>
+    </nav>
+ 
+    <!-- Patient nav — visible when role === 'patient' (Tiana) -->
+    <nav class="sidebar_type" id="nav-patient" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">My Health</span>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-user"></i> My Profile
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-calendar"></i> Appointments
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-pill"></i> Prescriptions
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-clipboard-list"></i> Medical History
+        </a>
+    </nav>
+ 
+    <!-- Guardian nav — visible when role === 'guardian' (Tiana) -->
+    <nav class="sidebar_type" id="nav-guardian" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Monitoring</span>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-user-heart"></i> Linked Patient
+        </a>
+    </nav>
+ 
+    <!-- Footer — user info + sign out -->
+    <div class="sidebar_footer">
+        <div class="sidebar_user">
+            <div class="sidebar_user-avatar" id="sidebar-avatar">--</div>
+            <div class="sidebar_user-info">
+                <div class="sidebar_user-name" id="sidebar-username">--</div>
+                <div class="sidebar_user-role" id="sidebar-role">--</div>
             </div>
         </div>
+        <div class="sidebar_logout" id="logoutBtn">
+            <i class="ti ti-logout"></i> Sign out
+        </div>
+    </div>
+ 
+</div>
+ 
 
         <!--TOPBAR SECTION (planning on putting the dashboard name, and details about the user thats logged in. Maybe we add profile pic later)-->
         <div class="topbar" id="topbar" hidden>
@@ -152,300 +254,294 @@
  
         </div>
         <div id="dashboard-admin" hidden>
-            <div class="admin_layout">
-
-                <!-- STATS ROW at the top of the dashboard -->
-                <div class="admin_stats">
-            
-                    <div class="stat_card">
-                        <div class="stat_title">Total Patients</div>
-                        <div class="stat_value" id="totalPatients"></div>
-                    </div>
-
-                    <div class="stat_card">
-                        <div class="stat_title">Appointments</div>
-                        <div class="stat_value" id="totalAppointments"></div>
-                    </div>
-            
-                    <div class="stat_card">
-                        <div class="stat_title">Available Beds</div>
-                        <div class="stat_value" id="availableBeds"></div>
-                    </div>
-            
-                    <div class="stat_card">
-                        <div class="stat_title">Registered Doctors</div>
-                        <div class="stat_value" id="totalDoctors"></div>
-                    </div>
-            
-                </div>
-            
-            
-                <!-- USER MANAGEMENT -->
-                <div class="adminSection">
-                    <div class="adminSection-header">
-                        <span class="adminSection-title">User Management</span>
-                    </div>
-            
-                    <!-- DOCTORS -->
-                    <div class="adminSectionUser">
-                        <div class="adminSectionUser-header">
-                            <span class="adminSectionUser-title">Doctors</span>
-                            <button class="adminAddBtn" onclick="alert('Add Doctor — available after backend implementation')">+ Add Doctor</button>
-                        </div>
-                        <table class="data_table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Specialty</th>
-                                    <th>GMC Number</th>
-                                    <th>Working Days</th>
-                                    <th>Patients Assigned</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminDoctorsTbody">
-                                <!-- Populated by admin.js -->
-                            </tbody>
-                        </table>
-                    </div>
-            
-                    <!-- NURSES -->
-                    <div class="adminSectionUser">
-                        <div class="adminSectionUser-header">
-                            <span class="adminSectionUser-title">Nurses</span>
-                            <button class="adminAddBtn" onclick="alert('Add Nurse — available after backend implementation')">+ Add Nurse</button>
-                        </div>
-                        <table class="data_table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>NMC Number</th>
-                                    <th>Email</th>
-                                    <th>Patients Assigned</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminNursesTbody">
-                                <!-- Populated by admin.js -->
-                            </tbody>
-                        </table>
-                    </div>
-            
-                    <!-- RECEPTIONISTS -->
-                    <div class="adminSectionUser">
-                        <div class="adminSectionUser-header">
-                            <span class="adminSectionUser-title">Receptionists</span>
-                            <button class="adminAddBtn" onclick="alert('Add Receptionist — available after backend implementation')">+ Add Receptionist</button>
-                        </div>
-                        <table class="data_table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Desk</th>
-                                    <th>Can Cancel Appointments</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminReceptionistsTbody">
-                                <!-- Populated by admin.js -->
-                            </tbody>
-                        </table>
-                    </div>
-            
-                    <!-- PATIENTS -->
-                    <div class="adminSectionUser">
-                        <div class="adminSectionUser-header">
-                            <span class="adminSectionUser-title">Patients</span>
-                            <button class="adminAddBtn" onclick="alert('Add Patient — available after backend implementation')">+ Add Patient</button>
-                        </div>
-                        <table class="data_table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>DOB</th>
-                                    <th>Registered Doctor</th>
-                                    <th>Guardian</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminPatientsTbody">
-                                <!-- Populated by admin.js -->
-                            </tbody>
-                        </table>
-                    </div>
-            
-                    <!-- GUARDIANS -->
-                    <div class="adminSectionUser">
-                        <div class="adminSectionUser-header">
-                            <span class="adminSectionUser-title">Guardians</span>
-                            <button class="adminAddBtn" onclick="alert('Add Guardian — available after backend implementation')">+ Add Guardian</button>
-                        </div>
-                        <table class="data_table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Relationship</th>
-                                    <th>Linked Patient</th>
-                                    <th>Email</th>
-                                    <th>Consent Granted</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminGuardiansTbody">
-                                <!-- Populated by admin.js -->
-                            </tbody>
-                        </table>
-                    </div>
-            
-                </div>
+            <div class="admin_layout" id="adminDashboardTop">
+ 
+    <!-- STATS ROW -->
+    <div class="admin_stats-grid">
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Total Patients</div>
+            <div class="stat_card-value" id="totalPatients">--</div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Appointments</div>
+            <div class="stat_card-value" id="totalAppointments">--</div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Available Beds</div>
+            <div class="stat_card-value" id="availableBeds">--</div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Registered Doctors</div>
+            <div class="stat_card-value" id="totalDoctors">--</div>
+        </div>
+ 
+    </div>
+ 
+    <!-- USER MANAGEMENT -->
+    <div class="admin_card">
+        <div class="admin_card-header">
+            <span class="admin_card-title">User Management</span>
+        </div>
+ 
+        <!-- DOCTORS -->
+        <div class="adminSectionUser" id="sectionDoctors">
+            <div class="adminSectionUser-header">
+                <span class="adminSectionUser-title">Doctors</span>
+                <button class="adminAddBtn" onclick="alert('Add Doctor — available after backend implementation')">+ Add Doctor</button>
+            </div>
+            <table class="data_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Specialty</th>
+                        <th>GMC Number</th>
+                        <th>Email</th>
+                        <th>Patients Assigned</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminDoctorsTbody"></tbody>
+            </table>
+        </div>
+ 
+        <!-- NURSES -->
+        <div class="adminSectionUser" id="sectionNurses">
+            <div class="adminSectionUser-header">
+                <span class="adminSectionUser-title">Nurses</span>
+                <button class="adminAddBtn" onclick="alert('Add Nurse — available after backend implementation')">+ Add Nurse</button>
+            </div>
+            <table class="data_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>NMC Number</th>
+                        <th>Email</th>
+                        <th>Patients Assigned</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminNursesTbody"></tbody>
+            </table>
+        </div>
+ 
+        <!-- RECEPTIONISTS -->
+        <div class="adminSectionUser" id="sectionReceptionists">
+            <div class="adminSectionUser-header">
+                <span class="adminSectionUser-title">Receptionists</span>
+                <button class="adminAddBtn" onclick="alert('Add Receptionist — available after backend implementation')">+ Add Receptionist</button>
+            </div>
+            <table class="data_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Desk</th>
+                        <th>Can Cancel Appointments</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminReceptionistsTbody"></tbody>
+            </table>
+        </div>
+ 
+        <!-- PATIENTS -->
+        <div class="adminSectionUser" id="sectionPatients">
+            <div class="adminSectionUser-header">
+                <span class="adminSectionUser-title">Patients</span>
+                <button class="adminAddBtn" onclick="alert('Add Patient — available after backend implementation')">+ Add Patient</button>
+            </div>
+            <table class="data_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>DOB</th>
+                        <th>NHS Number</th>
+                        <th>Address</th>
+                        <th>Telephone</th>
+                        <th>Registered Doctor</th>
+                        <th>Guardian</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminPatientsTbody"></tbody>
+            </table>
+        </div>
+ 
+        <!-- GUARDIANS -->
+        <div class="adminSectionUser" id="sectionGuardians">
+            <div class="adminSectionUser-header">
+                <span class="adminSectionUser-title">Guardians</span>
+                <button class="adminAddBtn" onclick="alert('Add Guardian — available after backend implementation')">+ Add Guardian</button>
+            </div>
+            <table class="data_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Relationship</th>
+                        <th>Linked Patient</th>
+                        <th>Email</th>
+                        <th>Telephone</th>
+                        <th>Consent Granted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminGuardiansTbody"></tbody>
+            </table>
+        </div>
+ 
+    </div>
  
 </div>
 
         </div>
         <div id="dashboard-nurse" hidden>
-            <div class="nurse_layout">
-                <!-- STATS ROW -->
-                <div class="nurse_stats">
-            
-                    <div class="stat_card">
-                        <div class="stat_title">Assigned Patients</div>
-                        <div class="stat_value" id="nurseAssignedCount"></div>
-                    </div>
-            
-                    <div class="stat_card">
-                        <div class="stat_title">Upcoming Appointments</div>
-                        <div class="stat_value" id="nurseUpcomingAppointments"></div>
-                    </div>
-            
-                    <div class="stat_card">
-                        <div class="stat_title">Active Prescriptions</div>
-                        <div class="stat_value" id="nurseActivePrescriptions"></div>
-                    </div>
-            
-                </div>
-            
-                <!-- ASSIGNED PATIENTS -->
-                <div class="nurseSection">
-                    <div class="nurseSection-header">
-                        <span class="nurseSection-title">Assigned Patients</span>
-                    </div>
-                    <table class="data_table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>DOB</th>
-                                <th>Blood Group</th>
-                                <th>Allergies</th>
-                                <th>Registered Doctor</th>
-                            </tr>
-                        </thead>
-                        <tbody id="nursePatientsTbody">
-                            <!-- Populated by nurse.js -->
-                        </tbody>
-                    </table>
-                </div>
-            
-                <!-- VITALS -->
-                <div class="nurseSection">
-                    <div class="nurseSection-header">
-                        <span class="nurseSection-title">Vitals</span>
-                    </div>
-                    <table class="data_table">
-                        <thead>
-                            <tr>
-                                <th>Patient</th>
-                                <th>Height (cm)</th>
-                                <th>Weight (kg)</th>
-                                <th>Blood Pressure</th>
-                                <th>Heart Rate</th>
-                                <th>Last Updated</th>
-                            </tr>
-                        </thead>
-                        <tbody id="nurseVitalsTbody">
-                            <!-- Populated by nurse.js -->
-                        </tbody>
-                    </table>
-                </div>
-            
-                <!-- APPOINTMENTS -->
-                <div class="nurseSection">
-                    <div class="nurseSection-header">
-                        <span class="nurseSection-title">Appointments</span>
-                    </div>
-                    <table class="data_table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Patient</th>
-                                <th>Doctor</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                                <th>Check-in</th>
-                            </tr>
-                        </thead>
-                        <tbody id="nurseAppointmentsTbody">
-                            <!-- Populated by nurse.js -->
-                        </tbody>
-                    </table>
-                </div>
-            
-                <!-- PRESCRIPTIONS -->
-                <div class="nurseSection">
-                    <div class="nurseSection-header">
-                        <span class="nurseSection-title">Active Prescriptions</span>
-                    </div>
-                    <table class="data_table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Patient</th>
-                                <th>Medicine</th>
-                                <th>Dosage</th>
-                                <th>Frequency</th>
-                                <th>Instructions</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="nursePrescriptionsTbody">
-                            <!-- Populated by nurse.js -->
-                        </tbody>
-                    </table>
-                </div>
-            
-                <!-- MEDICAL HISTORY -->
-                <div class="nurseSection">
-                    <div class="nurseSection-header">
-                        <span class="nurseSection-title">Medical History</span>
-                    </div>
-                    <table class="data_table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Patient</th>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Title</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody id="nurseHistoryTbody">
-                            <!-- Populated by nurse.js -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
+            <div class="nurse_layout" id="nurseDashboardTop">
+ 
+    <!-- STATS ROW -->
+    <div class="nurse_stats">
+ 
+        <div class="stat_card">
+            <div class="stat_title">Assigned Patients</div>
+            <div class="stat_value" id="nurseAssignedCount">--</div>
         </div>
-        <div id="dashboard-receptionist" hidden></div>
+ 
+        <div class="stat_card">
+            <div class="stat_title">Upcoming Appointments</div>
+            <div class="stat_value" id="nurseUpcomingAppointments">--</div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_title">Active Prescriptions</div>
+            <div class="stat_value" id="nurseActivePrescriptions">--</div>
+        </div>
+ 
+    </div>
+ 
+    <!-- ASSIGNED PATIENTS -->
+    <div class="nurseSection" id="nursePatients">
+        <div class="nurseSection-header">
+            <span class="nurseSection-title">Assigned Patients</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>DOB</th>
+                    <th>Blood Group</th>
+                    <th>Allergies</th>
+                    <th>Registered Doctor</th>
+                </tr>
+            </thead>
+            <tbody id="nursePatientsTbody">
+                <!-- Populated by nurse.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- VITALS -->
+    <div class="nurseSection" id="nurseVitals">
+        <div class="nurseSection-header">
+            <span class="nurseSection-title">Vitals</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Height (cm)</th>
+                    <th>Weight (kg)</th>
+                    <th>Blood Pressure</th>
+                    <th>Heart Rate</th>
+                    <th>Last Updated</th>
+                </tr>
+            </thead>
+            <tbody id="nurseVitalsTbody">
+                <!-- Populated by nurse.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- APPOINTMENTS -->
+    <div class="nurseSection" id="nurseAppointments">
+        <div class="nurseSection-header">
+            <span class="nurseSection-title">Appointments</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Check-in</th>
+                </tr>
+            </thead>
+            <tbody id="nurseAppointmentsTbody">
+                <!-- Populated by nurse.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- PRESCRIPTIONS -->
+    <div class="nurseSection" id="nursePrescriptions">
+        <div class="nurseSection-header">
+            <span class="nurseSection-title">Active Prescriptions</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Medicine</th>
+                    <th>Dosage</th>
+                    <th>Frequency</th>
+                    <th>Instructions</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="nursePrescriptionsTbody">
+                <!-- Populated by nurse.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- MEDICAL HISTORY -->
+    <div class="nurseSection" id="nurseHistory">
+        <div class="nurseSection-header">
+            <span class="nurseSection-title">Medical History</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody id="nurseHistoryTbody">
+                <!-- Populated by nurse.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+</div>
+
+    <div id="dashboard-receptionist" hidden></div>
 
 <!-- ==================================================================================================================================== -->
 
