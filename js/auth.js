@@ -101,6 +101,10 @@ function showDashboard(role) {
     if (role === 'admin') {
     loadAdminDashboard();
     }
+
+    if (role === 'nurse') {
+    loadNurseDashboard();
+    }
 }
 
 // Force this as the starting page
