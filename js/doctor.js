@@ -1,9 +1,7 @@
-//Makes sure that html file is read.
+//DOMContentLoaded ensures that the html file has been read, then runs the function.
 document.addEventListener("DOMContentLoaded", function() {
     loadDoctorDashboard();
 });
-
-
 //Checks session storage, finds doctor ID and loops it through DOCTORS array
 function getLoggedInDoctor() {
     //It returns the doctorID of the currently logged in from session storage.

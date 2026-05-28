@@ -1,3 +1,8 @@
+//DOMContentLoaded ensures that the html file has been read, then runs the function.
+document.addEventListener("DOMContentLoaded", function() {
+    loadPatientDashboard();
+});
+
 //getLoggedInPatient checks session storage, finds the patientID, and then loops through the PATIENTS array.
 function getLoggedInPatient() {
     //It retuns the patientID of the currently logged in from session storage.
@@ -111,7 +116,7 @@ function showStats(patient) {
         }
         //Display the date of the next appointment and the time + doctor details in the stats section of the dashboard.
         document.getElementById("statNextAppt").textContent = dateText;
-        document.getElementById("statNextApptMeta").textContent = nextAppointment.time + " Dr. " + apptDoctor.lastName;
+        document.getElementById("statNextApptMeta").textContent = nextAppointment.time + " · Dr " + apptDoctor.lastName;
 
     } else {
         //If no upcoming appointments, display "-" for the date and a message in the meta text.

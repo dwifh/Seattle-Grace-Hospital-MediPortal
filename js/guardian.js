@@ -1,8 +1,7 @@
-//It ensures that HTML file has been read.
+//DOMContentLoaded ensures that the html file has been read, then runs the function.
 document.addEventListener("DOMContentLoaded", function() {
     loadGuardianDashboard();
 });
-
 //CONSENT_ITEMS & NOTIFICATIONS are hardcoded for Phase 1.
 
 //List of items that guardian is authorised to see for patient.
