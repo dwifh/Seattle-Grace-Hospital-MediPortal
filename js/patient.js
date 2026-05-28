@@ -99,7 +99,7 @@ function showStats(patient) {
     }
 
     //It displays the date and time of the next appointment on the dashboard.
-    //However, if there are no upcoming appointments, it can display a message like "No upcoming appointments".
+    //However, if there are no upcoming appointments, it can display a message
     if (nextAppointment !== null) {
 
         //Convert the appointment date string to a Date object, then format it to a more readable form (e.g. "26 May 2026").
