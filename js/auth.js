@@ -110,13 +110,12 @@ function showDashboard(role) {
         updateTopbar(currentUser);
     }
 
-    if (role === 'admin') {
-    loadAdminDashboard();
-    }
-
-    if (role === 'nurse') {
-    loadNurseDashboard();
-    }
+    if (role === 'admin') { loadAdminDashboard(); }
+    if (role === 'nurse') { loadNurseDashboard(); }
+    if (role === 'doctor') { loadDoctorDashboard(); }
+    if (role === 'patient') { loadPatientDashboard(); }
+    if (role === 'guardian') { loadGuardianDashboard(); }
+    if (role === 'receptionist') { loadReceptionistDashboard(); }
 }
 
 // Force this as the starting page

@@ -49,6 +49,7 @@ function loadDoctorsTable() {
             '<td>' + doctor.title + ' ' + doctor.firstName + ' ' + doctor.lastName + '</td>' +
             '<td>' + doctor.specialty + '</td>' +
             '<td>' + doctor.gmcNumber + '</td>' +
+            '<td>' + doctor.email + '</td>' +
             '<td>' + assignedCount + '</td>' +
             actionButtons(doctor.doctorID);
 
@@ -106,6 +107,9 @@ function loadPatientsTable() {
             '<td>' + patient.patientID + '</td>' +
             '<td>' + patient.firstName + ' ' + patient.lastName + '</td>' +
             '<td>' + patient.dob + '</td>' +
+            '<td>' + patient.nhsNumber + '</td>' +
+            '<td>' + patient.address + '</td>' +
+            '<td>' + patient.telephone + '</td>' +
             '<td>' + (doctor ? doctor.title + ' ' + doctor.lastName : 'Unknown') + '</td>' +
             '<td>' + (patient.guardianID ? patient.guardianID : 'None') + '</td>' +
             actionButtons(patient.patientID);
@@ -130,6 +134,7 @@ function loadGuardiansTable() {
             '<td>' + guardian.relationship + '</td>' +
             '<td>' + (linkedPatient ? linkedPatient.firstName + ' ' + linkedPatient.lastName : guardian.linkedPatientID) + '</td>' +
             '<td>' + guardian.email + '</td>' +
+            '<td>' + guardian.telephone + '</td>' +
             '<td>' + (guardian.consentGranted ? 'Yes' : 'No') + '</td>' +
             actionButtons(guardian.guardianID);
 
