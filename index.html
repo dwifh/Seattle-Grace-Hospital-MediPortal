@@ -77,20 +77,20 @@
     <!-- Receptionist nav — visible when role === 'receptionist' -->
     <nav class="sidebar_type" id="nav-receptionist" hidden>
         <span class="sidebar-label">Main</span>
-        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)">
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)" onclick="scrollToSection('receptionistDashboardTop')">
             <i class="ti ti-layout-dashboard"></i> Dashboard
         </a>
         <span class="sidebar-label">Front Desk</span>
-        <a class="sidebar_item" href="javascript:void(0)">
-            <i class="ti ti-calendar"></i> Appointments
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('receptionistToday')">
+            <i class="ti ti-calendar"></i> Today's Schedule
         </a>
-        <a class="sidebar_item" href="javascript:void(0)">
-            <i class="ti ti-user-check"></i> Patient Check-in
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('receptionistAppointments')">
+            <i class="ti ti-list"></i> All Appointments
         </a>
-        <a class="sidebar_item" href="javascript:void(0)">
-            <i class="ti ti-list"></i> Schedule
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('receptionistPatients')">
+            <i class="ti ti-users"></i> Patient Directory
         </a>
-    </nav>
+</nav>
  
     <!-- Doctor nav — visible when role === 'doctor' (Tiana) -->
     <nav class="sidebar_type" id="nav-doctor" hidden>
@@ -253,6 +253,7 @@
             </div>
  
         </div>
+
         <div id="dashboard-admin" hidden>
             <div class="admin_layout" id="adminDashboardTop">
  
@@ -403,6 +404,7 @@
 </div>
 
         </div>
+        
         <div id="dashboard-nurse" hidden>
             <div class="nurse_layout" id="nurseDashboardTop">
                 <!-- STATS ROW -->
@@ -538,11 +540,106 @@
                     </table>
                 </div>
             </div>
-        </div>    
+        </div>   
 
-<div id="dashboard-receptionist" hidden>
-
-</div>
+        <div id="dashboard-receptionist" hidden>
+            <div class="receptionist_layout" id="receptionistDashboardTop">
+ 
+    <!-- STATS ROW -->
+    <div class="receptionist_stats">
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Total Appointments</div>
+            <div class="stat_card-value" id="receptionistTotalAppointments"></div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Booked Today</div>
+            <div class="stat_card-value" id="receptionistTodayAppointments"></div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Checked In</div>
+            <div class="stat_card-value" id="receptionistCheckedIn"></div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Pending Check-in</div>
+            <div class="stat_card-value" id="receptionistPending"></div>
+        </div>
+ 
+    </div>
+ 
+    <!-- TODAY'S SCHEDULE -->
+    <div class="receptionistSection" id="receptionistToday">
+        <div class="receptionistSection-header">
+            <span class="receptionistSection-title">Today's Schedule</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Check-in Status</th>
+                </tr>
+            </thead>
+            <tbody id="receptionistTodayTbody">
+                <!-- Populated by receptionist.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- ALL APPOINTMENTS -->
+    <div class="receptionistSection" id="receptionistAppointments">
+        <div class="receptionistSection-header">
+            <span class="receptionistSection-title">All Appointments</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Check-in</th>
+                    <th>Booked By</th>
+                </tr>
+            </thead>
+            <tbody id="receptionistAppointmentsTbody">
+                <!-- Populated by receptionist.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- PATIENT DIRECTORY -->
+    <div class="receptionistSection" id="receptionistPatients">
+        <div class="receptionistSection-header">
+            <span class="receptionistSection-title">Patient Directory</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>DOB</th>
+                    <th>Telephone</th>
+                    <th>Registered Doctor</th>
+                </tr>
+            </thead>
+            <tbody id="receptionistPatientsTbody">
+                <!-- Populated by receptionist.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+            </div>
+        </div>
 
 <!-- ==================================================================================================================================== -->
 
