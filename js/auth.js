@@ -145,6 +145,33 @@ function showLogin() {
     }
 }
 
+//Rate-limit functions
+function isLockedOut() {
+    var attempts = Number(sessionStorage.getItem("loginAttempts")) || 0;
+
+    //If there's less than 3 attempts, don't lock out.
+    if (attempts < 3) {
+        return false;
+    }
+
+    var lockoutTime = Number(sessionStorage.getItem("lockoutTime"));
+    //Date.now() retuns 1000 milliseconds.
+    var now = Date.now();
+
+    //30 seconds = 3,0000 milliseconds.
+    var thirtySeconds = 30 * 1000;
+
+    //If now is within 30 second lockout, don't lockout
+    if (now - lockoutTime < thirtySeconds) {
+        return true;
+    }
+
+    //When lockout has expired, reset counters.
+    sessionStorage.removeItem("loginAttempts");
+    sessionStorage.removeItem("lockoutTime");
+    return false;
+}
+
 
 // LOGIN ALGORITHM
 // Checks submitted credentials against USERS in dummy-data.js (Edited to handle tiana's dummy data)
@@ -167,10 +194,10 @@ function handleLogin(event) {
     lockoutBox.hidden = true;
 
     // -- Tiana's rate-limit check goes here --
-    // if (isLockedOut()) {
-    //     lockoutBox.hidden = false;
-    //     return;
-    // }
+    if (isLockedOut()) {
+        lockoutBox.hidden = false;
+         return;
+    }
 
     // Find matching user in dummy-data.js; USERS array
     //USERS.find is looping through the USERS ARRAY

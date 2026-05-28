@@ -204,12 +204,12 @@ const GUARDIAN = [
     guardianID: "g001",
     firstName: "Sinead",
     lastName: "O'Connor",
-    relationship: "mother",               
+    relationship: "son",               
     linkedPatientID: "p003",               
     email: "sinead.guardian@example.com",
     telephone: "07700 900345",
     consentGranted: true,                  
-    consentDate: "2024-01-15"
+    consentDate: "2026-01-15"
   }
 ];
 
@@ -376,7 +376,7 @@ const PRESCRIPTIONS = [
     dosage: "1 tablet",
     frequency: "every 8 hours when needed",
     durationDays: 30,
-    dateIssued: "2025-11-08",
+    dateIssued: "2026-04-08",
     instructions: "Take with water. Do not exceed 4 tablets in 24 hours.",
     status: "active"
   },
@@ -423,7 +423,8 @@ const MEDICAL_HISTORY = [
 
   {
     historyID: "h002",
-    patientID: "p001",                  //Aanya's full blood count test result from 2024, which was done as part of her routine check-up. 
+    patientID: "p001",
+    date: "2024-08-08",                  //Aanya's full blood count test result from 2024, which was done as part of her routine check-up. 
     type: "test_result",
     title: "Full blood count",
     description: "All values within normal range.",
@@ -442,8 +443,10 @@ const MEDICAL_HISTORY = [
 
   {
     historyID: "h004",
-    patientID: "p003",                 //Liam's asthma diagnosis from 2022, which was made after he had a spirometry test that showed reduced lung function. 
+    patientID: "p003",
+    date: "2022-05-28",                 //Liam's asthma diagnosis from 2022, which was made after he had a spirometry test that showed reduced lung function. 
     title: "Asthma diagnosis",
+    type: "diagnosis",
     description: "Diagnosed with mild persistent asthma after spirometry.",
     recordedBy: "d003"                  //Recorded by Dr. Aisha Khan, his registered pediatrician
   },
@@ -480,7 +483,7 @@ const MEDICAL_HISTORY = [
 ];
 
 
-//VITALS SECTION - Nursea can access it.
+//VITALS SECTION - Nurses can access it.
 const VITALS = [
   {
     vitalID: "v001",
