@@ -61,7 +61,7 @@ const PATIENTS = [
     email: "aanya.sharma@example.com",         
     registeredDoctorID: "d001",           
     bloodGroup: "O+",
-    allergies: ["penicillin"],            
+    allergies: ["peanuts"],            
     guardianID: null                      
   },
 

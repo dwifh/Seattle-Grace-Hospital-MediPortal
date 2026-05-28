@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
      <!--<link rel="stylesheet" href="css/styles.css"/>-->
-    <link rel="stylesheet" href="css/dashboard.css"/>
+    <!--<link rel="stylesheet" href="css/dashboard.css"/>-->
 
     </head>
 
@@ -559,7 +559,136 @@
             </main>
         </div>
 
-        <div id="dashboard-doctor" hidden> ... </div>
+        <!--Doctor Dashboard-->
+        <div id="dashboard-doctor" hidden>
+            <header class="dashboard_topbar">
+                <div class="dashboard_greeting">
+                    <p>Welcome back,</p>
+                    <h2 id="docName"></h2>
+                </div>
+                <div class="dashboard_actions">
+                    <input type="text" id="docSearchInput" placeholder="Search patient by name..."/>
+                    <button id="docSearchBtn">Search</button>
+                </div>
+            </header>
+
+             <!--Main grid layout for doctor dashboard-->
+            <main class="dashboard_grid">
+ 
+                <!--Doctor quick stats summary on top-->
+                <section class="dashboard_stats">
+                    <!--Today Appointment count-->
+                    <div class="stat_card" id="card_today">
+                        <p>Today's Appointments</p>
+                        <h2 id="statTodayCount"></h2>
+                        <p id="statTodaySub"></p>
+                    </div>
+                    <!--Patient Waitlist-->
+                    <div class="stat_card" id="card_waiting">
+                        <p>Waiting</p>
+                        <h2 id="statWaitingCount"></h2>
+                        <p id="statWaitingSub"></p>
+                    </div>
+                    <!--Patients being examined in progress-->
+                    <div class="stat_card" id="card_inprogress">
+                        <p>In Progress</p>
+                        <h2 id="statInProgressCount"></h2>
+                        <p id="statInProgressSub"></p>
+                    </div>
+                    <!--Patient consultation done-->
+                    <div class="stat_card" id="card_done">
+                        <p>Done</p>
+                        <h2 id="statDoneCount"></h2>
+                        <p id="statDoneSub"></p>
+                    </div>
+                </section>
+ 
+                <!--Appointment sidebar, doctor click to cycle patient list-->
+                <section class="today_sidebar">
+                    <div class="today_sidebar_header">
+                        <h2>Today's Patients</h2>
+                        <p id="todayDate"></p>
+                    </div>
+                    <ul id="todayList"></ul>
+                </section>
+ 
+                <!--With patient list, doctor can click on their name to see details-->
+                <section class="patient_list_panel">
+                    <div class="patient_list_header">
+                        <h2>My Patients</h2>
+                        <p id="patientCount"></p>
+                    </div>
+                    <ul id="patientList"></ul>
+                </section>
+ 
+                <!--When clicked, patient details appear-->
+                <section class="record_viewer" id="recordViewer" hidden>
+                    <div class="record_viewer_header">
+                        <h2 id="recordPatientName"></h2>
+                        <button type="button" id="closeRecordBtn">Close</button>
+                    </div>
+                    <!--Quick information on patient vitals-->
+                    <div class="record_info">
+                        <p><strong>DOB:</strong> <span id="recordDob"></span></p>
+                        <p><strong>Blood Group:</strong> <span id="recordBlood"></span></p>
+                        <p><strong>Allergies:</strong> <span id="recordAllergies"></span></p>
+                    </div>
+                    <!--Check previous and current medical history-->
+                    <div class="record_section">
+                        <h3>Medical History</h3>
+                        <ol id="recordHistory"></ol>
+                    </div>
+                    <!--Current active prescription of patient-->
+                    <div class="record_section">
+                        <h3>Active Prescriptions</h3>
+                        <ul id="recordRx"></ul>
+                    </div>
+                </section>
+ 
+                <!--Clinical notes added and will get pushed to MEDICAL_HISTORY of patient-->
+                <section class="note_card" id="noteCard" hidden>
+                    <h2>Add Clinical Note</h2>
+                    <form id="noteForm" novalidate>
+                        <div class="booking_form_row">
+                            <label for="noteTitle">Title</label>
+                            <input type="text" id="noteTitle" placeholder="e.g. Follow-up consultation"/>
+                        </div>
+                        <div class="booking_form_row">
+                            <label for="noteText">Note</label>
+                            <textarea id="noteText" rows="4" placeholder="Type clinical observations here..."></textarea>
+                        </div>
+                        <p id="noteError" hidden>Please fill out all fields correctly!</p>
+                        <p id="noteOk" hidden>Note added to patient history.</p>
+                        <button type="submit">Save Note</button>
+                    </form>
+                </section>
+ 
+                <!--Issuing prescription and it wil get pushed to PRESCRIPTIONS for the patient-->
+                <section class="rx_form_card" id="rxFormCard" hidden>
+                    <h2>Issue Prescription</h2>
+                    <form id="rxForm" novalidate>
+                        <div class="booking_form_row">
+                            <label for="rxMedicine">Medicine</label>
+                            <select id="rxMedicine">
+                            <option value="">Select a medicine...</option>
+                            </select>
+                        </div>
+                        <div class="booking_form_row">
+                            <label for="rxDosage">Dosage</label>
+                            <input type="text" id="rxDosage" placeholder="e.g. 1 capsule, 3 times daily"/>
+                        </div>
+                        <div class="booking_form_row">
+                            <label for="rxDuration">Duration (days)</label>
+                            <input type="number" id="rxDuration" min="1" placeholder="e.g. 7"/>
+                        </div>
+                        <p id="rxError" hidden>Please fill out all fields correctly!</p>
+                        <p id="rxOk" hidden>Prescription issued successfully.</p>
+                        <button type="submit">Issue Prescription</button>
+                    </form>
+                </section>
+            </main>
+        </div>
+
         <div id="dashboard-guardian" hidden> ... </div>
 
 
@@ -571,7 +700,8 @@
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/patient.js"></script>
-    <script src="js/nurse.js"></script>
+    <script src="js/doctor.js"></script>
+
 
     </body>
 
