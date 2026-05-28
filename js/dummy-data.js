@@ -80,7 +80,7 @@ const PATIENTS = [
     address: "8 Maple Close, Seattle, BS8 2QR",
     telephone: "07700 900789",
     email: "liam.guardian@example.com",
-    registeredDoctorID: "d001",
+    registeredDoctorID: "d003",
     bloodGroup: "B+",
     allergies: ["nuts", "shellfish"],
     guardianID: "g001"                    //Since he's a child, he has a guardian linked by ID
