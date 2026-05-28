@@ -16,70 +16,140 @@
                                 SIDEBAR (gonna sit on the left side of all dashboards)
         ====================================================== -->
         <div class="sidebar" id="sidebar" hidden>
-            <div class="sidebar-name">Seattle Grace Hospital</div>
-        
-            <!-- Admin nav -->
-            <nav class="sidebar_type" id="nav-admin" hidden>
-                <div class="sidebar-label">Main</div>
-                <a class="sidebar_item" href="#">Dashboard</a>
-                <div class="sidebar-label">Management</div>
-                <a class="sidebar_item" href="#">Patients</a>
-                <a class="sidebar_item" href="#">Doctors</a>
-                <a class="sidebar_item" href="#">Staff</a>
-                <a class="sidebar_item" href="#">Appointments</a>
-            </nav>
-
-            <!--Patient Nav - visible when role === patient-->
-              <nav class="sidebar_section" id="nav-patient" hidden>
-                <div class="sidebar_section-label">Main</div>
-                <a class="sidebar_item" href="#">Dashboard</a>
-                <div class="sidebar-label">Health</div>
-                <a class="sidebar_item" href="#">Appointments</a>
-                <a class="sidebar_item" href="#">Prescriptions</a>
-                <a class="sidebar_item" href="#">Medical History</a>
-                <a class="sidebar_item" href="#">Profile</a>
-            </nav>
-            
-            <!-- Nurse nav -->
-            <nav class="sidebar_type" id="nav-nurse" hidden>
-                <div class="sidebar-label">Main</div>
-                    <a class="sidebar_item" href="#">Dashboard</a>
-                <div class="sidebar-label">Ward</div>
-                    <a class="sidebar_item" href="#">My Patients</a>
-                    <a class="sidebar_item" href="#">Vitals</a>
-                    <a class="sidebar_item" href="#">Appointments</a>
-                    <a class="sidebar_item" href="#">Prescriptions</a>
-                    <a class="sidebar_item" href="#">Medical History</a>
-            </nav>
-
-            <!--Doctor nav-->
-            <nav class="sidebar_section" id="nav-doctor" hidden>
-                <div class="sidebar-label">Main</div>
-                <a class="sidebar_item" href="#">Dashboard</a>
-                <div class="sidebar-label">Patients</div>
-                <a class="sidebar_item" href="#">My Patients</a>
-                <a class="sidebar_item" href="#">Today's Appointments</a>
-                <div class="sidebar-label">Clinical</div>
-                <a class="sidebar_item" href="#">Add Note</a>
-                <a class="sidebar_item" href="#">Issue Prescription</a>
-            </nav>
-
-            <!--Guardian nav-->
-             <nav class="sidebar_section" id="nav-guardian" hidden>
-                <div class="sidebar-label">Main</div>
-                <a class="sidebar_item" href="#">Dashboard</a>
-                <div class="sidebar-label">My Child's Care</div>
-                <a class="sidebar_item" href="#">Medical History</a>
-                <a class="sidebar_item" href="#">Prescriptions</a>
-                <a class="sidebar_item" href="#">Appointments</a>
-                <div class="sidebar-label">Account</div>
-                <a class="sidebar_item" href="#">Consent Log</a>
-                <a class="sidebar_item" href="#">Notifications</a>
-            </nav>
-
-            <!-- footer for logout button (Remains the same for all sidebar navs) -->
-            <div class="sidebar_footer">
-                <div class="sidebar_logout" id="logoutBtn">Logout</div>
+          
+    <!-- Logo block -->
+    <div class="sidebar_logo">
+        <div class="sidebar_logo-initials">SG</div>
+        <div class="sidebar_logo-text">
+            <div class="sidebar_logo-name">Seattle Grace</div>
+            <div class="sidebar_logo-sub" id="sidebar-role-label">MediPortal</div>
+        </div>
+    </div>
+ 
+    <!-- Admin nav — visible when role === 'admin' -->
+    <nav class="sidebar_type" id="nav-admin" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)" onclick="scrollToSection('adminDashboardTop')">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Management</span>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionDoctors')">
+            <i class="ti ti-stethoscope"></i> Doctors
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionNurses')">
+            <i class="ti ti-heart-handshake"></i> Nurses
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionReceptionists')">
+            <i class="ti ti-user-check"></i> Receptionists
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionPatients')">
+            <i class="ti ti-users"></i> Patients
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('sectionGuardians')">
+            <i class="ti ti-shield-check"></i> Guardians
+        </a>
+    </nav>
+ 
+    <!-- Nurse nav — visible when role === 'nurse' -->
+    <nav class="sidebar_type" id="nav-nurse" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)" onclick="scrollToSection('nurseDashboardTop')">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Ward</span>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nursePatients')">
+            <i class="ti ti-users"></i> My Patients
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nurseVitals')">
+            <i class="ti ti-activity"></i> Vitals
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nurseAppointments')">
+            <i class="ti ti-calendar"></i> Appointments
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nursePrescriptions')">
+            <i class="ti ti-pill"></i> Prescriptions
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('nurseHistory')">
+            <i class="ti ti-clipboard-list"></i> Medical History
+        </a>
+    </nav>
+ 
+    <!-- Receptionist nav — visible when role === 'receptionist' -->
+    <nav class="sidebar_type" id="nav-receptionist" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)" onclick="scrollToSection('receptionistDashboardTop')">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Front Desk</span>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('receptionistToday')">
+            <i class="ti ti-calendar"></i> Today's Schedule
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('receptionistAppointments')">
+            <i class="ti ti-list"></i> All Appointments
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)" onclick="scrollToSection('receptionistPatients')">
+            <i class="ti ti-users"></i> Patient Directory
+        </a>
+</nav>
+ 
+    <!-- Doctor nav — visible when role === 'doctor' (Tiana) -->
+    <nav class="sidebar_type" id="nav-doctor" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Clinical</span>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-users"></i> My Patients
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-pill"></i> Prescriptions
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-flask"></i> Lab Orders
+        </a>
+    </nav>
+ 
+    <!-- Patient nav — visible when role === 'patient' (Tiana) -->
+    <nav class="sidebar_type" id="nav-patient" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">My Health</span>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-user"></i> My Profile
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-calendar"></i> Appointments
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-pill"></i> Prescriptions
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-clipboard-list"></i> Medical History
+        </a>
+    </nav>
+ 
+    <!-- Guardian nav — visible when role === 'guardian' (Tiana) -->
+    <nav class="sidebar_type" id="nav-guardian" hidden>
+        <span class="sidebar-label">Main</span>
+        <a class="sidebar_item sidebar_item--active" href="javascript:void(0)">
+            <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <span class="sidebar-label">Monitoring</span>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-user-heart"></i> Linked Patient
+        </a>
+    </nav>
+ 
+    <!-- Footer — user info + sign out -->
+    <div class="sidebar_footer">
+        <div class="sidebar_user">
+            <div class="sidebar_user-avatar" id="sidebar-avatar"></div>
+            <div class="sidebar_user-info">
+                <div class="sidebar_user-name" id="sidebar-username"></div>
+                <div class="sidebar_user-role" id="sidebar-role"></div>
             </div>
         </div>
         <div class="sidebar_logout" id="logoutBtn">
@@ -183,6 +253,7 @@
             </div>
  
         </div>
+
         <div id="dashboard-admin" hidden>
             <div class="admin_layout" id="adminDashboardTop">
  
@@ -333,6 +404,7 @@
 </div>
 
         </div>
+        
         <div id="dashboard-nurse" hidden>
             <div class="nurse_layout" id="nurseDashboardTop">
                 <!-- STATS ROW -->
@@ -468,11 +540,106 @@
                     </table>
                 </div>
             </div>
-        </div>    
+        </div>   
 
-<div id="dashboard-receptionist" hidden>
-
-</div>
+        <div id="dashboard-receptionist" hidden>
+            <div class="receptionist_layout" id="receptionistDashboardTop">
+ 
+    <!-- STATS ROW -->
+    <div class="receptionist_stats">
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Total Appointments</div>
+            <div class="stat_card-value" id="receptionistTotalAppointments"></div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Booked Today</div>
+            <div class="stat_card-value" id="receptionistTodayAppointments"></div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Checked In</div>
+            <div class="stat_card-value" id="receptionistCheckedIn"></div>
+        </div>
+ 
+        <div class="stat_card">
+            <div class="stat_card-label">Pending Check-in</div>
+            <div class="stat_card-value" id="receptionistPending"></div>
+        </div>
+ 
+    </div>
+ 
+    <!-- TODAY'S SCHEDULE -->
+    <div class="receptionistSection" id="receptionistToday">
+        <div class="receptionistSection-header">
+            <span class="receptionistSection-title">Today's Schedule</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Check-in Status</th>
+                </tr>
+            </thead>
+            <tbody id="receptionistTodayTbody">
+                <!-- Populated by receptionist.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- ALL APPOINTMENTS -->
+    <div class="receptionistSection" id="receptionistAppointments">
+        <div class="receptionistSection-header">
+            <span class="receptionistSection-title">All Appointments</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Check-in</th>
+                    <th>Booked By</th>
+                </tr>
+            </thead>
+            <tbody id="receptionistAppointmentsTbody">
+                <!-- Populated by receptionist.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- PATIENT DIRECTORY -->
+    <div class="receptionistSection" id="receptionistPatients">
+        <div class="receptionistSection-header">
+            <span class="receptionistSection-title">Patient Directory</span>
+        </div>
+        <table class="data_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>DOB</th>
+                    <th>Telephone</th>
+                    <th>Registered Doctor</th>
+                </tr>
+            </thead>
+            <tbody id="receptionistPatientsTbody">
+                <!-- Populated by receptionist.js -->
+            </tbody>
+        </table>
+    </div>
+ 
+            </div>
+        </div>
 
 <!-- ==================================================================================================================================== -->
 
