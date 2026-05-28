@@ -277,7 +277,7 @@ function showPatientList(doctor) {
             '<div class="patient_item_avatar">' + p.firstName[0] + p.lastName[0] + '</div>' +
             '<div class="patient_item_body">' +
                 '<p class="patient_item_name">' + p.firstName + ' ' + p.lastName + '</p>' +
-                '<p class="patient_item_meta">' + p.gender + ' · Age ' + p.age + ' · ' + p.bloodGroup + '</p>' +
+                '<p class="patient_item_meta">' + p.gender + ' · age ' + p.age + ' · ' + p.bloodGroup + '</p>' +
             '</div>';
 
         //A click event - It will read patient ID and call a function that will display the patient's full record on the right.

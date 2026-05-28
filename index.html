@@ -32,12 +32,12 @@
             <!--Patient Nav - visible when role === patient-->
               <nav class="sidebar_section" id="nav-patient" hidden>
                 <div class="sidebar_section-label">Main</div>
-                <a class="sidebar_item sidebar__item--active" data-section="overview" href="#">Overview</a>
-                <div class="sidebar_section-label">Health</div>
-                <a class="sidebar_item" data-section="appointments" href="#">Appointments</a>
-                <a class="sidebar_item" data-section="prescriptions" href="#">Prescriptions</a>
-                <a class="sidebar_item" data-section="history" href="#">Medical History</a>
-                <a class="sidebar_item" data-section="profile" href="#">Profile</a>
+                <a class="sidebar_item" href="#">Dashboard</a>
+                <div class="sidebar-label">Health</div>
+                <a class="sidebar_item" href="#">Appointments</a>
+                <a class="sidebar_item" href="#">Prescriptions</a>
+                <a class="sidebar_item" href="#">Medical History</a>
+                <a class="sidebar_item" href="#">Profile</a>
             </nav>
             
             <!-- Nurse nav -->
@@ -50,6 +50,31 @@
                     <a class="sidebar_item" href="#">Appointments</a>
                     <a class="sidebar_item" href="#">Prescriptions</a>
                     <a class="sidebar_item" href="#">Medical History</a>
+            </nav>
+
+            <!--Doctor nav-->
+            <nav class="sidebar_section" id="nav-doctor" hidden>
+                <div class="sidebar-label">Main</div>
+                <a class="sidebar_item" href="#">Dashboard</a>
+                <div class="sidebar-label">Patients</div>
+                <a class="sidebar_item" href="#">My Patients</a>
+                <a class="sidebar_item" href="#">Today's Appointments</a>
+                <div class="sidebar-label">Clinical</div>
+                <a class="sidebar_item" href="#">Add Note</a>
+                <a class="sidebar_item" href="#">Issue Prescription</a>
+            </nav>
+
+            <!--Guardian nav-->
+             <nav class="sidebar_section" id="nav-guardian" hidden>
+                <div class="sidebar-label">Main</div>
+                <a class="sidebar_item" href="#">Dashboard</a>
+                <div class="sidebar-label">My Child's Care</div>
+                <a class="sidebar_item" href="#">Medical History</a>
+                <a class="sidebar_item" href="#">Prescriptions</a>
+                <a class="sidebar_item" href="#">Appointments</a>
+                <div class="sidebar-label">Account</div>
+                <a class="sidebar_item" href="#">Consent Log</a>
+                <a class="sidebar_item" href="#">Notifications</a>
             </nav>
 
             <!-- footer for logout button (Remains the same for all sidebar navs) -->
@@ -689,7 +714,105 @@
             </main>
         </div>
 
-        <div id="dashboard-guardian" hidden> ... </div>
+        <!--Guardian Dashboard-->
+        <div id="dashboard-guardian" hidden>
+            <header class="dashboard_topbar">
+            <div class="dashboard_greeting">
+                <p>Welcome back,</p>
+                <h2 id="guardianName"></h2>
+            </div>
+            <div class="dashboard_actions">
+                <input type="text" id="guardianSearchInput" placeholder="Search..."/>
+                <button id="guardianSearchBtn">Search</button>
+            </div>
+        </header>
+ 
+        <!--Main read-only grid layout for guardian-->
+        <main class="dashboard_grid">
+ 
+            <!--Banner to show which patient is guardian viewing-->
+            <section class="guardian_banner">
+                <div class="guardian_banner_avatar">
+                    <span id="wardInitials"></span>
+                </div>
+                <div class="guardian_banner_info">
+                    <p>You are viewing the medical records of</p>
+                    <h2 id="wardName"></h2>
+                    <p id="wardRelationship"></p>
+                </div>
+                <div class="guardian_banner_consent">
+                    <p>Consent</p>
+                    <h2 id="consentStatus"></h2>
+                    <p id="consentDate"></p>
+                </div>
+            </section>
+ 
+            <!--Summary stat cards for ward-->
+            <section class="dashboard_stats">
+                <!--Next appointment-->
+                <div class="stat_card" id="card_appointment">
+                    <p>Next Appointment</p>
+                    <h2 id="g_statNextAppt"></h2>
+                    <p id="g_statNextApptMeta"></p>
+                </div>
+                <!--Active prescription-->
+                <div class="stat_card" id="card_prescriptions">
+                    <p>Active Prescriptions</p>
+                    <h2 id="g_statRxCount"></h2>
+                    <p id="g_statRxSub"></p>
+                </div>
+                <!--Blood group-->
+                <div class="stat_card" id="card_bloodgroup">
+                    <p>Blood Group</p>
+                    <h2 id="g_statBloodGroup"></h2>
+                    <p id="g_statVitalsDate"></p>
+                </div>
+                <!--Allergies-->
+                <div class="stat_card" id="card_allergies">
+                    <p>Allergies</p>
+                    <h2 id="g_statAllergiesCount"></h2>
+                    <p id="g_statAllergiesList"></p>
+                </div>
+            </section>
+ 
+            <!--Consent log card to show what's authorised for the guardian to see-->
+            <section class="consent_card">
+                <div class="consent_card_header">
+                    <h2>Consent Log</h2>
+                    <p>What you are authorised to view</p>
+                </div>
+                <ul id="consentList"></ul>
+            </section>
+ 
+            <!--Notification panel(Hardcoded)-->
+            <section class="notif_panel">
+                <div class="notif_panel_header">
+                    <h2>Notifications</h2>
+                    <p id="notifCount"></p>
+                </div>
+                <ul id="notifList"></ul>
+            </section>
+ 
+            <!--Medical history-->
+            <section class="history">
+                <div class="history_header">
+                    <h2>Medical History</h2>
+                    <p class="readonly_note">Read-only view</p>
+                </div>
+                <ol id="g_historyTimeline"></ol>
+            </section>
+ 
+            <!--Active prescriptions-->
+            <section class="rx_panel">
+                <div class="rx_panel_header">
+                    <h2>Prescriptions</h2>
+                    <p class="readonly_note">Read-only view</p>
+                </div>
+                <ul id="g_rxGrid"></ul>
+            </section>
+ 
+        </main>
+    </div>
 
 
 <!-- ==================================================================================================================================== -->
@@ -700,8 +823,9 @@
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/patient.js"></script>
+    <script src="js/nurse.js"></script>
     <script src="js/doctor.js"></script>
-
+    <script src="js/guardian.js"></script>
 
     </body>
 
