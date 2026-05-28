@@ -74,8 +74,8 @@ function showDoctorCard(patient) {
     
     //Doctor details; first name and last name, speciality, and GMC number are shown in the doctor card on the dashboard.
     document.getElementById("doctorName").textContent = doctor.title + " " + doctor.firstName + " " + doctor.lastName;
-    document.getElementById("doctorSpeciality").textContent = doctor.specialty;
-    document.getElementById("doctorGMC").textContent = doctor.gmcNumber.replace("GMC", " ");
+    document.getElementById("doctorSpecialty").textContent = doctor.specialty;
+    document.getElementById("doctorGmc").textContent = doctor.gmcNumber.replace("GMC", " ");
 }
 
 function showStats(patient) {
@@ -115,12 +115,12 @@ function showStats(patient) {
             }
         }
         //Display the date of the next appointment and the time + doctor details in the stats section of the dashboard.
-        document.getElementById("statsNextAppt").textContent = dateText;
-        document.getElementById("statsNextApptMeta").textContent = nextAppointment.time + " Dr. " + apptDoctor.LastName;
+        document.getElementById("statNextAppt").textContent = dateText;
+        document.getElementById("statNextApptMeta").textContent = nextAppointment.time + " Dr. " + apptDoctor.lastName;
 
     } else {
         //If no upcoming appointments, display "-" for the date and a message in the meta text.
-        document.getElementById("statsNextAppt").textContent = "-";
+        document.getElementById("statNextAppt").textContent = "-";
         document.getElementById("statNextApptMeta").textContent = "No upcoming appointments";
     }
 
@@ -153,7 +153,7 @@ function showStats(patient) {
     //Display the prescription count and the name of the first active prescription.
     //'?' condition = shows value if true & value if false.
     document.getElementById("statRxCount").textContent = rxCount;
-    document.getElementById("statFirstMed").textContent = rxCount > 0 ? firstMedName : "No active prescriptions";
+    document.getElementById("statRxSub").textContent = rxCount > 0 ? firstMedName : "No active prescriptions";
 
     
     //BLOOD GROUP SECTION
@@ -184,7 +184,7 @@ function showStats(patient) {
 
     //Display the number of allergies and a preview of the first allergy. If no allergies, show "No allergies".
     document.getElementById("statAllergiesCount").textContent = allergies.length;
-    document.getElementById("statFirstAllergy").textContent = allergies.length > 0 ? allergies.join(", ") : "No allergies";
+    document.getElementById("statAllergiesList").textContent = allergies.length > 0 ? allergies.join(", ") : "No allergies";
 }
 
 //It handles the prescription list table
@@ -295,7 +295,7 @@ function showHistory(patient) {
     }
 }
 
-function setupFilterButtons(patient) {
+function setupFilterButtons() {
  
     //querySelectorAll scans and returns all elements that match filter_pill
     //It grabs every button with class="filter_pill"
