@@ -168,8 +168,8 @@ function showStats(patient) {
     //If vitals record is found, display the date of the last vitals record. 
     //If not found, display a message like "No vitals recorded".
     if (vitalsRecord) {
-        var vitalsRecord = new Date(vitalsRecord.lastUpdated);
-        document.getElementById("statVitalsDate").textContent = vitalsRecord.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+        var vitalsDate = new Date(vitalsRecord.lastUpdated);
+        document.getElementById("statVitalsDate").textContent = vitalsDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
     } else {
         document.getElementById("statVitalsDate").textContent = "No vitals recorded";
     }
@@ -268,7 +268,7 @@ function showHistory(patient) {
         //badge class is built from the type 
         var badgeClass = "badge_" + entry.type;
 
-        //"test_result" → "test result" for the label text
+        //"test_result" to "test result" for the label text
         var typeLabel = entry.type.replace("_", " ");
 
         //create list item
