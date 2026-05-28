@@ -1,8 +1,3 @@
-//DOMContentLoaded ensures that the html file has been read, then runs the function.
-document.addEventListener("DOMContentLoaded", function() {
-    loadPatientDashboard();
-});
-
 //getLoggedInPatient checks session storage, finds the patientID, and then loops through the PATIENTS array.
 function getLoggedInPatient() {
     //It retuns the patientID of the currently logged in from session storage.

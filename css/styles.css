@@ -1,0 +1,663 @@
+/* ============================================================
+   styles.css — OWNED BY AYUSH
+   Global design system for Seattle Grace Hospital MediPortal
+   All dashboards share these styles.
+   Tiana's dashboard.css imports this and adds page-specific overrides.
+============================================================ */
+
+/* ── CSS VARIABLES ──────────────────────────────────────────── */
+:root {
+    /* Tiana's palette (agreed as project standard) */
+    --bg:               #f8fafc;
+    --surface:          #ffffff;
+    --border:           #e2e8f0;
+    --text:             #1e293b;
+    --text-muted:       #64748b;
+    --primary:          #2d6cdf;
+    --primary-soft:     #eff6ff;
+    --warn:             #f59e0b;
+    --success:          #10b981;
+    --shadow:           0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.05);
+
+    /* Extended semantic colours */
+    --danger:           #e11d48;
+    --danger-soft:      #fff1f2;
+    --success-soft:     #ecfdf5;
+    --warn-soft:        #fffbeb;
+    --primary-dark:     #1a5fad;
+
+    /* Layout */
+    --sidebar-width:    230px;
+    --topbar-height:    60px;
+    --radius-sm:        6px;
+    --radius-md:        10px;
+    --radius-lg:        14px;
+    --transition:       0.18s ease;
+
+    /* Typography */
+    --font:             'DM Sans', sans-serif;
+}
+
+/* ── RESET ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font);
+    background:  var(--bg);
+    color:       var(--text);
+    font-size:   14px;
+    line-height: 1.5;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    font-family: var(--font);
+    cursor: pointer;
+}
+
+/* ── APP SHELL ──────────────────────────────────────────────── */
+/* Wraps sidebar + main content side by side */
+body {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ── SIDEBAR ────────────────────────────────────────────────── */
+.sidebar {
+    width:          var(--sidebar-width);
+    min-width:      var(--sidebar-width);
+    background:     var(--surface);
+    border-right:   1px solid var(--border);
+    display:        flex;
+    flex-direction: column;
+    position:       fixed;
+    top:            0;
+    left:           0;
+    height:         100vh;
+    overflow-y:     auto;
+    z-index:        100;
+}
+
+/* Logo block — initials + hospital name */
+.sidebar_logo {
+    display:       flex;
+    align-items:   center;
+    gap:           10px;
+    padding:       20px 16px 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar_logo-initials {
+    width:           36px;
+    height:          36px;
+    border-radius:   var(--radius-sm);
+    background:      var(--primary);
+    color:           #ffffff;
+    font-size:       13px;
+    font-weight:     700;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    flex-shrink:     0;
+}
+
+.sidebar_logo-text {
+    display:        flex;
+    flex-direction: column;
+}
+
+.sidebar_logo-name {
+    font-size:   13px;
+    font-weight: 700;
+    color:       var(--text);
+    line-height: 1.2;
+}
+
+.sidebar_logo-sub {
+    font-size: 11px;
+    color:     var(--text-muted);
+    margin-top: 1px;
+}
+
+/* Nav sections */
+.sidebar_type {
+    list-style: none;
+    padding:    12px 10px 4px;
+}
+
+.sidebar-label {
+    color:          var(--text-muted);
+    font-size:      10px;
+    font-weight:    600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding:        8px 8px 4px;
+    display:        block;
+}
+
+.sidebar_item {
+    display:       flex;
+    align-items:   center;
+    gap:           10px;
+    padding:       9px 10px;
+    color:         var(--text-muted);
+    font-size:     13px;
+    font-weight:   500;
+    border-radius: var(--radius-sm);
+    transition:    background var(--transition), color var(--transition);
+    cursor:        pointer;
+    margin-bottom: 2px;
+}
+
+.sidebar_item i {
+    font-size:  17px;
+    flex-shrink: 0;
+}
+
+.sidebar_item:hover {
+    background: var(--bg);
+    color:      var(--text);
+}
+
+.sidebar_item--active {
+    background: var(--primary-soft);
+    color:      var(--primary);
+    font-weight: 600;
+}
+
+/* Footer — user info + sign out */
+.sidebar_footer {
+    margin-top:  auto;
+    padding:     14px 10px;
+    border-top:  1px solid var(--border);
+}
+
+.sidebar_user {
+    display:     flex;
+    align-items: center;
+    gap:         10px;
+    padding:     8px 10px;
+    margin-bottom: 4px;
+}
+
+.sidebar_user-avatar {
+    width:           34px;
+    height:          34px;
+    border-radius:   50%;
+    background:      var(--primary);
+    color:           #ffffff;
+    font-size:       12px;
+    font-weight:     700;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    flex-shrink:     0;
+}
+
+.sidebar_user-info {
+    display:        flex;
+    flex-direction: column;
+}
+
+.sidebar_user-name {
+    font-size:   13px;
+    font-weight: 600;
+    color:       var(--text);
+    line-height: 1.2;
+}
+
+.sidebar_user-role {
+    font-size: 11px;
+    color:     var(--text-muted);
+}
+
+.sidebar_logout {
+    display:       flex;
+    align-items:   center;
+    gap:           8px;
+    padding:       9px 10px;
+    color:         var(--text-muted);
+    font-size:     13px;
+    font-weight:   500;
+    border-radius: var(--radius-sm);
+    cursor:        pointer;
+    transition:    background var(--transition), color var(--transition);
+}
+
+.sidebar_logout i {
+    font-size: 17px;
+}
+
+.sidebar_logout:hover {
+    background: var(--bg);
+    color:      var(--danger);
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────────── */
+.topbar {
+    position:    fixed;
+    top:         0;
+    left:        var(--sidebar-width);
+    right:       0;
+    height:      var(--topbar-height);
+    background:  var(--surface);
+    border-bottom: 1px solid var(--border);
+    display:     flex;
+    align-items: center;
+    justify-content: space-between;
+    padding:     0 24px;
+    z-index:     99;
+}
+
+.topbar_left {
+    display:        flex;
+    flex-direction: column;
+}
+
+.topbar_title {
+    font-size:   16px;
+    font-weight: 700;
+    color:       var(--text);
+}
+
+.topbar_breadcrumb {
+    font-size: 11px;
+    color:     var(--text-muted);
+    margin-top: 1px;
+}
+
+.topbar_right {
+    display:     flex;
+    align-items: center;
+}
+
+.topbar_user {
+    display:     flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.topbar_user-name {
+    font-size:   13px;
+    font-weight: 600;
+    color:       var(--text);
+}
+
+.topbar_user-role {
+    font-size: 11px;
+    color:     var(--text-muted);
+}
+
+#dashboard-login {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: var(--bg);
+    z-index: 200;
+    margin: 0;
+}
+
+/* ── MAIN CONTENT OFFSET ────────────────────────────────────── */
+/* Pushes page content clear of the fixed sidebar and topbar */
+#dashboard-admin,
+#dashboard-nurse,
+#dashboard-receptionist,
+#dashboard-patient,
+#dashboard-doctor,
+#dashboard-guardian {
+    margin-left: var(--sidebar-width);
+    margin-top:  var(--topbar-height);
+    padding:     24px;
+    min-height:  calc(100vh - var(--topbar-height));
+    width:       calc(100% - var(--sidebar-width));
+}
+
+/* ── CARDS ──────────────────────────────────────────────────── */
+.stat_card {
+    background:    var(--surface);
+    border:        1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding:       18px 20px;
+    box-shadow:    var(--shadow);
+}
+
+.stat_card-label {
+    font-size:   11px;
+    font-weight: 600;
+    color:       var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat_card-value {
+    font-size:   28px;
+    font-weight: 700;
+    color:       var(--text);
+    margin-top:  6px;
+}
+
+.login_page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+}
+
+.admin_card,
+.nurseSection {
+    background:    var(--surface);
+    border:        1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding:       20px;
+    box-shadow:    var(--shadow);
+    margin-bottom: 20px;
+}
+
+.admin_card-header,
+.nurseSection-header {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    margin-bottom:   16px;
+}
+
+.admin_card-title,
+.nurseSection-title {
+    font-size:   15px;
+    font-weight: 700;
+    color:       var(--text);
+}
+
+/* ── STAT GRIDS ─────────────────────────────────────────────── */
+.admin_stats-grid,
+.nurse_stats {
+    display:               grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:                   14px;
+    margin-bottom:         20px;
+}
+
+.nurse_stats {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* ── ADMIN LAYOUT ───────────────────────────────────────────── */
+.admin_layout,
+.nurse_layout {
+    display:        flex;
+    flex-direction: column;
+}
+
+.adminSectionUser {
+    margin-bottom: 28px;
+}
+
+.adminSectionUser:last-child {
+    margin-bottom: 0;
+}
+
+.adminSectionUser-header {
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    margin-bottom:   10px;
+}
+
+.adminSectionUser-title {
+    font-size:   13px;
+    font-weight: 700;
+    color:       var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── DATA TABLE ─────────────────────────────────────────────── */
+.data_table {
+    width:           100%;
+    border-collapse: collapse;
+    font-size:       13px;
+}
+
+.data_table thead th {
+    color:          var(--text-muted);
+    font-weight:    600;
+    font-size:      11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding:        8px 12px;
+    text-align:     left;
+    border-bottom:  1px solid var(--border);
+    white-space:    nowrap;
+}
+
+.data_table tbody td {
+    padding:       10px 12px;
+    color:         var(--text);
+    border-bottom: 1px solid var(--bg);
+    vertical-align: middle;
+}
+
+.data_table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.data_table tbody tr:hover td {
+    background: var(--bg);
+}
+
+/* ── BADGES ─────────────────────────────────────────────────── */
+.badge {
+    display:       inline-block;
+    font-size:     11px;
+    font-weight:   600;
+    padding:       3px 9px;
+    border-radius: 20px;
+}
+
+.badge--booked,
+.badge--active,
+.badge--confirmed {
+    background: var(--success-soft);
+    color:      var(--success);
+}
+
+.badge--pending,
+.badge--repeat_requested {
+    background: var(--warn-soft);
+    color:      var(--warn);
+}
+
+.badge--completed,
+.badge--checked_in {
+    background: var(--primary-soft);
+    color:      var(--primary);
+}
+
+.badge--cancelled,
+.badge--no_show {
+    background: var(--danger-soft);
+    color:      var(--danger);
+}
+
+/* ── BUTTONS ────────────────────────────────────────────────── */
+.adminAddBtn {
+    background:    var(--primary);
+    color:         #ffffff;
+    border:        none;
+    border-radius: var(--radius-sm);
+    padding:       7px 14px;
+    font-size:     12px;
+    font-weight:   600;
+    transition:    background var(--transition);
+}
+
+.adminAddBtn:hover {
+    background: var(--primary-dark);
+}
+
+.adminEditBtn {
+    background:    var(--primary-soft);
+    color:         var(--primary);
+    border:        1px solid var(--primary);
+    border-radius: var(--radius-sm);
+    padding:       4px 10px;
+    font-size:     11px;
+    font-weight:   600;
+    margin-right:  4px;
+    transition:    background var(--transition);
+}
+
+.adminEditBtn:hover {
+    background: var(--primary);
+    color:      #ffffff;
+}
+
+.adminDeleteBtn {
+    background:    var(--danger-soft);
+    color:         var(--danger);
+    border:        1px solid var(--danger);
+    border-radius: var(--radius-sm);
+    padding:       4px 10px;
+    font-size:     11px;
+    font-weight:   600;
+    transition:    background var(--transition);
+}
+
+.adminDeleteBtn:hover {
+    background: var(--danger);
+    color:      #ffffff;
+}
+
+/* ── LOGIN PAGE ─────────────────────────────────────────────── */
+.login_page {
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    min-height:      100vh;
+    width:           100%;
+    background:      var(--bg);
+}
+
+.login_card {
+    background:    var(--surface);
+    border:        1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding:       40px 36px;
+    width:         100%;
+    max-width:     420px;
+    box-shadow:    var(--shadow);
+}
+
+.login_header {
+    text-align:    center;
+    margin-bottom: 28px;
+}
+
+.login_logo {
+    font-size:   12px;
+    font-weight: 600;
+    color:       var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.login_title {
+    font-size:   24px;
+    font-weight: 700;
+    color:       var(--text);
+}
+
+.login_subtitle {
+    font-size:   13px;
+    color:       var(--text-muted);
+    margin-top:  4px;
+}
+
+.login_form {
+    display:        flex;
+    flex-direction: column;
+    gap:            16px;
+}
+
+.login_field {
+    display:        flex;
+    flex-direction: column;
+    gap:            5px;
+}
+
+.login_label {
+    font-size:   12px;
+    font-weight: 600;
+    color:       var(--text-muted);
+}
+
+.login_input {
+    border:        1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding:       10px 12px;
+    font-family:   var(--font);
+    font-size:     14px;
+    color:         var(--text);
+    background:    var(--bg);
+    outline:       none;
+    transition:    border-color var(--transition);
+}
+
+.login_input:focus {
+    border-color: var(--primary);
+    background:   var(--surface);
+}
+
+.login_error,
+.login_lockout {
+    font-size:   12px;
+    font-weight: 500;
+    padding:     8px 12px;
+    border-radius: var(--radius-sm);
+}
+
+.login_error {
+    background: var(--danger-soft);
+    color:      var(--danger);
+}
+
+.login_lockout {
+    background: var(--warn-soft);
+    color:      var(--warn);
+}
+
+.login_btn {
+    background:    var(--primary);
+    color:         #ffffff;
+    border:        none;
+    border-radius: var(--radius-sm);
+    padding:       11px;
+    font-size:     14px;
+    font-weight:   600;
+    width:         100%;
+    transition:    background var(--transition);
+    margin-top:    4px;
+}
+
+.login_btn:hover {
+    background: var(--primary-dark);
+}
+
+.login_footer {
+    text-align:  center;
+    margin-top:  20px;
+    font-size:   12px;
+    color:       var(--text-muted);
+}

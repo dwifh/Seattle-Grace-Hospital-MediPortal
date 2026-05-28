@@ -21,15 +21,27 @@ const ROLE_BREADCRUMBS = {
 };
 
 function updateTopbar(user) {
-    // for page title and breadcrumb
-    document.getElementById('topbar-title').textContent = 'Dashboard';
+    document.getElementById('topbar-title').textContent      = 'Dashboard';
     document.getElementById('topbar-breadcrumb').textContent = ROLE_BREADCRUMBS[user.role] || '';
+    document.getElementById('topbar-username').textContent   = user.username;
+    document.getElementById('topbar-role').textContent       = ROLE_LABELS[user.role] || user.role;
  
-    // for username
-    document.getElementById('topbar-username').textContent = user.username;
+    // sidebar footer
+    document.getElementById('sidebar-username').textContent     = user.username;
+    document.getElementById('sidebar-role').textContent         = ROLE_LABELS[user.role] || user.role;
+    document.getElementById('sidebar-role-label').textContent   = 'MediPortal · ' + ROLE_LABELS[user.role];
  
-    // for role label
-    document.getElementById('topbar-role').textContent = ROLE_LABELS[user.role] || user.role;
+    // avatar initials from username e.g. 'admin.login' -> 'AL'
+    const parts    = user.username.split('.');
+    const initials = parts.map(function(p) { return p[0].toUpperCase(); }).join('');
+    document.getElementById('sidebar-avatar').textContent = initials.slice(0, 2);
+}
+
+function scrollToSection(id) {
+    const section = document.getElementById(id);
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 // SESSION SAVER - Tiana don't edit this, or else users will have to login everytime the tab is refreshed
@@ -98,13 +110,12 @@ function showDashboard(role) {
         updateTopbar(currentUser);
     }
 
-    if (role === 'admin') {
-    loadAdminDashboard();
-    }
-
-    if (role === 'nurse') {
-    loadNurseDashboard();
-    }
+    if (role === 'admin') { loadAdminDashboard(); }
+    if (role === 'nurse') { loadNurseDashboard(); }
+    if (role === 'doctor') { loadDoctorDashboard(); }
+    if (role === 'patient') { loadPatientDashboard(); }
+    if (role === 'guardian') { loadGuardianDashboard(); }
+    if (role === 'receptionist') { loadReceptionistDashboard(); }
 }
 
 // Force this as the starting page
