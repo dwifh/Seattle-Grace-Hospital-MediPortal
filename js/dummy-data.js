@@ -6,31 +6,44 @@ const USERS = [
     username: "patient.login",
     password: "Patient123!",
     role: "patient",
+    patientID: "p001",
   },
 
   {
     username: "doctor.login",
     password: "Doctor123!",
     role: "doctor",
+    doctorID: "d001",
   },
 
   {
     username: "admin.login",
     password: "Admin123!",
     role: "admin",
+    adminID: "a001",
   },
 
   {
     username: "reception.login",
     password: "Reception123!",
     role: "receptionist",
+    receptionistID: "r001",
   },
 
   {
     username: "guardian.login",
     password: "Guardian123!",
     role: "guardian",
-  }
+    guardianID: "g001",
+  },
+
+  {
+    username: "nurse.login",
+    password: "Nurse123!",
+    role: "nurse",
+    nurseID: "n001"
+}
+
 ];
 
 //PATIENT SECTION
