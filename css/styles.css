@@ -296,6 +296,17 @@ body {
     color:     var(--text-muted);
 }
 
+#dashboard-login {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: var(--bg);
+    z-index: 200;
+    margin: 0;
+}
+
 /* ── MAIN CONTENT OFFSET ────────────────────────────────────── */
 /* Pushes page content clear of the fixed sidebar and topbar */
 #dashboard-admin,
@@ -333,6 +344,14 @@ body {
     font-weight: 700;
     color:       var(--text);
     margin-top:  6px;
+}
+
+.login_page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
 }
 
 .admin_card,

@@ -405,143 +405,144 @@
         </div>
         <div id="dashboard-nurse" hidden>
             <div class="nurse_layout" id="nurseDashboardTop">
- 
-    <!-- STATS ROW -->
-    <div class="nurse_stats">
- 
-        <div class="stat_card">
-            <div class="stat_title">Assigned Patients</div>
-            <div class="stat_value" id="nurseAssignedCount">--</div>
-        </div>
- 
-        <div class="stat_card">
-            <div class="stat_title">Upcoming Appointments</div>
-            <div class="stat_value" id="nurseUpcomingAppointments">--</div>
-        </div>
- 
-        <div class="stat_card">
-            <div class="stat_title">Active Prescriptions</div>
-            <div class="stat_value" id="nurseActivePrescriptions">--</div>
-        </div>
- 
-    </div>
- 
-    <!-- ASSIGNED PATIENTS -->
-    <div class="nurseSection" id="nursePatients">
-        <div class="nurseSection-header">
-            <span class="nurseSection-title">Assigned Patients</span>
-        </div>
-        <table class="data_table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>DOB</th>
-                    <th>Blood Group</th>
-                    <th>Allergies</th>
-                    <th>Registered Doctor</th>
-                </tr>
-            </thead>
-            <tbody id="nursePatientsTbody">
-                <!-- Populated by nurse.js -->
-            </tbody>
-        </table>
-    </div>
- 
-    <!-- VITALS -->
-    <div class="nurseSection" id="nurseVitals">
-        <div class="nurseSection-header">
-            <span class="nurseSection-title">Vitals</span>
-        </div>
-        <table class="data_table">
-            <thead>
-                <tr>
-                    <th>Patient</th>
-                    <th>Height (cm)</th>
-                    <th>Weight (kg)</th>
-                    <th>Blood Pressure</th>
-                    <th>Heart Rate</th>
-                    <th>Last Updated</th>
-                </tr>
-            </thead>
-            <tbody id="nurseVitalsTbody">
-                <!-- Populated by nurse.js -->
-            </tbody>
-        </table>
-    </div>
- 
-    <!-- APPOINTMENTS -->
-    <div class="nurseSection" id="nurseAppointments">
-        <div class="nurseSection-header">
-            <span class="nurseSection-title">Appointments</span>
-        </div>
-        <table class="data_table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Patient</th>
-                    <th>Doctor</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th>Check-in</th>
-                </tr>
-            </thead>
-            <tbody id="nurseAppointmentsTbody">
-                <!-- Populated by nurse.js -->
-            </tbody>
-        </table>
-    </div>
- 
-    <!-- PRESCRIPTIONS -->
-    <div class="nurseSection" id="nursePrescriptions">
-        <div class="nurseSection-header">
-            <span class="nurseSection-title">Active Prescriptions</span>
-        </div>
-        <table class="data_table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Patient</th>
-                    <th>Medicine</th>
-                    <th>Dosage</th>
-                    <th>Frequency</th>
-                    <th>Instructions</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="nursePrescriptionsTbody">
-                <!-- Populated by nurse.js -->
-            </tbody>
-        </table>
-    </div>
- 
-    <!-- MEDICAL HISTORY -->
-    <div class="nurseSection" id="nurseHistory">
-        <div class="nurseSection-header">
-            <span class="nurseSection-title">Medical History</span>
-        </div>
-        <table class="data_table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Patient</th>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Title</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody id="nurseHistoryTbody">
-                <!-- Populated by nurse.js -->
-            </tbody>
-        </table>
-    </div>
- 
-</div>
+                <!-- STATS ROW -->
+                <div class="nurse_stats">
 
-    <div id="dashboard-receptionist" hidden></div>
+                    <div class="stat_card">
+                        <div class="stat_title">Assigned Patients</div>
+                        <div class="stat_value" id="nurseAssignedCount"></div>
+                    </div>
+            
+                    <div class="stat_card">
+                        <div class="stat_title">Upcoming Appointments</div>
+                        <div class="stat_value" id="nurseUpcomingAppointments"></div>
+                    </div>
+            
+                    <div class="stat_card">
+                        <div class="stat_title">Active Prescriptions</div>
+                        <div class="stat_value" id="nurseActivePrescriptions"></div>
+                    </div>
+            
+            </div>
+            
+                <!-- ASSIGNED PATIENTS -->
+                <div class="nurseSection" id="nursePatients">
+                    <div class="nurseSection-header">
+                        <span class="nurseSection-title">Assigned Patients</span>
+                    </div>
+                    <table class="data_table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>DOB</th>
+                                <th>Blood Group</th>
+                                <th>Allergies</th>
+                                <th>Registered Doctor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nursePatientsTbody">
+                            <!-- Populated by nurse.js -->
+                        </tbody>
+                    </table>
+                </div>
+            
+                <!-- VITALS -->
+                <div class="nurseSection" id="nurseVitals">
+                    <div class="nurseSection-header">
+                        <span class="nurseSection-title">Vitals</span>
+                    </div>
+                    <table class="data_table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Height (cm)</th>
+                                <th>Weight (kg)</th>
+                                <th>Blood Pressure</th>
+                                <th>Heart Rate</th>
+                                <th>Last Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nurseVitalsTbody">
+                            <!-- Populated by nurse.js -->
+                        </tbody>
+                    </table>
+                </div>
+            
+                <!-- APPOINTMENTS -->
+                <div class="nurseSection" id="nurseAppointments">
+                    <div class="nurseSection-header">
+                        <span class="nurseSection-title">Appointments</span>
+                    </div>
+                    <table class="data_table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Check-in</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nurseAppointmentsTbody">
+                            <!-- Populated by nurse.js -->
+                        </tbody>
+                    </table>
+                </div>
+            
+                <!-- PRESCRIPTIONS -->
+                <div class="nurseSection" id="nursePrescriptions">
+                    <div class="nurseSection-header">
+                        <span class="nurseSection-title">Active Prescriptions</span>
+                    </div>
+                    <table class="data_table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient</th>
+                                <th>Medicine</th>
+                                <th>Dosage</th>
+                                <th>Frequency</th>
+                                <th>Instructions</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nursePrescriptionsTbody">
+                            <!-- Populated by nurse.js -->
+                        </tbody>
+                    </table>
+                </div>
+            
+                <!-- MEDICAL HISTORY -->
+                <div class="nurseSection" id="nurseHistory">
+                    <div class="nurseSection-header">
+                        <span class="nurseSection-title">Medical History</span>
+                    </div>
+                    <table class="data_table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nurseHistoryTbody">
+                            <!-- Populated by nurse.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>    
+
+<div id="dashboard-receptionist" hidden>
+
+</div>
 
 <!-- ==================================================================================================================================== -->
 
@@ -795,8 +796,11 @@
     <script src="js/validate.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/nurse.js"></script>
     <script src="js/patient.js"></script>
     <script src="js/doctor.js"></script>
+    <script src="js/guardian.js"></script>
+    <script src="js/receptionist.js"></script>
 
 
     </body>
