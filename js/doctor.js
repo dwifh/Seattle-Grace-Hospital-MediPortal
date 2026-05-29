@@ -36,7 +36,7 @@ function loadDoctorDashboard() {
     showDoctorName(doctor);
     showTodayDate();
     showTodayAppointments(doctor);
-    showStats(doctor);
+    showDoctorStats(doctor);
     showPatientList(doctor);
     fillMedicineDropdown();
     setupNoteForm();
@@ -198,7 +198,7 @@ function setupStatusPills() {
 
 
 //It will display the 4 stat cards at the top of the dashboard.
-function showStats(doctor) {
+function showDoctorStats(doctor) {
     var today = new Date();
     var todayString = today.toISOString().slice(0, 10);
 
