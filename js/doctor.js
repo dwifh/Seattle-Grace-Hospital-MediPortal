@@ -17,7 +17,7 @@ function getLoggedInDoctor() {
 
     //Load Dr Priya Patel as demo doctor
     for (var i = 0; i < DOCTORS.length; i++) {
-        if (DOCTORS[i].doctorID === "d002") {
+        if (DOCTORS[i].doctorID === "d001") {
             return DOCTORS[i];
         }
     }
