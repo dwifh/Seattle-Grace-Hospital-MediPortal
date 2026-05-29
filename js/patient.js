@@ -36,9 +36,9 @@ function loadPatientDashboard() {
 
     showPatientName(patient);
     showDoctorCard(patient);
-    showStats(patient);
-    showPrescriptions(patient);
-    showHistory(patient);
+    showPatientStats(patient);
+    showPatientPrescriptions(patient);
+    showPatientHistory(patient);
     showWeekStrip(patient);
     fillDoctorDropdown();
     setupFilterButtons();
@@ -73,7 +73,7 @@ function showDoctorCard(patient) {
     document.getElementById("doctorGmc").textContent = doctor.gmcNumber.replace("GMC", "");
 }
 
-function showStats(patient) {
+function showPatientStats(patient) {
     //APPOINTMENTS SECTION
     var nextAppointment = null;
 
@@ -183,7 +183,7 @@ function showStats(patient) {
 }
 
 //It handles the prescription list table
-function showPrescriptions(patient) {
+function showPatientPrescriptions(patient) {
       //Get the unordered list where the items will go
       var list = document.getElementById("rxGrid")
       //Clear anything that was present
@@ -237,7 +237,7 @@ function showPrescriptions(patient) {
 }
 
 //It handles medical history
-function showHistory(patient) {
+function showPatientHistory(patient) {
     //Get ordered list for medical history
     var timeline = document.getElementById("historyTimeline");
     timeline.innerHTML = "";
