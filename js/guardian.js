@@ -1,7 +1,3 @@
-//DOMContentLoaded ensures that the html file has been read, then runs the function.
-document.addEventListener("DOMContentLoaded", function() {
-    loadGuardianDashboard();
-});
 //CONSENT_ITEMS & NOTIFICATIONS are hardcoded for Phase 1.
 
 //List of items that guardian is authorised to see for patient.
@@ -79,11 +75,11 @@ function loadGuardianDashboard() {
 
     showGuardianName(guardian);
     showWardBanner(guardian, ward);
-    showStats(ward);
+    showWardStats(ward);
     showConsentLog();
     showNotifications();
-    showHistory(ward);
-    showPrescriptions(ward);
+    showWardHistory(ward);
+    showWardPrescriptions(ward);
 }
 
 //It will display guardian name in welcome message on top of dashboard.
@@ -106,7 +102,7 @@ function showWardBanner(guardian, ward) {
 
 
 //It will show summary stat cards of the ward.
-function showStats(ward) {
+function showWardStats(ward) {
     //APPOINTMENTS SECTION
     var nextAppointment = null;
 
@@ -268,7 +264,7 @@ function showNotifications() {
 
 
 //It shows medical history of ward but in read-only.
-function showHistory(ward) {
+function showWardHistory(ward) {
     //Get ordered list for medical history.
     var timeline = document.getElementById("g_historyTimeline");
     timeline.innerHTML = "";
@@ -322,7 +318,7 @@ function showHistory(ward) {
 
 
 //It shows ward's prescription but read only.
-function showPrescriptions(ward) {
+function showWardPrescriptions(ward) {
     //Get the unordered list where the items will go
     var list = document.getElementById("g_rxGrid");
     list.innerHTML = "";

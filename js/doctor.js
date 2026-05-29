@@ -1,7 +1,3 @@
-//DOMContentLoaded ensures that the html file has been read, then runs the function.
-document.addEventListener("DOMContentLoaded", function() {
-    loadDoctorDashboard();
-});
 //Checks session storage, finds doctor ID and loops it through DOCTORS array
 function getLoggedInDoctor() {
     //It returns the doctorID of the currently logged in from session storage.
@@ -40,7 +36,7 @@ function loadDoctorDashboard() {
     showDoctorName(doctor);
     showTodayDate();
     showTodayAppointments(doctor);
-    showStats(doctor);
+    showDoctorStats(doctor);
     showPatientList(doctor);
     fillMedicineDropdown();
     setupNoteForm();
@@ -202,7 +198,7 @@ function setupStatusPills() {
 
 
 //It will display the 4 stat cards at the top of the dashboard.
-function showStats(doctor) {
+function showDoctorStats(doctor) {
     var today = new Date();
     var todayString = today.toISOString().slice(0, 10);
 
