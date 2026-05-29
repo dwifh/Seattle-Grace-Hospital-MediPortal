@@ -145,6 +145,20 @@ function showLogin() {
     }
 }
 
+//TIANA SECTION
+//Record how many failed attempts.
+function recordFailedAttempt() {
+    //Read how many attempts have been made so far
+    var attempts = Number(sessionStorage.getItem("loginAttempts")) || 0;
+    attempts++;
+    sessionStorage.setItem("loginAttempts", attempts);
+
+    //If 3 or more failed, save the time the lockout started
+    if (attempts >= 3) {
+        sessionStorage.setItem("lockoutTime", Date.now());
+    }
+}
+
 //Rate-limit functions
 function isLockedOut() {
     var attempts = Number(sessionStorage.getItem("loginAttempts")) || 0;
@@ -172,6 +186,7 @@ function isLockedOut() {
     return false;
 }
 
+//END OF TIANA SECTION
 
 // LOGIN ALGORITHM
 // Checks submitted credentials against USERS in dummy-data.js (Edited to handle tiana's dummy data)
@@ -210,7 +225,7 @@ function handleLogin(event) {
     //If login failed, display an error message, clear the password box, put focus back on it, and stop.
     if (!matchedUser) {
         // -- Tiana's failed attempt counter goes here --
-        // recordFailedAttempt();
+        recordFailedAttempt();
         errorBox.hidden = false;
         //clear the password field
         passwordInput.value = '';
@@ -220,7 +235,9 @@ function handleLogin(event) {
     }
 
     // Valid login — save session and route to dashboard
-    saveSession(matchedUser);
+    saveSession(matchedUser);   
+    sessionStorage.removeItem("loginAttempts");
+    sessionStorage.removeItem("lockoutTime");
     showDashboard(matchedUser.role);
 }
 
