@@ -36,9 +36,9 @@ function loadPatientDashboard() {
 
     showPatientName(patient);
     showDoctorCard(patient);
-    showStats(patient);
-    showPrescriptions(patient);
-    showHistory(patient);
+    showPatientStats(patient);
+    showPatientPrescriptions(patient);
+    showPatientHistory(patient);
     showWeekStrip(patient);
     fillDoctorDropdown();
     setupFilterButtons();
@@ -70,10 +70,10 @@ function showDoctorCard(patient) {
     //Doctor details; first name and last name, speciality, and GMC number are shown in the doctor card on the dashboard.
     document.getElementById("doctorName").textContent = doctor.title + " " + doctor.firstName + " " + doctor.lastName;
     document.getElementById("doctorSpecialty").textContent = doctor.specialty;
-    document.getElementById("doctorGmc").textContent = doctor.gmcNumber.replace("GMC", " ");
+    document.getElementById("doctorGmc").textContent = doctor.gmcNumber.replace("GMC", "");
 }
 
-function showStats(patient) {
+function showPatientStats(patient) {
     //APPOINTMENTS SECTION
     var nextAppointment = null;
 
@@ -111,7 +111,7 @@ function showStats(patient) {
         }
         //Display the date of the next appointment and the time + doctor details in the stats section of the dashboard.
         document.getElementById("statNextAppt").textContent = dateText;
-        document.getElementById("statNextApptMeta").textContent = nextAppointment.time + " Dr. " + apptDoctor.lastName;
+        document.getElementById("statNextApptMeta").textContent = nextAppointment.time + " · Dr " + apptDoctor.lastName;
 
     } else {
         //If no upcoming appointments, display "-" for the date and a message in the meta text.
@@ -138,7 +138,7 @@ function showStats(patient) {
             for (var j = 0; j < MEDICINES.length; j++) {
                 //If medicineID matches, store the medicine name and duration in a variable, then break the loop.
                 if (MEDICINES[j].medicineID === PRESCRIPTIONS[i].medicineID) {
-                    firstMedName = MEDICINES[j].name + "·" + PRESCRIPTIONS[i].durationDays + " days";
+                    firstMedName = MEDICINES[j].name + " · " + PRESCRIPTIONS[i].durationDays + " days";
                     break;
                 }
             }
@@ -183,7 +183,7 @@ function showStats(patient) {
 }
 
 //It handles the prescription list table
-function showPrescriptions(patient) {
+function showPatientPrescriptions(patient) {
       //Get the unordered list where the items will go
       var list = document.getElementById("rxGrid")
       //Clear anything that was present
@@ -237,7 +237,7 @@ function showPrescriptions(patient) {
 }
 
 //It handles medical history
-function showHistory(patient) {
+function showPatientHistory(patient) {
     //Get ordered list for medical history
     var timeline = document.getElementById("historyTimeline");
     timeline.innerHTML = "";

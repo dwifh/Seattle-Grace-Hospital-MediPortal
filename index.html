@@ -11,10 +11,8 @@
 
     <body>
         <!--   SHARED SECTIONS   -->
+        <!--SIDEBAR (gonna sit on the left side of all dashboards) -->
         
-        <!-- ======================================================
-                                SIDEBAR (gonna sit on the left side of all dashboards)
-        ====================================================== -->
         <div class="sidebar" id="sidebar" hidden>
           
     <!-- Logo block -->
@@ -140,6 +138,21 @@
         <span class="sidebar-label">Monitoring</span>
         <a class="sidebar_item" href="javascript:void(0)">
             <i class="ti ti-user-heart"></i> Linked Patient
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-clipboard-list"></i> Medical History
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-pill"></i> Prescriptions
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+        <i class="ti ti-calendar"></i> Appointments
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-shield-check"></i> Consent Log
+        </a>
+        <a class="sidebar_item" href="javascript:void(0)">
+            <i class="ti ti-bell"></i> Notifications
         </a>
     </nav>
  
@@ -664,24 +677,24 @@
                 <section class="dashboard_stats">
                     <!--Patient main details-->
                     <div class="stat_card" id="card_appointment">
-                        <p>Next Appointment</p>
-                        <h2 id="statNextAppt"></h2>
-                        <p id="statNextApptMeta"></p>
+                        <div class="stat_card-label">Next Appointment</div>
+                        <div class="stat_card-value" id="statNextAppt"></div>
+                        <div class="stat_card-label" id="statNextApptMeta"></div>
                     </div>
                     <div class="stat_card" id="card_prescriptions">
-                        <p>Active Prescriptions</p>
-                        <h2 id="statRxCount"></h2>
-                        <p id="statRxSub"></p>
+                        <div class="stat_card-label">Active Prescriptions</div>
+                        <div class="stat_card-value" id="statRxCount"></div>
+                        <div class="stat_card-label" id="statRxSub"></div>
                     </div>
                     <div class="stat_card" id="card_bloodgroup">
-                        <p>Blood Group</p>
-                        <h2 id="statBloodGroup"></h2>
-                        <p id="statVitalsDate"></p>
+                        <div class="stat_card-label">Blood Group</div>
+                        <div class="stat_card-value" id="statBloodGroup"></div>
+                        <div class="stat_card-label" id="statVitalsDate"></div>
                     </div>
                     <div class="stat_card" id="card_allergies">
-                        <p>Allergies</p>
-                        <h2 id="statAllergiesCount"></h2>
-                        <p id="statAllergiesList"></p>
+                        <div class="stat_card-label">Allergies</div>
+                        <div class="stat_card-value" id="statAllergiesCount"></div>
+                        <div class="stat_card-label" id="statAllergiesList"></div>
                     </div>
                 </section>
                 <!--Doctor details-->
@@ -773,27 +786,27 @@
                 <section class="dashboard_stats">
                     <!--Today Appointment count-->
                     <div class="stat_card" id="card_today">
-                        <p>Today's Appointments</p>
-                        <h2 id="statTodayCount"></h2>
-                        <p id="statTodaySub"></p>
+                        <div class="stat_card-label">Today's Appointments</div>
+                        <div class="stat_card-value" id="statTodayCount"></div>
+                        <div class="stat_card-label" id="statTodaySub"></div>
                     </div>
                     <!--Patient Waitlist-->
                     <div class="stat_card" id="card_waiting">
-                        <p>Waiting</p>
-                        <h2 id="statWaitingCount"></h2>
-                        <p id="statWaitingSub"></p>
+                        <div class="stat_card-label">Waiting</div>
+                        <div class="stat_card-value" id="statWaitingCount"></div>
+                        <div class="stat_card-label" id="statWaitingSub"></div>
                     </div>
                     <!--Patients being examined in progress-->
                     <div class="stat_card" id="card_inprogress">
-                        <p>In Progress</p>
-                        <h2 id="statInProgressCount"></h2>
-                        <p id="statInProgressSub"></p>
+                        <div class="stat_card-label">In Progress</div>
+                        <div class="stat_card-value" id="statInProgressCount"></div>
+                        <div class="stat_card-label" id="statInProgressSub"></div>
                     </div>
                     <!--Patient consultation done-->
                     <div class="stat_card" id="card_done">
-                        <p>Done</p>
-                        <h2 id="statDoneCount"></h2>
-                        <p id="statDoneSub"></p>
+                        <div class="stat_card-label">Done</div>
+                        <div class="stat_card-value" id="statDoneCount"></div>
+                        <div class="stat_card-label" id="statDoneSub"></div>
                     </div>
                 </section>
  
@@ -920,27 +933,27 @@
             <section class="dashboard_stats">
                 <!--Next appointment-->
                 <div class="stat_card" id="card_appointment">
-                    <p>Next Appointment</p>
-                    <h2 id="g_statNextAppt"></h2>
-                    <p id="g_statNextApptMeta"></p>
+                    <div class="stat_card-label">Next Appointment</div>
+                    <div class="stat_card-value" id="g_statNextAppt"></div>
+                    <div class="stat_card-label" id="g_statNextApptMeta"></div>
                 </div>
                 <!--Active prescription-->
                 <div class="stat_card" id="card_prescriptions">
-                    <p>Active Prescriptions</p>
-                    <h2 id="g_statRxCount"></h2>
-                    <p id="g_statRxSub"></p>
+                    <div class="stat_card-label">Active Prescriptions</div>
+                    <div class="stat_card-value" id="g_statRxCount"></div>
+                    <div class="stat_card-label" id="g_statRxSub"></div>
                 </div>
                 <!--Blood group-->
                 <div class="stat_card" id="card_bloodgroup">
-                    <p>Blood Group</p>
-                    <h2 id="g_statBloodGroup"></h2>
-                    <p id="g_statVitalsDate"></p>
+                    <div class="stat_card-label">Blood Group</div>
+                    <div class="stat_card-value" id="g_statBloodGroup"></div>
+                    <div class="stat_card-label" id="g_statVitalsDate"></div>
                 </div>
                 <!--Allergies-->
                 <div class="stat_card" id="card_allergies">
-                    <p>Allergies</p>
-                    <h2 id="g_statAllergiesCount"></h2>
-                    <p id="g_statAllergiesList"></p>
+                    <div class="stat_card-label">Allergies</div>
+                    <div class="stat_card-value" id="g_statAllergiesCount"></div>
+                    <div class="stat_card-label" id="g_statAllergiesList"></div>
                 </div>
             </section>
  
@@ -993,7 +1006,6 @@
     <script src="js/admin.js"></script>
     <script src="js/nurse.js"></script>
     <script src="js/patient.js"></script>
-    <script src="js/nurse.js"></script>
     <script src="js/doctor.js"></script>
     <script src="js/guardian.js"></script>
     <script src="js/receptionist.js"></script>
