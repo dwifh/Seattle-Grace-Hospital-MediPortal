@@ -1,0 +1,2087 @@
+/*-----------PATIENT / DOCTOR / GUARDIAN DASHBOARD CSS------------*/
+
+/* 4-column grid used by patient, doctor and guardian stat rows */
+.dashboard_stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+/* appointment card — solid blue so it stands out */
+#card_appointment {
+    background:   var(--primary);
+    border-color: var(--primary);
+}
+
+#card_appointment .stat_card-label,
+#card_appointment .stat_card-value {
+    color: #ffffff;
+}
+
+/* allergies card — amber warning on the number */
+#card_allergies .stat_card-value {
+    color: var(--warn);
+}
+
+/* today's appointments card on doctor dashboard — solid blue */
+#card_today {
+    background:   var(--primary);
+    border-color: var(--primary);
+}
+
+#card_today .stat_card-label,
+#card_today .stat_card-value {
+    color: #ffffff;
+}
+
+
+/*MAIN DASHBOARD GRID - 12-column grid shared by patient, doctor and guardian.*/
+
+.dashboard_grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+}
+
+
+/* TOPBAR INSIDE DASHBOARDS - Patient/doctor/guardian have their own topbar-style header inside the dashboard div.*/
+
+.dashboard_topbar {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.dashboard_greeting p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.dashboard_greeting h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.dashboard_actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#searchInput,
+#docSearchInput,
+#guardianSearchInput {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    width: 240px;
+}
+
+
+/*DOCTOR CARD - The registered doctor panel in the patient dashboard.*/
+
+.doctor_card {
+    grid-column: span 4;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+}
+
+.doctor_card_avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 1.4rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.doctor_card h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.doctor_card p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.doctor_card_actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.doctor_card_actions button {
+    background: var(--primary-soft);
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+
+/*BOOKING CARD - Appointment booking form — takes the remaining columns.*/
+
+.booking_card {
+    grid-column: span 8;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+
+.booking_card h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.booking_card > p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0 0 16px 0;
+}
+
+.booking_form_row {
+    margin-bottom: 12px;
+}
+
+.booking_form_row label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.booking_form_row input,
+.booking_form_row select {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+}
+
+.booking_form_row input:focus,
+.booking_form_row select:focus {
+    border-color: var(--primary);
+    background: var(--surface);
+}
+
+#bookingError  { color: var(--danger);  font-size: 12px; margin: 6px 0; }
+#bookingOk     { color: var(--success); font-size: 12px; margin: 6px 0; }
+
+.booking_card button[type="submit"] {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-family: var(--font);
+    font-size: 13px;
+    width: 100%;
+    margin-top: 4px;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.booking_card button[type="submit"]:hover {
+    background: var(--primary-dark);
+}
+
+
+/* WEEK STRIP - The 7-day calendar row.*/
+
+.week_strip {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+}
+
+.week_strip_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.week_strip_header h2 {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.week_strip_header p {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+#bookingWeek {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.day_pill {
+    flex: 1;
+    padding: 10px 6px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    cursor: pointer;
+    background: var(--primary-soft);
+    transition: background var(--transition);
+}
+
+.day_pill span {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.day_pill b {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.day_pill_active {
+    background: var(--primary);
+    color: #fff;
+}
+
+.day_pill_active span { color: rgba(255,255,255,0.8); }
+.day_pill_active b    { color: #fff; }
+
+#weekStripDetail {
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.week_strip_label {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 0 0 3px 0;
+}
+
+.week_strip_title {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 2px 0;
+}
+
+.week_strip_meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+#weekStripDetail button {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: var(--font);
+}
+
+
+/*HISTORY TIMELINE*/
+
+.history {
+    grid-column: span 7;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+}
+
+.history_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.history h2,
+.history_header h2 {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+}
+
+#historyFilters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.filter_pill {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: all var(--transition);
+}
+
+.filter_pill_active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 8px;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+}
+
+.timeline_item {
+    position: relative;
+    padding-left: 26px;
+    padding-bottom: 16px;
+}
+
+.timeline_item_dot {
+    position: absolute;
+    left: 0;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary);
+}
+
+.timeline_item_date  { font-size: 11px; color: var(--text-muted); margin: 0 0 2px 0; }
+.timeline_item_title { font-size: 13px; font-weight: 600; margin: 0 0 3px 0; }
+.timeline_item_desc  { font-size: 12px; color: var(--text-muted); margin: 0 0 6px 0; line-height: 1.5; }
+
+
+/*PRESCRIPTIONS PANEL */
+
+.rx_panel {
+    grid-column: span 5;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+}
+
+.rx_panel_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.rx_panel_header h2 { font-size: 14px; font-weight: 700; margin: 0; }
+
+.rx_panel_header button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    cursor: pointer;
+    font-family: var(--font);
+}
+
+#rxGrid,
+#g_rxGrid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rx_item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--primary-soft);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+}
+
+.rx_item_pill {
+    font-size: 1.1rem;
+    width: 36px;
+    height: 36px;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.rx_item_body { flex: 1; }
+.rx_item_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.rx_item_dose { font-size: 11px; color: var(--text-muted); margin: 0 0 2px 0; }
+.rx_item_note { font-size: 11px; color: var(--text-muted); font-style: italic; margin: 0; }
+
+
+/*BADGES — history and prescription status pills */
+
+.badge_diagnosis, .badge_vaccination, .badge_test_result, .badge_active {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.badge_diagnosis  { background: rgba(45,108,223,0.1);  color: var(--primary); }
+.badge_vaccination { background: rgba(16,185,129,0.1); color: var(--success); }
+.badge_test_result { background: rgba(245,158,11,0.1); color: var(--warn); }
+.badge_active      { background: var(--success); color: #fff; }
+
+
+/*DOCTOR DASHBOARD — today sidebar, patient list, record viewer*/
+
+.today_sidebar {
+    grid-column: span 4;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.today_sidebar_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.today_sidebar_header h2 { font-size: 14px; font-weight: 700; margin: 0; }
+.today_sidebar_header p  { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+#todayList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.today_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary-soft);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+}
+
+.today_item_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.today_item_time { font-size: 11px; color: var(--text-muted); margin: 0; }
+.today_empty     { font-size: 13px; color: var(--text-muted); padding: 8px 0; list-style: none; }
+
+.status_pill {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.status_pending,
+.status_checked_in { background: rgba(245,158,11,0.15); color: var(--warn); }
+.status_in_progress { background: rgba(45,108,223,0.15); color: var(--primary); }
+.status_done        { background: rgba(16,185,129,0.15); color: var(--success); }
+
+.patient_list_panel {
+    grid-column: span 8;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.patient_list_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.patient_list_header h2 { font-size: 14px; font-weight: 700; margin: 0; }
+.patient_list_header p  { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+#patientList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.patient_item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.patient_item:hover { background: var(--primary-soft); }
+
+.patient_item_avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.patient_item_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.patient_item_meta { font-size: 11px; color: var(--text-muted); margin: 0; text-transform: capitalize; }
+.patient_empty     { font-size: 13px; color: var(--text-muted); padding: 8px 0; list-style: none; }
+
+.record_viewer {
+    grid-column: span 8;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.record_viewer_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.record_viewer_header h2 { font-size: 15px; font-weight: 700; margin: 0; }
+
+#closeRecordBtn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    cursor: pointer;
+    font-family: var(--font);
+}
+
+.record_info {
+    display: flex;
+    gap: 20px;
+    background: var(--primary-soft);
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.record_info p { font-size: 12px; color: var(--text-muted); margin: 0; }
+.record_info p strong { color: var(--text); font-weight: 600; }
+
+.record_section { margin-top: 16px; }
+.record_section h3 { font-size: 13px; font-weight: 700; margin: 0 0 10px 0; }
+
+.record_section ol,
+.record_section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.record_history_item,
+.record_rx_item {
+    background: var(--primary-soft);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+}
+
+.record_history_date  { font-size: 11px; color: var(--text-muted); margin: 0 0 2px 0; }
+.record_history_title { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.record_history_desc  { font-size: 12px; color: var(--text-muted); margin: 0 0 4px 0; }
+.record_rx_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.record_rx_dose { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+.note_card,
+.rx_form_card {
+    grid-column: span 6;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.note_card h2,
+.rx_form_card h2 { font-size: 14px; font-weight: 700; margin: 0 0 14px 0; }
+
+#noteText {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+}
+
+#noteError, #rxError { color: var(--danger);  font-size: 12px; margin: 6px 0; }
+#noteOk,    #rxOk    { color: var(--success); font-size: 12px; margin: 6px 0; }
+
+.note_card button[type="submit"],
+.rx_form_card button[type="submit"] {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-family: var(--font);
+    font-size: 13px;
+    width: 100%;
+    margin-top: 4px;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.note_card button[type="submit"]:hover,
+.rx_form_card button[type="submit"]:hover { background: var(--primary-dark); }
+
+
+/*GUARDIAN DASHBOARD — ward banner, consent log, notifications*/
+
+.guardian_banner {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.guardian_banner_avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.guardian_banner_info { flex: 1; }
+.guardian_banner_info p  { font-size: 11px; color: var(--text-muted); margin: 0; }
+.guardian_banner_info h2 { font-size: 1.2rem; font-weight: 700; margin: 4px 0; }
+
+.guardian_banner_consent { text-align: right; }
+.guardian_banner_consent p  { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin: 0; }
+.guardian_banner_consent h2 { font-size: 1rem; font-weight: 700; color: var(--success); margin: 4px 0 0 0; }
+
+.consent_card {
+    grid-column: span 6;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.consent_card_header { margin-bottom: 14px; }
+.consent_card_header h2 { font-size: 14px; font-weight: 700; margin: 0 0 3px 0; }
+.consent_card_header p  { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+#consentList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.consent_item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary-soft);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+}
+
+.consent_icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.consent_label { flex: 1; font-size: 12px; margin: 0; }
+
+.consent_status {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.consent_granted { background: rgba(16,185,129,0.15); color: var(--success); }
+.consent_denied  { background: rgba(225,29,72,0.12);  color: var(--danger); }
+
+.notif_panel {
+    grid-column: span 6;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.notif_panel_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.notif_panel_header h2 { font-size: 14px; font-weight: 700; margin: 0; }
+.notif_panel_header p  {
+    font-size: 10px;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin: 0;
+}
+
+#notifList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.notif_item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--primary-soft);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+}
+
+.notif_icon {
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.notif_title   { font-size: 12px; font-weight: 600; margin: 0 0 2px 0; }
+.notif_message { font-size: 11px; color: var(--text-muted); margin: 0 0 3px 0; line-height: 1.4; }
+.notif_date    { font-size: 10px; color: var(--text-muted); margin: 0; }
+
+.readonly_note {
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--primary-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/*CREATE APPOINTMENT BUTTON (patient dashboard) - Animated fill button in our primary blue - Adapted from UIverse "stale-rattlesnake-87".*/
+
+.booking_card button[type="submit"] {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    z-index: 1;
+    transition: color 0.4s ease;
+}
+
+/* the blue fill that slides in from the left on hover */
+.booking_card button[type="submit"]::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.booking_card button[type="submit"]:hover {
+    background: var(--surface);  /* keep base, fill handled by ::before */
+    color: #ffffff;
+}
+
+.booking_card button[type="submit"]:hover::before {
+    transform: scaleX(1);
+}
+
+
+/*CLOSE BUTTON (doctor record viewer) — red slide effect - Adapted from UIverse "stupid-impala-51".*/
+
+#closeRecordBtn {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    color: var(--danger);
+    border: 2px solid var(--danger);
+    border-radius: var(--radius-sm);
+    padding: 6px 16px;
+    font-weight: 600;
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.4s ease;
+}
+
+#closeRecordBtn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--danger);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s ease;
+}
+
+#closeRecordBtn:hover {
+    color: #ffffff;
+}
+
+#closeRecordBtn:hover::before {
+    transform: scaleX(1);
+}
+
+
+/*ACCEPT / DECLINE BUTTONS (doctor booking notifications) */
+
+.booking_notif_actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.btn_accept,
+.btn_decline {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 6px 16px;
+    font-weight: 600;
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: pointer;
+    color: #ffffff;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn_accept {
+    background: var(--success);
+}
+
+.btn_decline {
+    background: var(--danger);
+}
+
+/* lift and glow on hover */
+.btn_accept:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+}
+
+.btn_decline:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(225, 29, 72, 0.4);
+}
+
+
+/*BOOKING NOTIFICATION PANEL (doctor dashboard) - Sits next to Today's Patients. Lists pending requests. */
+
+.booking_notif_panel {
+    grid-column: span 8;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.booking_notif_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.booking_notif_header h2 { font-size: 14px; font-weight: 700; margin: 0; }
+
+.booking_notif_header p {
+    font-size: 10px;
+    color: var(--warn);
+    background: var(--warn-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+#bookingNotifList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.booking_notif_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background: var(--primary-soft);
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+}
+
+.booking_notif_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.booking_notif_meta { font-size: 11px; color: var(--text-muted); margin: 0; }
+.booking_notif_empty { font-size: 13px; color: var(--text-muted); padding: 8px 0; list-style: none; }
+
+
+/* STAT CARD HOVER EFFECTS - Each card lifts and shows a coloured outline + matching shadow - Adapted from UIverse "dangerous-warthog-85". */
+
+/* base lift for every stat card */
+.stat_card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.stat_card:hover {
+    transform: translateY(-4px);
+}
+
+/* PATIENT dashboard */
+/* 1st (appointment, blue) — white outline, blue shadow */
+#dashboard-patient #card_appointment:hover {
+    outline-color: #ffffff;
+    box-shadow: 0 8px 20px rgba(45, 108, 223, 0.45);
+}
+/* 2nd (prescriptions) — green */
+#dashboard-patient #card_prescriptions:hover {
+    outline-color: var(--success);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+/* 3rd (blood group) — red */
+#dashboard-patient #card_bloodgroup:hover {
+    outline-color: var(--danger);
+    box-shadow: 0 8px 20px rgba(225, 29, 72, 0.4);
+}
+/* 4th (allergies) — mustard */
+#dashboard-patient #card_allergies:hover {
+    outline-color: var(--warn);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+/*DOCTOR dashboard */
+/* 1st (today, blue) — white outline, blue shadow */
+#dashboard-doctor #card_today:hover {
+    outline-color: #ffffff;
+    box-shadow: 0 8px 20px rgba(45, 108, 223, 0.45);
+}
+/* 2nd (waiting) — red */
+#dashboard-doctor #card_waiting:hover {
+    outline-color: var(--danger);
+    box-shadow: 0 8px 20px rgba(225, 29, 72, 0.4);
+}
+/* 3rd (in progress) — mustard */
+#dashboard-doctor #card_inprogress:hover {
+    outline-color: var(--warn);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+/* 4th (done) — green */
+#dashboard-doctor #card_done:hover {
+    outline-color: var(--success);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* GUARDIAN dashboard*/
+/* 1st (appointment, blue) — white outline, blue shadow */
+#dashboard-guardian #card_appointment:hover {
+    outline-color: #ffffff;
+    box-shadow: 0 8px 20px rgba(45, 108, 223, 0.45);
+}
+/* 2nd (prescriptions) — green */
+#dashboard-guardian #card_prescriptions:hover {
+    outline-color: var(--success);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+/* 3rd (blood group) — red */
+#dashboard-guardian #card_bloodgroup:hover {
+    outline-color: var(--danger);
+    box-shadow: 0 8px 20px rgba(225, 29, 72, 0.4);
+}
+/* 4th (allergies) — mustard */
+#dashboard-guardian #card_allergies:hover {
+    outline-color: var(--warn);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+
+/* MEDICAL HISTORY TIMELINE (patient + guardian)-  Animated timeline with pulsing dots and a connecting line - Adapted from UIverse "orange-newt-23".*/
+
+/*Layout for both timelines (line + spacing) always applies */
+#historyTimeline,
+#g_historyTimeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    padding-left: 8px;
+}
+
+/* Each timeline row */
+#historyTimeline .timeline_item,
+#g_historyTimeline .timeline_item {
+    position: relative;
+    padding-left: 28px;
+    padding-bottom: 18px;
+}
+
+/* Base dot */
+#historyTimeline .timeline_item_dot,
+#g_historyTimeline .timeline_item_dot {
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-soft);
+}
+
+/* The animated design (connecting gradient line + pulsing dots) only shows when ALL is selected.*/
+#historyTimeline.timeline_all_active::before,
+#g_historyTimeline::before {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--primary), var(--primary-soft));
+}
+
+#historyTimeline.timeline_all_active .timeline_item_dot,
+#g_historyTimeline .timeline_item_dot {
+    animation: timelinePulse 2s infinite;
+}
+
+/* The pulsing ring animation */
+@keyframes timelinePulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(45, 108, 223, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(45, 108, 223, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(45, 108, 223, 0);
+    }
+}
+
+
+/*BOOK AN APPOINTMENT — blue shadow + blue text*/
+
+.booking_card {
+    box-shadow: 0 4px 16px rgba(45, 108, 223, 0.25);
+}
+
+.booking_card h2 {
+    color: var(--primary);
+}
+
+.booking_card > p {
+    color: var(--primary);
+}
+
+
+/*Layout overhaul*/
+
+/*Shared dashboard grid spacing */
+.dashboard_grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 22px;
+    max-width: 1400px;
+}
+
+/* Welcome message + name centred at the top (all 3 dashboards)*/
+.dashboard_topbar {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+}
+
+.dashboard_greeting {
+    width: 100%;
+    text-align: center;
+}
+
+.dashboard_greeting p {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.dashboard_greeting h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/*Neat search button + input (all 3 dashboards)*/
+.dashboard_actions {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+#searchInput,
+#docSearchInput,
+#guardianSearchInput {
+    border: 2px solid var(--border);
+    border-right: none;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    padding: 10px 16px;
+    font-size: 14px;
+    font-family: var(--font);
+    outline: none;
+    width: 280px;
+    transition: border-color 0.2s ease;
+}
+
+#searchInput:focus,
+#docSearchInput:focus,
+#guardianSearchInput:focus {
+    border-color: var(--primary);
+}
+
+#searchBtn,
+#docSearchBtn,
+#guardianSearchBtn {
+    border: 2px solid var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+#searchBtn:hover,
+#docSearchBtn:hover,
+#guardianSearchBtn:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* Bigger, clearer stat cards */
+.stat_card {
+    padding: 22px 24px;
+    min-height: 110px;
+}
+
+.stat_card-label {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+.stat_card-value {
+    font-size: 30px;
+    margin-top: 8px;
+}
+
+
+
+#dashboard-patient .doctor_card     { grid-column: span 4; }
+#dashboard-patient .booking_card    { grid-column: span 8; }
+#dashboard-patient .week_strip      { grid-column: 1 / -1; }
+#dashboard-patient .status_bar      { grid-column: 1 / -1; }
+#dashboard-patient .history         { grid-column: span 6; }
+#dashboard-patient .rx_panel        { grid-column: span 6; }
+
+.doctor_card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, outline 0.2s ease;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    text-align: center;
+}
+
+.doctor_card:hover {
+    transform: translateY(-4px);
+    outline-color: var(--primary);
+    box-shadow: 0 8px 20px rgba(45, 108, 223, 0.45);
+}
+
+.booking_card {
+    box-shadow: 0 8px 28px rgba(45, 108, 223, 0.45);
+}
+
+.booking_card h2,
+.booking_card > p {
+    color: var(--primary);
+    text-align: center;
+}
+
+#weekStripDetail {
+    text-align: center;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.week_strip_label  { font-size: 12px; text-align: center; }
+.week_strip_title  { font-size: 16px; text-align: center; }
+.week_strip_meta   { font-size: 14px; text-align: center; }
+
+#dashboard-patient .history h2 {
+    text-align: center;
+    font-size: 18px;
+    width: 100%;
+}
+
+#dashboard-patient .history_header {
+    justify-content: center;
+}
+
+#dashboard-patient #historyFilters {
+    justify-content: center;
+}
+
+#dashboard-patient .timeline_item_title { font-size: 15px; text-align: center; }
+#dashboard-patient .timeline_item_desc  { font-size: 13px; text-align: center; }
+#dashboard-patient .timeline_item_date  { font-size: 12px; text-align: center; }
+
+#dashboard-patient .rx_panel_header {
+    justify-content: center;
+}
+
+#dashboard-patient .rx_panel_header h2 {
+    font-size: 18px;
+    text-align: center;
+}
+
+
+/*BOOKING STATUS BAR (patient)*/
+
+.status_bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+}
+
+.status_bar_header {
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.status_bar_header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.status_bar_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.status_bar_table thead th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--border);
+}
+
+.status_bar_table thead th:last-child {
+    text-align: center;
+    width: 160px;
+}
+
+.status_bar_table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid var(--bg);
+    vertical-align: middle;
+}
+
+.status_bar_table tbody td:last-child {
+    text-align: center;
+}
+
+.status_bar_reason { font-size: 14px; font-weight: 600; margin: 0 0 2px 0; }
+.status_bar_meta   { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+.status_bar_pill {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 999px;
+    text-transform: capitalize;
+}
+
+/* pending = grey, accepted = green, declined = red */
+.status_bar_pending {
+    background: #e2e8f0;
+    color: var(--text-muted);
+}
+
+.status_bar_accepted {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+}
+
+.status_bar_declined {
+    background: rgba(225, 29, 72, 0.15);
+    color: var(--danger);
+}
+
+.status_bar_empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 16px;
+    font-size: 13px;
+}
+
+
+#dashboard-doctor .today_sidebar        { grid-column: span 4; }
+#dashboard-doctor .booking_notif_panel  { grid-column: span 8; }
+#dashboard-doctor .patient_list_panel   { grid-column: 1 / -1; }
+#dashboard-doctor .record_viewer        { grid-column: 1 / -1; }
+#dashboard-doctor .note_card            { grid-column: span 6; }
+#dashboard-doctor .rx_form_card         { grid-column: span 6; }
+
+/* Smooth transition when the patient record viewer appears.*/
+.record_viewer,
+.note_card,
+.rx_form_card {
+    animation: recordFadeIn 0.35s ease;
+}
+
+@keyframes recordFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Centre all text inside the record viewer + the two form headers */
+#dashboard-doctor .record_viewer_header h2,
+#dashboard-doctor .record_info,
+#dashboard-doctor .record_section h3,
+#dashboard-doctor .record_history_item,
+#dashboard-doctor .record_rx_item,
+#dashboard-doctor .note_card h2,
+#dashboard-doctor .rx_form_card h2 {
+    text-align: center;
+}
+
+#dashboard-doctor .record_info {
+    justify-content: center;
+}
+
+#dashboard-doctor .record_viewer_header {
+    justify-content: center;
+    position: relative;
+}
+
+/* keep the close button on the right even though the title is centred */
+#dashboard-doctor .record_viewer_header #closeRecordBtn {
+    position: absolute;
+    right: 0;
+}
+
+
+/* SAVE NOTE / ISSUE PRESCRIPTION buttons (doctor) - Adapted from UIverse "stale-cheetah-42" — lift + shadow.*/
+.note_card button[type="submit"],
+.rx_form_card button[type="submit"] {
+    background: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: var(--font);
+    width: 100%;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+}
+
+.note_card button[type="submit"]:hover,
+.rx_form_card button[type="submit"]:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(45, 108, 223, 0.4);
+}
+
+
+
+#dashboard-guardian .guardian_banner   { grid-column: 1 / -1; }
+#dashboard-guardian .notif_panel        { grid-column: span 6; }
+#dashboard-guardian .consent_card       { grid-column: span 6; }
+#dashboard-guardian .history            { grid-column: span 6; }
+#dashboard-guardian .rx_panel           { grid-column: span 6; }
+
+.guardian_banner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 0;
+    text-align: center;
+}
+
+.guardian_banner_avatar {
+    margin: 0 auto 8px auto;
+}
+
+.guardian_banner_info {
+    text-align: center;
+    padding: 0 24px;
+    border-right: 1px solid var(--border);   
+}
+
+.guardian_banner_consent {
+    text-align: center;
+    padding: 0 24px;
+}
+
+.guardian_banner_consent h2 {
+    font-size: 1.2rem;
+}
+
+#dashboard-guardian .history h2 {
+    text-align: center;
+    font-size: 18px;
+    width: 100%;
+}
+
+#dashboard-guardian .history_header {
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#dashboard-guardian .timeline_item_title { font-size: 15px; text-align: center; }
+#dashboard-guardian .timeline_item_desc  { font-size: 13px; text-align: center; }
+#dashboard-guardian .timeline_item_date  { font-size: 12px; text-align: center; }
+
+#dashboard-guardian .consent_card_header {
+    text-align: center;
+}
+
+#dashboard-guardian .consent_card_header h2,
+#dashboard-guardian .consent_card_header p {
+    text-align: center;
+}
+
+#dashboard-guardian .rx_panel_header {
+    justify-content: center;
+}
+
+#dashboard-guardian .rx_panel_header h2 {
+    text-align: center;
+    font-size: 18px;
+}
+
+
+/*RESPONSIVENESS — big screens down to phones */
+
+/* Large tablets / small laptops: collapse 12-col into simpler rows */
+@media (max-width: 1024px) {
+    .dashboard_stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    #dashboard-patient .doctor_card,
+    #dashboard-patient .booking_card,
+    #dashboard-patient .history,
+    #dashboard-patient .rx_panel,
+    #dashboard-doctor .today_sidebar,
+    #dashboard-doctor .booking_notif_panel,
+    #dashboard-doctor .note_card,
+    #dashboard-doctor .rx_form_card,
+    #dashboard-guardian .notif_panel,
+    #dashboard-guardian .consent_card,
+    #dashboard-guardian .history,
+    #dashboard-guardian .rx_panel {
+        grid-column: 1 / -1;   /* each section takes the full width */
+    }
+}
+
+/* Phones: single column everything, smaller fonts, stacked search */
+@media (max-width: 600px) {
+    #dashboard-admin,
+    #dashboard-nurse,
+    #dashboard-receptionist,
+    #dashboard-patient,
+    #dashboard-doctor,
+    #dashboard-guardian {
+        margin-left: 0;
+        width: 100%;
+        padding: 14px;
+    }
+
+    .dashboard_stats {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard_greeting h2 {
+        font-size: 1.5rem;
+    }
+
+    #searchInput,
+    #docSearchInput,
+    #guardianSearchInput {
+        width: 70%;
+    }
+
+    /* ward banner stacks vertically and divider becomes a bottom border */
+    .guardian_banner {
+        grid-template-columns: 1fr;
+    }
+
+    .guardian_banner_info {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+
+    /* sidebar collapses — let the global styles handle it but ensure content fits */
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+}
+
+
+/* ---- Request Refill button (patient) — rattlesnake-87 style ---- */
+.btn_refill {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-sm);
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.4s ease;
+}
+
+.btn_refill::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.btn_refill:hover {
+    color: #ffffff;
+}
+
+.btn_refill:hover::before {
+    transform: scaleX(1);
+}
+
+
+/* ---- Stat cards: square, big, bold heading, centred ---- */
+.dashboard_stats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.stat_card {
+    aspect-ratio: 1 / 1;          /* makes each card square */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.stat_card-label {
+    font-size: 16px;
+    font-weight: 700;             /* bold heading */
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 6px;
+}
+
+.stat_card-value {
+    font-size: 34px;
+    font-weight: 700;
+}
+
+/* the small sub-line under the value (date, "7 days", etc.) */
+.stat_card-label + .stat_card-value + .stat_card-label,
+.stat_card .stat_card-label:last-child {
+    font-size: 13px;              /* slightly smaller than heading */
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-muted);
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+
+/*PATIENT DASHBOARD — final pairings */
+#dashboard-patient .booking_card {
+    grid-column: 1 / 8;           /* left, 7 columns wide */
+    order: 1;
+}
+#dashboard-patient .doctor_card {
+    grid-column: 8 / 13;          /* right, 5 columns wide */
+    order: 2;
+}
+
+#dashboard-patient .doctor_card {
+    aspect-ratio: auto;
+    text-align: center;
+}
+#dashboard-patient .doctor_card h2 {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+#dashboard-patient .doctor_card p {
+    font-size: 14px;
+    font-weight: 700;
+}
+#dashboard-patient .doctor_card p span {
+    font-weight: 500;
+}
+#dashboard-patient .doctor_card h2:nth-of-type(2) {
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+#dashboard-patient .doctor_card #doctorInfo {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+#dashboard-patient .week_strip {
+    grid-column: 1 / 7;
+    order: 3;
+}
+#dashboard-patient .status_bar {
+    grid-column: 7 / 13;
+    order: 4;
+}
+
+#dashboard-patient .history {
+    grid-column: 1 / 7;
+    order: 5;
+}
+#dashboard-patient .rx_panel {
+    grid-column: 7 / 13;
+    order: 6;
+}
+
+#dashboard-patient .rx_panel_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#dashboard-patient .rx_panel_header h2 {
+    text-align: left;
+}
+
+
+/*DOCTOR DASHBOARD — final grid layout*/
+#dashboard-doctor .booking_notif_panel {
+    grid-column: 1 / 9;           /* left, 8 columns */
+    order: 2;
+}
+#dashboard-doctor .today_sidebar {
+    grid-column: 9 / 13;          /* right, 4 columns */
+    order: 1;
+    aspect-ratio: 1 / 1;          /* keep it square */
+    overflow-y: auto;
+}
+
+/* bigger fonts in both */
+#dashboard-doctor .booking_notif_header h2,
+#dashboard-doctor .today_sidebar_header h2 {
+    font-size: 18px;
+}
+#dashboard-doctor .today_item_name,
+#dashboard-doctor .booking_notif_name {
+    font-size: 15px;
+}
+
+/* My Patients — full width, centred, bigger */
+#dashboard-doctor .patient_list_panel {
+    grid-column: 1 / -1;
+    order: 3;
+    text-align: center;
+}
+#dashboard-doctor .patient_list_header {
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+}
+#dashboard-doctor .patient_list_header h2 { font-size: 20px; }
+#dashboard-doctor .patient_item {
+    justify-content: center;
+    text-align: center;
+    font-size: 15px;
+}
+#dashboard-doctor .patient_item_name { font-size: 16px; }
+
+
+#dashboard-doctor .record_viewer {
+    grid-column: 1 / -1;
+    order: 4;
+}
+#dashboard-doctor .record_viewer_header h2 { font-size: 26px; }
+#dashboard-doctor .record_section h3 { font-size: 20px; }
+
+
+#dashboard-doctor .note_card {
+    grid-column: 1 / 7;
+    order: 5;
+}
+#dashboard-doctor .rx_form_card {
+    grid-column: 7 / 13;
+    order: 6;
+}
+
+
+/*GUARDIAN DASHBOARD — grid layout fixes */
+
+#dashboard-guardian .guardian_banner {
+    grid-column: 1 / -1;
+}
+
+#dashboard-guardian .notif_panel {
+    grid-column: 1 / 7;
+    order: 1;
+}
+#dashboard-guardian .consent_card {
+    grid-column: 7 / 13;
+    order: 2;
+}
+#dashboard-guardian .notif_panel_header {
+    justify-content: center;
+}
+#dashboard-guardian .notif_panel_header h2 { font-size: 18px; }
+#dashboard-guardian .consent_card_header h2 { font-size: 18px; }
+
+#dashboard-guardian .rx_panel {
+    grid-column: 1 / 7;
+    order: 3;
+}
+#dashboard-guardian .history {
+    grid-column: 7 / 13;
+    order: 4;
+}
+
+
+/*RESPONSIVE — collapse the paired rows on small screens*/
+@media (max-width: 1024px) {
+    .dashboard_stats { grid-template-columns: repeat(2, 1fr); }
+
+    #dashboard-patient .booking_card,
+    #dashboard-patient .doctor_card,
+    #dashboard-patient .week_strip,
+    #dashboard-patient .status_bar,
+    #dashboard-patient .history,
+    #dashboard-patient .rx_panel,
+    #dashboard-doctor .booking_notif_panel,
+    #dashboard-doctor .today_sidebar,
+    #dashboard-doctor .note_card,
+    #dashboard-doctor .rx_form_card,
+    #dashboard-guardian .notif_panel,
+    #dashboard-guardian .consent_card,
+    #dashboard-guardian .history,
+    #dashboard-guardian .rx_panel {
+        grid-column: 1 / -1;
+    }
+
+    /* let the square panels relax when stacked */
+    #dashboard-doctor .today_sidebar { aspect-ratio: auto; }
+}
+
+@media (max-width: 600px) {
+    .dashboard_stats { grid-template-columns: 1fr; }
+    .stat_card { aspect-ratio: auto; }
+}
+
+
+/* Set of bugs fixed in dashboard*/
+.dashboard_stats {
+    grid-column: 1 / -1;
+}
+
+.stat_card {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.stat_card-value {
+    font-size: 26px;
+    line-height: 1.15;
+}
+
+.stat_card .stat_card-label:last-child {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+/* the appointment card text is white on blue, keep meta readable */
+#card_appointment .stat_card-label:last-child {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.stat_card {
+    aspect-ratio: auto;          /* drop the strict square so nothing clips */
+    min-height: 150px;
+    padding: 18px 16px;
+}
+
+
+#dashboard-doctor .booking_notif_panel {
+    grid-column: 1 / 9;          /* left, 8 cols */
+    order: 2;
+}
+#dashboard-doctor .today_sidebar {
+    grid-column: 9 / 13;         /* right, 4 cols */
+    order: 3;                    /* after stats (which span full width) */
+    aspect-ratio: auto;
+    min-height: 0;
+}
+
+
+#dashboard-guardian .guardian_banner {
+    display: grid;
+    /* LEFT half = avatar on top of ward info (one centred column),
+       RIGHT half = consent. Divider sits between the two halves. */
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+}
+/* LEFT half: avatar + ward info stacked and centred together.*/
+#dashboard-guardian .guardian_banner_avatar {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0 auto 10px auto;   /* centred, sits on top of the info */
+}
+#dashboard-guardian .guardian_banner_info {
+    grid-column: 1;
+    grid-row: 2;
+    text-align: center;
+    border-right: 1px solid var(--border);   /* the divider line */
+    padding: 0 24px;
+}
+/* RIGHT half: consent block, spanning both rows so it's vertically centred */
+#dashboard-guardian .guardian_banner_consent {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    border-right: none;
+    border-left: none;
+    text-align: center;
+    padding: 0 24px;
+}
+
+/* On small screens stack them and turn the divider into a bottom border */
+@media (max-width: 600px) {
+    #dashboard-guardian .guardian_banner {
+        grid-template-columns: 1fr;
+    }
+    #dashboard-guardian .guardian_banner_avatar {
+        grid-column: 1;
+        grid-row: 1;
+        margin: 0 auto 8px auto;
+    }
+    #dashboard-guardian .guardian_banner_info {
+        grid-column: 1;
+        grid-row: 2;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+    }
+    #dashboard-guardian .guardian_banner_consent {
+        grid-column: 1;
+        grid-row: 3;
+    }
+}
