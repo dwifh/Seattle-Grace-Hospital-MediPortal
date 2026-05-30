@@ -744,6 +744,23 @@
                     <div id="bookingWeek"></div>
                     <div id="weekStripDetail"></div>
                 </section>
+
+                <!--Booking status bar - Pending clears after 7 days, accepted and declined clear after 24 hours. Hardcoded timing for Phase 1.-->
+                 <section class="status_bar">
+                    <div class="status_bar_header">
+                        <h2>Booking Status</h2>
+                    </div>
+                    <table class="status_bar_table">
+                        <thead>
+                            <tr>
+                                <th>Booking</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingStatusBody"></tbody>
+                    </table>
+                </section>
+                
                 <!--Medical history details-->
                 <section class="history" aria-label="Medical History">
                     <div class="history_header">
