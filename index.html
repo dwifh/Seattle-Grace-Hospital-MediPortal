@@ -727,6 +727,10 @@
                             </select>
                         </div>
                         <div class="booking_form_row">
+                            <label for="apptTime">Preferred Time</label>
+                            <input type="time" id="apptTime" name="apptTime" required/>
+                        </div>
+                        <div class="booking_form_row">
                             <label for="apptReason">Reason for visit?</label>
                             <input type="text" id="apptReason" name="apptReason" placeholder="e.g. Routine Check-up" required/>
                         </div>
@@ -744,23 +748,6 @@
                     <div id="bookingWeek"></div>
                     <div id="weekStripDetail"></div>
                 </section>
-
-                <!--Booking status bar - Pending clears after 7 days, accepted and declined clear after 24 hours. Hardcoded timing for Phase 1.-->
-                 <section class="status_bar">
-                    <div class="status_bar_header">
-                        <h2>Booking Status</h2>
-                    </div>
-                    <table class="status_bar_table">
-                        <thead>
-                            <tr>
-                                <th>Booking</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bookingStatusBody"></tbody>
-                    </table>
-                </section>
-                
                 <!--Medical history details-->
                 <section class="history" aria-label="Medical History">
                     <div class="history_header">
