@@ -352,6 +352,29 @@ const APPOINTMENTS = [
   }
 ];
  
+//BOOKING_REQUEST section - Hardcoded for phase 1 where doctor can accept/decline.
+const BOOKING_REQUESTS = [
+  {
+    requestID: "br001",
+    patientID: "p001",                //Aanya requesting annual winter vaccine against flu with Dr Priya Patel
+    doctorID: "d001",
+    date: "2026-06-15",
+    time: "10:00",
+    reason: "Annual winter vaccine against flu",     
+    status: "pending"                 //pending status until doctor accepts/decline.
+  },
+ 
+  {
+    requestID: "br002",
+    patientID: "p001",                //Another booking from Aanya for blood test results.
+    doctorID: "d001",             
+    date: "2026-06-20",
+    time: "14:30",
+    reason: "Follow-up on blood test results",
+    status: "pending"
+  }
+];
+
 
 //PRESCRIPTIONS SECTION 
 const PRESCRIPTIONS = [
