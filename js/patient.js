@@ -452,7 +452,6 @@ function fillDoctorDropdown() {
         select.remove(1);
     }
 
-
     //Add one <option> for each doctor in the DOCTORS array
     for (var i = 0; i < DOCTORS.length; i++) {
  
