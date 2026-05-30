@@ -2,7 +2,7 @@
 
 /*  CSS VARIABLES  */
 :root {
-    /* Tiana's palette (agreed as project standard) */
+    /* palette  */
     --bg:               #f8fafc;
     --surface:          #ffffff;
     --border:           #e2e8f0;
@@ -76,6 +76,8 @@ body {
     position:       fixed;
     top:            0;
     left:           0;
+    background: #ffffff;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.08);
     height:         100vh;
     overflow-y:     auto;
     z-index:        100;
@@ -246,6 +248,8 @@ body {
     background:  var(--surface);
     border-bottom: 1px solid var(--border);
     display:     flex;
+    background: #ffffff;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.07);
     align-items: center;
     justify-content: space-between;
     padding:     0 24px;
@@ -299,11 +303,12 @@ body {
     height: 100vh;
     background: var(--bg);
     z-index: 200;
+    overflow-y: auto;
     margin: 0;
 }
 
 /* MAIN CONTENT OFFSET */
-/* Pushes page content clear of the fixed sidebar and topbar */
+
 #dashboard-admin,
 #dashboard-nurse,
 #dashboard-receptionist,
@@ -315,21 +320,31 @@ body {
     padding:     24px;
     min-height:  calc(100vh - var(--topbar-height));
     width:       calc(100% - var(--sidebar-width));
+    background:  #f0f4f8;
 }
 
-/* CARDS  */
+/* CARDS */
+
+/* Stat cards */
 .stat_card {
     background:    var(--surface);
     border:        1px solid var(--border);
+    border-left:   4px solid var(--primary);
     border-radius: var(--radius-md);
     padding:       18px 20px;
-    box-shadow:    var(--shadow);
+    box-shadow:    0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
+    transition:    transform var(--transition), box-shadow var(--transition);
 }
 
+.stat_card:hover {
+    transform:  translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.11);
+}       
+
 .stat_card-label {
-    font-size:   11px;
-    font-weight: 600;
-    color:       var(--text-muted);
+    font-size:      11px;
+    font-weight:    600;
+    color:          var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -339,23 +354,18 @@ body {
     font-weight: 700;
     color:       var(--text);
     margin-top:  6px;
+    line-height: 1;
 }
-
-.login_page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100vh;
-}
+/* general changes */
 
 .admin_card,
-.nurseSection {
+.nurseSection,
+.receptionistSection {
     background:    var(--surface);
     border:        1px solid var(--border);
     border-radius: var(--radius-md);
-    padding:       20px;
-    box-shadow:    var(--shadow);
+    padding:       22px;
+    box-shadow:    0 2px 12px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.05);
     margin-bottom: 20px;
 }
 
@@ -417,7 +427,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* DATA TABLE  */
+/* DATA TABLE */
 .data_table {
     width:           100%;
     border-collapse: collapse;
@@ -425,31 +435,39 @@ body {
 }
 
 .data_table thead th {
-    color:          var(--text-muted);
-    font-weight:    600;
-    font-size:      11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding:        8px 12px;
-    text-align:     left;
-    border-bottom:  1px solid var(--border);
-    white-space:    nowrap;
+    color:           var(--text-muted);
+    font-weight:     600;
+    font-size:       11px;
+    text-transform:  uppercase;
+    letter-spacing:  0.6px;
+    padding:         11px 14px;
+    text-align:      center;
+    background:      var(--bg);
+    border-top:      1px solid var(--border);
+    border-bottom:   2px solid var(--border);
+    white-space:     nowrap;
 }
+
+.data_table thead th:first-child { border-left: 1px solid var(--border); border-radius: var(--radius-sm) 0 0 0; }
+.data_table thead th:last-child  { border-right: 1px solid var(--border); border-radius: 0 var(--radius-sm) 0 0; }
+
+/* Two-tone alternating rows — even rows are slightly tinted */
+.data_table tbody tr:nth-child(odd)  { background: var(--surface); }
+.data_table tbody tr:nth-child(even) { background: var(--bg); }
+
+.data_table tbody tr:hover { background: var(--primary-soft); }
 
 .data_table tbody td {
-    padding:       10px 12px;
-    color:         var(--text);
-    border-bottom: 1px solid var(--bg);
-    vertical-align: middle;
+    padding:         11px 14px;
+    color:           var(--text);
+    text-align:      center;
+    vertical-align:  middle;
+    border-bottom:   1px solid var(--border);
+    border-right:    1px solid var(--border);
 }
 
-.data_table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.data_table tbody tr:hover td {
-    background: var(--bg);
-}
+.data_table tbody td:first-child { border-left: 1px solid var(--border); }
+.data_table tbody tr:last-child td { border-bottom: 1px solid var(--border); }
 
 /* BADGES */
 .badge {
@@ -534,56 +552,134 @@ body {
     color:      #ffffff;
 }
 
-/* LOGIN PAGE  */
+/* LOGIN PAGE */
+
 .login_page {
-    display:         flex;
-    align-items:     center;
-    justify-content: center;
-    min-height:      100vh;
-    width:           100%;
-    background:      var(--bg);
+    display:          flex;
+    align-items:     flex-start;
+    justify-content:  center;
+    min-height:       100vh;
+    width:            100%;
+    background:       linear-gradient(135deg, #f0f6ff 0%, var(--bg) 60%, #f0faf6 100%);
+    position:         relative;
+    padding:         80px 24px 40px;
 }
 
+/* Back to site link  */
+.login_back {
+    position:        absolute;
+    top:             24px;
+    left:            28px;
+    display:         flex;
+    align-items:     center;
+    gap:             6px;
+    font-size:       13px;
+    font-weight:     500;
+    color:           var(--text-muted);
+    text-decoration: none;
+    transition:      color var(--transition);
+}
+
+.login_back:hover { color: var(--primary); }
+
+.login_back i { font-size: 16px; }
+
+/* Card */
 .login_card {
     background:    var(--surface);
     border:        1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding:       40px 36px;
+    padding:       36px 32px 32px;
     width:         100%;
-    max-width:     420px;
-    box-shadow:    var(--shadow);
+    max-width:     460px;
+    box-shadow:    0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
 }
 
+/* Logo block — initials mark + hospital name */
 .login_header {
-    text-align:    center;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 }
 
-.login_logo {
-    font-size:   12px;
-    font-weight: 600;
-    color:       var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+.login_logo-wrap {
+    display:     flex;
+    align-items: center;
+    gap:         10px;
 }
 
-.login_title {
-    font-size:   24px;
+.login_logo-mark {
+    width:           38px;
+    height:          38px;
+    background:      var(--primary);
+    border-radius:   var(--radius-sm);
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    color:           #fff;
+    font-size:       14px;
+    font-weight:     700;
+    flex-shrink:     0;
+}
+
+.login_logo-name {
+    font-size:   14px;
     font-weight: 700;
     color:       var(--text);
+    line-height: 1.2;
+}
+
+.login_logo-sub {
+    font-size: 11px;
+    color:     var(--text-muted);
+}
+
+/* Tab switcher — toggles between Sign In and Register panels */
+.login_tabs {
+    display:       flex;
+    border:        1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding:       3px;
+    margin-bottom: 20px;
+    background:    var(--bg);
+}
+
+.login_tab {
+    flex:          1;
+    padding:       8px;
+    border:        none;
+    background:    transparent;
+    font-family:   var(--font);
+    font-size:     13px;
+    font-weight:   600;
+    color:         var(--text-muted);
+    border-radius: calc(var(--radius-sm) - 2px);
+    cursor:        pointer;
+    transition:    background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+/* Active tab lifts off the track with a white background and shadow */
+.login_tab--active {
+    background: var(--surface);
+    color:      var(--primary);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
 .login_subtitle {
-    font-size:   13px;
-    color:       var(--text-muted);
-    margin-top:  4px;
+    font-size:     13px;
+    color:         var(--text-muted);
+    margin-bottom: 18px;
 }
 
 .login_form {
     display:        flex;
     flex-direction: column;
-    gap:            16px;
+    gap:            14px;
+}
+
+/* Two-column row for first/last name and username/password in register form */
+.login_form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap:     12px;
 }
 
 .login_field {
@@ -603,35 +699,28 @@ body {
     border-radius: var(--radius-sm);
     padding:       10px 12px;
     font-family:   var(--font);
-    font-size:     14px;
+    font-size:     13px;
     color:         var(--text);
     background:    var(--bg);
     outline:       none;
-    transition:    border-color var(--transition);
+    transition:    border-color var(--transition), box-shadow var(--transition);
 }
 
-.login_input:focus {
-    border-color: var(--primary);
-    background:   var(--surface);
-}
-
-.login_error,
-.login_lockout {
-    font-size:   12px;
-    font-weight: 500;
-    padding:     8px 12px;
+/* Info notice for the placeholder register form */
+.login_notice {
+    display:       flex;
+    align-items:   flex-start;
+    gap:           8px;
+    font-size:     12px;
+    color:         var(--text-muted);
+    background:    var(--primary-soft);
+    border:        1px solid rgba(45,108,223,0.15);
     border-radius: var(--radius-sm);
+    padding:       10px 12px;
+    line-height:   1.5;
 }
 
-.login_error {
-    background: var(--danger-soft);
-    color:      var(--danger);
-}
-
-.login_lockout {
-    background: var(--warn-soft);
-    color:      var(--warn);
-}
+.login_notice i { color: var(--primary); font-size: 15px; flex-shrink: 0; margin-top: 1px; }
 
 .login_btn {
     background:    var(--primary);
@@ -642,17 +731,21 @@ body {
     font-size:     14px;
     font-weight:   600;
     width:         100%;
-    transition:    background var(--transition);
+    font-family:   var(--font);
+    transition:    background var(--transition), box-shadow var(--transition), transform var(--transition);
     margin-top:    4px;
+    cursor:        pointer;
 }
 
 .login_btn:hover {
     background: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(45,108,223,0.30);
+    transform:  translateY(-1px);
 }
 
 .login_footer {
     text-align:  center;
-    margin-top:  20px;
+    margin-top:  18px;
     font-size:   12px;
     color:       var(--text-muted);
 }
@@ -754,7 +847,7 @@ body:has(.landing_navbar) {
     color:     var(--text-muted);
 }
 
-/* Nav links list — sits in the centre of the navbar */
+/* Nav links list  */
 .landing_nav-links {
     display:     flex;
     align-items: center;
@@ -771,7 +864,7 @@ body:has(.landing_navbar) {
     transition:      color var(--transition);
 }
 
-/* Underline indicator — starts at width 0, expands on hover/active. */
+/* Underline indicator */
 .landing_nav-links a::after {
     content:    '';
     position:   absolute;

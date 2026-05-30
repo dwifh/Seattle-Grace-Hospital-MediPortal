@@ -40,7 +40,9 @@ function updateTopbar(user) {
 function scrollToSection(id) {
     const section = document.getElementById(id);
     if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const topbarHeight = 60;
+        const y = section.getBoundingClientRect().top + window.scrollY - topbarHeight - 16;
+        window.scrollTo({ top: y, behavior: 'smooth' });
     }
 }
 
@@ -142,6 +144,25 @@ function showLogin() {
     const loginPage = document.getElementById('dashboard-login');
     if (loginPage) {
         loginPage.hidden = false;
+    }
+}
+
+function showTab(tab) {
+    const loginPanel = document.getElementById('loginPanel');
+    const registerPanel = document.getElementById('registerPanel');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+ 
+    if (tab === 'login') {
+        loginPanel.hidden = false;
+        registerPanel.hidden = true;
+        tabLogin.classList.add('login_tab--active');
+        tabRegister.classList.remove('login_tab--active');
+    } else {
+        loginPanel.hidden = true;
+        registerPanel.hidden = false;
+        tabRegister.classList.add('login_tab--active');
+        tabLogin.classList.remove('login_tab--active');
     }
 }
 
