@@ -242,6 +242,9 @@ function showPatientHistory(patient) {
     var timeline = document.getElementById("historyTimeline");
     timeline.innerHTML = "";
 
+    //Design for animated timeline. 'ALL' is the default selected filter.
+    timeline.classList.add("timeline_all_active");
+
     //Collect medical history entries for specific patients in their own personal array
     var entries = []
     //Loop through MEDICAL_HISTORY array and push items at the end of array
@@ -314,6 +317,14 @@ function setupFilterButtons() {
  
             //Read which filter this button represents from its data-filter attribute
             var filter = this.getAttribute("data-filter");
+
+            //Animated design for timeline should only show when filter is on 'ALL'
+             var timeline = document.getElementById("historyTimeline");
+            if (filter === "all") {
+                timeline.classList.add("timeline_all_active");
+            } else {
+                timeline.classList.remove("timeline_all_active");
+            }
  
             //Get all timeline items so we can show or hide them
             var items = document.querySelectorAll(".timeline_item");
