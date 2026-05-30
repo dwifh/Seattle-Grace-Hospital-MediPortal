@@ -1,10 +1,6 @@
 // landing.js — OWNED BY AYUSH
-// Handles all interactivity for landing.html:
-// navbar scroll effect, active nav link tracking, and scroll reveal animations.
 
 //NAVBAR SCROLL EFFECT 
-// Adds a shadow to the navbar once the user scrolls past 20px.
-// This gives the navbar visual depth without being distracting at the top.
 
 const navbar = document.getElementById('navbar');
 
