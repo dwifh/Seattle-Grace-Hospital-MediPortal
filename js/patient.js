@@ -72,6 +72,8 @@ function showDoctorCard(patient) {
     document.getElementById("doctorName").textContent = doctor.title + " " + doctor.firstName + " " + doctor.lastName;
     document.getElementById("doctorSpecialty").textContent = doctor.specialty;
     document.getElementById("doctorGmc").textContent = doctor.gmcNumber.replace("GMC", "");
+    document.getElementById("doctorEmail").textContent = doctor.email;
+    document.getElementById("doctorInfo").textContent = doctor.information;
 }
 
 function showPatientStats(patient) {
