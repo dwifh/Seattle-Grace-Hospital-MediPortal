@@ -7,6 +7,7 @@
 
 /* ── CSS VARIABLES ──────────────────────────────────────────── */
 :root {
+    /* Tiana's palette (agreed as project standard) */
     --bg:               #f8fafc;
     --surface:          #ffffff;
     --border:           #e2e8f0;
@@ -693,4 +694,749 @@ body {
     font-size:   15px;
     font-weight: 700;
     color:       var(--text);
+}
+
+
+/* ============================================================
+   LANDING PAGE STYLES
+   Only applied to landing.html — not the portal (index.html).
+   Uses the same CSS variables as the rest of the design system.
+   Classes follow the same single-underscore naming convention.
+============================================================ */
+
+/* ── LANDING PAGE BODY OVERRIDE ─────────────────────────────────
+   styles.css sets body { display: flex } for the portal's sidebar layout.
+   The landing page doesn't use a sidebar so we reset it to block here.
+   This only applies when the landing_navbar exists on the page.
+────────────────────────────────────────────────────────────── */
+body:has(.landing_navbar) {
+    display: block;
+}
+
+/* ── LANDING NAVBAR ─────────────────────────────────────────────
+   Fixed to the top of the viewport using position: fixed.
+   backdrop-filter: blur creates the frosted-glass effect when
+   scrolling over content — only works in modern browsers (Chrome, Edge, Safari).
+   The .scrolled class is toggled by landing.js once the user scrolls past 20px.
+────────────────────────────────────────────────────────────── */
+.landing_navbar {
+    position:        fixed;
+    top:             0;
+    left:            0;
+    right:           0;
+    z-index:         100;
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    padding:         0 48px;
+    height:          68px;
+    background:      rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom:   1px solid var(--border);
+    transition:      box-shadow var(--transition);
+}
+
+.landing_navbar.scrolled {
+    box-shadow: var(--shadow);
+}
+
+.landing_navbar-logo {
+    display:     flex;
+    align-items: center;
+    gap:         10px;
+    text-decoration: none;
+}
+
+.landing_navbar-mark {
+    width:           38px;
+    height:          38px;
+    background:      var(--primary);
+    border-radius:   var(--radius-sm);
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    color:           #fff;
+    font-weight:     700;
+    font-size:       14px;
+    letter-spacing:  0.5px;
+    flex-shrink:     0;
+}
+
+.landing_navbar-name {
+    font-size:   14px;
+    font-weight: 700;
+    color:       var(--text);
+    line-height: 1.2;
+}
+
+.landing_navbar-sub {
+    font-size: 11px;
+    color:     var(--text-muted);
+}
+
+/* Nav links list — sits in the centre of the navbar */
+.landing_nav-links {
+    display:     flex;
+    align-items: center;
+    gap:         32px;
+    list-style:  none;
+}
+
+.landing_nav-links a {
+    font-size:       13px;
+    font-weight:     500;
+    color:           var(--text-muted);
+    text-decoration: none;
+    position:        relative;
+    transition:      color var(--transition);
+}
+
+/* Underline indicator — starts at width 0, expands on hover/active.
+   This is more subtle than a background highlight and suits the medical tone. */
+.landing_nav-links a::after {
+    content:    '';
+    position:   absolute;
+    bottom:     -4px;
+    left:       0;
+    width:      0;
+    height:     2px;
+    background: var(--primary);
+    transition: width var(--transition);
+}
+
+.landing_nav-links a:hover          { color: var(--primary); }
+.landing_nav-links a:hover::after   { width: 100%; }
+.landing_nav-links a.active         { color: var(--primary); }
+.landing_nav-links a.active::after  { width: 100%; }
+
+.landing_navbar-actions {
+    display:     flex;
+    align-items: center;
+    gap:         10px;
+}
+
+/* ── LANDING BUTTONS ────────────────────────────────────────────
+   Shared base class + modifier classes.
+   .landing_btn--outline: bordered, transparent background
+   .landing_btn--primary: filled primary colour
+   .landing_btn--white:   white fill for use on dark/coloured backgrounds
+   .landing_btn--white-outline: transparent with white border for dark backgrounds
+────────────────────────────────────────────────────────────── */
+.landing_btn {
+    display:         inline-flex;
+    align-items:     center;
+    gap:             6px;
+    padding:         9px 18px;
+    border-radius:   var(--radius-sm);
+    font-family:     var(--font);
+    font-size:       13px;
+    font-weight:     600;
+    cursor:          pointer;
+    text-decoration: none;
+    transition:      background var(--transition), box-shadow var(--transition), transform var(--transition);
+    border:          none;
+}
+
+.landing_btn--outline {
+    background: transparent;
+    color:      var(--primary);
+    border:     1.5px solid var(--primary);
+}
+
+.landing_btn--outline:hover {
+    background: var(--primary-soft);
+}
+
+.landing_btn--primary {
+    background: var(--primary);
+    color:      #fff;
+}
+
+.landing_btn--primary:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(45,108,223,0.35);
+    transform:  translateY(-1px);
+}
+
+.landing_btn--white {
+    background: #fff;
+    color:      var(--primary);
+}
+
+.landing_btn--white:hover {
+    background: var(--primary-soft);
+    transform:  translateY(-1px);
+}
+
+.landing_btn--white-outline {
+    background:   transparent;
+    color:        #fff;
+    border:       1.5px solid rgba(255,255,255,0.5);
+}
+
+.landing_btn--white-outline:hover {
+    background:   rgba(255,255,255,0.12);
+    border-color: #fff;
+}
+
+/* ── HERO SECTION ───────────────────────────────────────────────
+   Full-viewport height section with a subtle dot grid pattern.
+   The two blobs are absolutely positioned circles with blur applied —
+   filter: blur() on large elements is GPU-accelerated in modern browsers.
+   The gradient background ties together the blue and green brand colours.
+────────────────────────────────────────────────────────────── */
+.landing_hero {
+    min-height:      100vh;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    position:        relative;
+    overflow:        hidden;
+    padding:         120px 48px 80px;
+    background:      linear-gradient(135deg, #f0f6ff 0%, #f8fafc 50%, #e8f4f0 100%);
+}
+
+/* Repeating radial-gradient creates the dot grid.
+   background-size controls the spacing between dots. */
+.landing_hero-pattern {
+    position:         absolute;
+    inset:            0;
+    opacity:          0.035;
+    background-image:
+        radial-gradient(circle at 25% 25%, var(--primary) 2px, transparent 2px),
+        radial-gradient(circle at 75% 75%, var(--primary) 2px, transparent 2px);
+    background-size: 48px 48px;
+    pointer-events:   none;
+}
+
+/* Decorative colour blobs — purely visual, sit behind content */
+.landing_hero-blob {
+    position:      absolute;
+    border-radius: 50%;
+    filter:        blur(80px);
+    opacity:       0.18;
+    pointer-events: none;
+}
+
+.landing_hero-blob--blue {
+    width:      500px;
+    height:     500px;
+    background: var(--primary);
+    top:        -100px;
+    right:      -100px;
+}
+
+.landing_hero-blob--green {
+    width:      350px;
+    height:     350px;
+    background: var(--success);
+    bottom:     -80px;
+    left:       -80px;
+}
+
+.landing_hero-content {
+    position:   relative;
+    text-align: center;
+    max-width:  760px;
+    animation:  landing_fadeUp 0.9s ease both;
+}
+
+/* Small pill badge above the headline */
+.landing_hero-eyebrow {
+    display:        inline-flex;
+    align-items:    center;
+    gap:            8px;
+    background:     var(--primary-soft);
+    color:          var(--primary);
+    font-size:      12px;
+    font-weight:    600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding:        6px 14px;
+    border-radius:  20px;
+    margin-bottom:  24px;
+}
+
+/* clamp() makes the font size fluid — scales between 42px and 72px
+   depending on viewport width without any media queries. */
+.landing_hero-title {
+    font-size:     clamp(42px, 6vw, 72px);
+    line-height:   1.1;
+    color:         var(--text);
+    margin-bottom: 22px;
+    font-weight:   700;
+}
+
+.landing_hero-title em {
+    font-style: italic;
+    color:      var(--primary);
+}
+
+.landing_hero-subtitle {
+    font-size:     17px;
+    color:         var(--text-muted);
+    line-height:   1.7;
+    max-width:     560px;
+    margin:        0 auto 36px;
+    font-weight:   400;
+}
+
+.landing_hero-actions {
+    display:         flex;
+    align-items:     center;
+    gap:             12px;
+    justify-content: center;
+    flex-wrap:       wrap;
+}
+
+.landing_hero-actions .landing_btn {
+    padding:   12px 28px;
+    font-size: 14px;
+}
+
+/* Animated scroll indicator at the bottom of the hero */
+.landing_hero-scroll {
+    position:        absolute;
+    bottom:          32px;
+    left:            50%;
+    transform:       translateX(-50%);
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    gap:             6px;
+    color:           var(--text-muted);
+    font-size:       11px;
+    font-weight:     500;
+    letter-spacing:  1px;
+    text-transform:  uppercase;
+    text-decoration: none;
+    animation:       landing_bounce 2s infinite;
+}
+
+.landing_hero-scroll i { font-size: 20px; }
+
+/* ── STATS BAR ──────────────────────────────────────────────────
+   Full-width band of key figures in the primary colour.
+   Sits between the hero and services sections for visual punctuation.
+────────────────────────────────────────────────────────────── */
+.landing_stats {
+    background: var(--primary);
+    padding:    36px 48px;
+}
+
+.landing_stats-inner {
+    max-width:             1100px;
+    margin:                0 auto;
+    display:               grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:                   24px;
+}
+
+.landing_stats-item {
+    text-align: center;
+    color:      #fff;
+}
+
+.landing_stats-value {
+    font-size:     36px;
+    font-weight:   700;
+    line-height:   1;
+    margin-bottom: 6px;
+}
+
+.landing_stats-label {
+    font-size:  13px;
+    opacity:    0.78;
+    font-weight: 400;
+}
+
+/* ── SHARED SECTION STYLES ──────────────────────────────────────
+   Consistent padding, max-width, and text hierarchy for all sections.
+────────────────────────────────────────────────────────────── */
+.landing_section {
+    padding: 96px 48px;
+}
+
+.landing_section--alt {
+    background: var(--bg);
+}
+
+.landing_section-inner {
+    max-width: 1100px;
+    margin:    0 auto;
+}
+
+.landing_section-eyebrow {
+    font-size:      11px;
+    font-weight:    600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color:          var(--primary);
+    margin-bottom:  10px;
+}
+
+.landing_section-title {
+    font-size:     clamp(28px, 4vw, 42px);
+    color:         var(--text);
+    margin-bottom: 14px;
+    line-height:   1.2;
+    font-weight:   700;
+}
+
+.landing_section-subtitle {
+    font-size:     16px;
+    color:         var(--text-muted);
+    max-width:     520px;
+    line-height:   1.7;
+    margin-bottom: 52px;
+}
+
+/* ── SERVICES GRID ──────────────────────────────────────────────
+   Each card has a hidden top border that slides in on hover using scaleX.
+   transform-origin defaults to center, so we set it to left to slide from left to right.
+────────────────────────────────────────────────────────────── */
+.landing_services-grid {
+    display:               grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:                   20px;
+}
+
+.landing_service-card {
+    background:    var(--surface);
+    border:        1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding:       28px;
+    transition:    transform var(--transition), box-shadow var(--transition);
+    position:      relative;
+    overflow:      hidden;
+}
+
+.landing_service-card::before {
+    content:          '';
+    position:         absolute;
+    top:              0;
+    left:             0;
+    right:            0;
+    height:           3px;
+    background:       var(--primary);
+    transform:        scaleX(0);
+    transform-origin: left;
+    transition:       transform var(--transition);
+}
+
+.landing_service-card:hover {
+    transform:  translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.13);
+}
+
+.landing_service-card:hover::before {
+    transform: scaleX(1);
+}
+
+.landing_service-icon {
+    width:           48px;
+    height:          48px;
+    background:      var(--primary-soft);
+    border-radius:   var(--radius-sm);
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    color:           var(--primary);
+    font-size:       22px;
+    margin-bottom:   18px;
+}
+
+.landing_service-title {
+    font-size:     15px;
+    font-weight:   700;
+    color:         var(--text);
+    margin-bottom: 8px;
+}
+
+.landing_service-desc {
+    font-size:   13px;
+    color:       var(--text-muted);
+    line-height: 1.65;
+}
+
+/* ── DEPARTMENTS GRID ───────────────────────────────────────────
+   Cards invert on hover — background becomes primary blue, text turns white.
+   All colour transitions are handled with transition: all to catch every property.
+────────────────────────────────────────────────────────────── */
+.landing_dept-grid {
+    display:               grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:                   16px;
+}
+
+.landing_dept-card {
+    background:    var(--bg);
+    border:        1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding:       24px 20px;
+    text-align:    center;
+    transition:    all var(--transition);
+}
+
+.landing_dept-card:hover {
+    background:   var(--primary);
+    border-color: var(--primary);
+    transform:    translateY(-3px);
+    box-shadow:   var(--shadow);
+}
+
+.landing_dept-card:hover .landing_dept-icon,
+.landing_dept-card:hover .landing_dept-name,
+.landing_dept-card:hover .landing_dept-count {
+    color: #fff;
+}
+
+.landing_dept-card:hover .landing_dept-icon {
+    background: rgba(255,255,255,0.2);
+}
+
+.landing_dept-icon {
+    width:           44px;
+    height:          44px;
+    background:      var(--primary-soft);
+    border-radius:   50%;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    color:           var(--primary);
+    font-size:       20px;
+    margin:          0 auto 14px;
+    transition:      all var(--transition);
+}
+
+.landing_dept-name {
+    font-size:     14px;
+    font-weight:   700;
+    color:         var(--text);
+    margin-bottom: 4px;
+    transition:    color var(--transition);
+}
+
+.landing_dept-count {
+    font-size:  12px;
+    color:      var(--text-muted);
+    transition: color var(--transition);
+}
+
+/* ── ABOUT SECTION ──────────────────────────────────────────────
+   Two-column layout: visual block on the left, content on the right.
+   aspect-ratio: 4/3 maintains proportions without a fixed height.
+────────────────────────────────────────────────────────────── */
+.landing_about-inner {
+    display:     grid;
+    grid-template-columns: 1fr 1fr;
+    gap:         64px;
+    align-items: center;
+}
+
+.landing_about-visual {
+    position:        relative;
+    border-radius:   var(--radius-lg);
+    overflow:        hidden;
+    aspect-ratio:    4/3;
+    background:      linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+}
+
+.landing_about-visual-icon {
+    font-size: 120px;
+    color:     rgba(255,255,255,0.15);
+}
+
+/* Floating badge overlaid on the visual block */
+.landing_about-badge {
+    position:      absolute;
+    bottom:        24px;
+    left:          24px;
+    background:    #fff;
+    border-radius: var(--radius-md);
+    padding:       16px 20px;
+    box-shadow:    var(--shadow);
+}
+
+.landing_about-badge-value {
+    font-size:   28px;
+    font-weight: 700;
+    color:       var(--primary);
+    line-height: 1;
+}
+
+.landing_about-badge-label {
+    font-size:  12px;
+    color:      var(--text-muted);
+    margin-top: 2px;
+}
+
+.landing_about-list {
+    list-style: none;
+    display:    flex;
+    flex-direction: column;
+    gap:        12px;
+    margin-top: 4px;
+}
+
+.landing_about-list li {
+    display:     flex;
+    align-items: center;
+    gap:         10px;
+    font-size:   14px;
+    color:       var(--text);
+}
+
+.landing_about-list li i {
+    color:       var(--success);
+    font-size:   18px;
+    flex-shrink: 0;
+}
+
+/* ── PORTAL CTA ─────────────────────────────────────────────────
+   Full-width gradient call-to-action block.
+   The ::before pseudo-element adds two radial highlight spots to break
+   up the flat gradient and give it more depth.
+────────────────────────────────────────────────────────────── */
+.landing_cta {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    padding:    80px 48px;
+    text-align: center;
+    position:   relative;
+    overflow:   hidden;
+}
+
+.landing_cta::before {
+    content:  '';
+    position: absolute;
+    inset:    0;
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 60%),
+        radial-gradient(circle at 80% 50%, rgba(255,255,255,0.06) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.landing_cta-inner {
+    position:  relative;
+    max-width: 600px;
+    margin:    0 auto;
+}
+
+.landing_cta-title {
+    font-size:     clamp(28px, 4vw, 42px);
+    color:         #fff;
+    margin-bottom: 16px;
+    font-weight:   700;
+    line-height:   1.2;
+}
+
+.landing_cta-subtitle {
+    font-size:     16px;
+    color:         rgba(255,255,255,0.75);
+    margin-bottom: 36px;
+    line-height:   1.6;
+}
+
+.landing_cta-actions {
+    display:         flex;
+    gap:             12px;
+    justify-content: center;
+    flex-wrap:       wrap;
+}
+
+/* ── FOOTER ─────────────────────────────────────────────────────
+   Dark background footer with logo, nav links and copyright.
+────────────────────────────────────────────────────────────── */
+.landing_footer {
+    background: var(--text);
+    padding:    48px;
+}
+
+.landing_footer-inner {
+    max-width:       1100px;
+    margin:          0 auto;
+    display:         flex;
+    align-items:     center;
+    justify-content: space-between;
+    flex-wrap:       wrap;
+    gap:             16px;
+}
+
+.landing_footer-logo {
+    display:     flex;
+    align-items: center;
+    gap:         10px;
+}
+
+.landing_footer-mark {
+    width:           34px;
+    height:          34px;
+    background:      var(--primary);
+    border-radius:   var(--radius-sm);
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    color:           #fff;
+    font-size:       12px;
+    font-weight:     700;
+}
+
+.landing_footer-name {
+    font-size:   14px;
+    font-weight: 600;
+    color:       #fff;
+}
+
+.landing_footer-links {
+    display:    flex;
+    gap:        24px;
+    list-style: none;
+}
+
+.landing_footer-links a {
+    font-size:       13px;
+    color:           rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition:      color var(--transition);
+}
+
+.landing_footer-links a:hover { color: #fff; }
+
+.landing_footer-copy {
+    font-size: 12px;
+    color:     rgba(255,255,255,0.35);
+}
+
+/* ── REVEAL ANIMATION ───────────────────────────────────────────
+   Elements with .reveal start hidden and slightly below their final position.
+   landing.js adds .visible via IntersectionObserver when they enter the viewport.
+   The transition does the rest — no JS animation needed.
+────────────────────────────────────────────────────────────── */
+.reveal {
+    opacity:    0;
+    transform:  translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+    opacity:   1;
+    transform: translateY(0);
+}
+
+/* ── LANDING KEYFRAMES ──────────────────────────────────────────
+   landing_fadeUp: used on the hero content block for the initial page load animation.
+   landing_bounce: used on the scroll indicator arrow in the hero.
+   Prefixed with "landing_" to avoid clashing with any other keyframes in the codebase.
+────────────────────────────────────────────────────────────── */
+@keyframes landing_fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes landing_bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(8px); }
 }

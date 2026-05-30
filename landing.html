@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Seattle Grace Hospital</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+    <!-- ======================================================
+         NAVBAR
+         Fixed to top. .scrolled class added by landing.js on scroll.
+         Active link tracking handled by IntersectionObserver in landing.js.
+    ====================================================== -->
+    <nav class="landing_navbar" id="navbar">
+
+        <a href="landing.html" class="landing_navbar-logo">
+            <div class="landing_navbar-mark">SG</div>
+            <div>
+                <div class="landing_navbar-name">Seattle Grace</div>
+                <div class="landing_navbar-sub">Hospital</div>
+            </div>
+        </a>
+
+        <ul class="landing_nav-links">
+            <li><a href="#services"    class="nav-link">Services</a></li>
+            <li><a href="#departments" class="nav-link">Departments</a></li>
+            <li><a href="#about"       class="nav-link">About</a></li>
+        </ul>
+
+        <div class="landing_navbar-actions">
+            <a href="index.html"          class="landing_btn landing_btn--outline">Log In</a>
+            <a href="index.html#register" class="landing_btn landing_btn--primary">
+                <i class="ti ti-user-plus"></i> Sign Up
+            </a>
+        </div>
+
+    </nav>
+
+    <!-- ======================================================
+         HERO
+         Full-viewport section with dot grid pattern, colour blobs,
+         headline, subtitle and two call-to-action buttons.
+         The hero content div is animated via CSS (landing_fadeUp keyframe).
+    ====================================================== -->
+    <section id="home" class="landing_hero">
+
+        <div class="landing_hero-pattern"></div>
+        <div class="landing_hero-blob landing_hero-blob--blue"></div>
+        <div class="landing_hero-blob landing_hero-blob--green"></div>
+
+        <div class="landing_hero-content">
+            <div class="landing_hero-eyebrow">
+                <i class="ti ti-heart-filled"></i>
+                Compassionate Care, Advanced Medicine
+            </div>
+            <h1 class="landing_hero-title">
+                Your Health Is Our <em>Priority</em>
+            </h1>
+            <p class="landing_hero-subtitle">
+                Seattle Grace Hospital provides world-class medical care with a patient-first approach.
+                From routine check-ups to specialist consultations, we are here for every step of your health journey.
+            </p>
+            <div class="landing_hero-actions">
+                <a href="index.html" class="landing_btn landing_btn--primary">
+                    <i class="ti ti-login"></i> Patient Portal
+                </a>
+                <a href="#services" class="landing_btn landing_btn--outline">
+                    Our Services
+                </a>
+            </div>
+        </div>
+
+        <a href="#services" class="landing_hero-scroll">
+            <i class="ti ti-chevron-down"></i>
+            Scroll
+        </a>
+
+    </section>
+
+    <!-- ======================================================
+         STATS BAR
+         Key figures displayed in the primary blue band.
+         Each item uses the .reveal class — animated in by landing.js.
+    ====================================================== -->
+    <div class="landing_stats">
+        <div class="landing_stats-inner">
+            <div class="landing_stats-item reveal">
+                <div class="landing_stats-value">5,000+</div>
+                <div class="landing_stats-label">Patients Treated</div>
+            </div>
+            <div class="landing_stats-item reveal">
+                <div class="landing_stats-value">12+</div>
+                <div class="landing_stats-label">Specialist Doctors</div>
+            </div>
+            <div class="landing_stats-item reveal">
+                <div class="landing_stats-value">20</div>
+                <div class="landing_stats-label">Hospital Beds</div>
+            </div>
+            <div class="landing_stats-item reveal">
+                <div class="landing_stats-value">Est. 2010</div>
+                <div class="landing_stats-label">Serving Seattle</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================
+         SERVICES
+         Six service cards in a 3-column grid.
+         Each card has a top border that slides in on hover (CSS ::before).
+    ====================================================== -->
+    <section id="services" class="landing_section landing_section--alt">
+        <div class="landing_section-inner">
+
+            <p class="landing_section-eyebrow reveal">What We Offer</p>
+            <h2 class="landing_section-title reveal">Comprehensive Medical Services</h2>
+            <p class="landing_section-subtitle reveal">
+                From emergency care to long-term wellness, our services are designed around your needs.
+            </p>
+
+            <div class="landing_services-grid">
+
+                <div class="landing_service-card reveal">
+                    <div class="landing_service-icon"><i class="ti ti-urgent"></i></div>
+                    <div class="landing_service-title">Emergency Care</div>
+                    <div class="landing_service-desc">Round-the-clock emergency services with rapid response teams ready to handle any critical situation.</div>
+                </div>
+
+                <div class="landing_service-card reveal">
+                    <div class="landing_service-icon"><i class="ti ti-stethoscope"></i></div>
+                    <div class="landing_service-title">Outpatient Services</div>
+                    <div class="landing_service-desc">Consultations, follow-ups and routine check-ups without the need for overnight admission.</div>
+                </div>
+
+                <div class="landing_service-card reveal">
+                    <div class="landing_service-icon"><i class="ti ti-flask"></i></div>
+                    <div class="landing_service-title">Lab & Diagnostics</div>
+                    <div class="landing_service-desc">State-of-the-art diagnostic facilities including blood tests, imaging and pathology services.</div>
+                </div>
+
+                <div class="landing_service-card reveal">
+                    <div class="landing_service-icon"><i class="ti ti-pill"></i></div>
+                    <div class="landing_service-title">Pharmacy</div>
+                    <div class="landing_service-desc">On-site pharmacy dispensing prescriptions issued by our doctors with expert medication advice.</div>
+                </div>
+
+                <div class="landing_service-card reveal">
+                    <div class="landing_service-icon"><i class="ti ti-heart-handshake"></i></div>
+                    <div class="landing_service-title">Nursing & Rehabilitation</div>
+                    <div class="landing_service-desc">Dedicated nursing teams supporting patient recovery, monitoring vitals and managing care plans.</div>
+                </div>
+
+                <div class="landing_service-card reveal">
+                    <div class="landing_service-icon"><i class="ti ti-calendar-check"></i></div>
+                    <div class="landing_service-title">Appointment Management</div>
+                    <div class="landing_service-desc">Easy online booking, scheduling and check-in through our MediPortal patient platform.</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================================================
+         DEPARTMENTS
+         Eight department cards in a 4-column grid.
+         Cards invert colour on hover — handled entirely in CSS.
+    ====================================================== -->
+    <section id="departments" class="landing_section">
+        <div class="landing_section-inner">
+
+            <p class="landing_section-eyebrow reveal">Our Specialties</p>
+            <h2 class="landing_section-title reveal">Medical Departments</h2>
+            <p class="landing_section-subtitle reveal">
+                Our multidisciplinary team of specialists covers a wide range of medical fields.
+            </p>
+
+            <div class="landing_dept-grid">
+
+                <div class="landing_dept-card reveal">
+                    <div class="landing_dept-icon"><i class="ti ti-activity-heartbeat"></i></div>
+                    <div class="landing_dept-name">Cardiology</div>
+                    <div class="landing_dept-count">Heart & Vascular Care</div>
+                </div>
+
+                <div class="landing_dept-card reveal">
+                    <div class="landing_dept-icon"><i class="ti ti-brain"></i></div>
+                    <div class="landing_dept-name">Neurology</div>
+                    <div class="landing_dept-count">Brain & Nervous System</div>
+                </div>
+
+                <div class="landing_dept-card reveal">
+                    <div class="landing_dept-icon"><i class="ti ti-baby-carriage"></i></div>
+                    <div class="landing_dept-name">Paediatrics</div>
+                    <div class="landing_dept-count">Child Health</div>
+                </div>
+
+                <div class="landing_dept-card reveal">
+                    <div class="landing_dept-icon"><i class="ti ti-lungs"></i></div>
+                    <div class="landing_dept-name">Respiratory</div>
+                    <div class="landing_dept-count">Lung & Airway Care</div>
+                </div>
+
+                <div class="landing_dept-card reveal">
+                    <div class="landing_dept-icon"><i class="ti ti-bone"></i></div>
+                    <div class="landing_dept-name">Orthopaedics</div>
+                    <div class="landing_dept-count">Bone & Joint Care</div>
+                </div>
+
+                <div class="landing_dept-card reveal">
+                    <div class="landing_dept-icon"><i class="ti ti-eye"></i></div>
+                    <div class="landing_dept-name">Ophthalmology</div>
+                    <div class="landing_dept-count">Eye Care</div>
+                </div>
+
+                <div class="landing_dept-card reveal">
+                    <div class="landing_dept-icon"><i class="ti ti-user-heart"></i></div>
+                    <div class="landing_dept-name">General Practice</div>
+                    <div class="landing_dept-count">Primary Care</div>
+                </div>
+
+                <div class="landing_dept-card reveal">
+                    <div class="landing_dept-icon"><i class="ti ti-report-medical"></i></div>
+                    <div class="landing_dept-name">Oncology</div>
+                    <div class="landing_dept-count">Cancer Care</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================================================
+         ABOUT
+         Two-column layout: gradient visual block on left, text on right.
+         The floating badge is absolutely positioned over the visual block.
+    ====================================================== -->
+    <section id="about" class="landing_section landing_section--alt">
+        <div class="landing_section-inner">
+            <div class="landing_about-inner">
+
+                <div class="landing_about-visual reveal">
+                    <i class="ti ti-building-hospital landing_about-visual-icon"></i>
+                    <div class="landing_about-badge">
+                        <div class="landing_about-badge-value">15+</div>
+                        <div class="landing_about-badge-label">Years of Service</div>
+                    </div>
+                </div>
+
+                <div class="landing_about-content">
+                    <p class="landing_section-eyebrow reveal">Who We Are</p>
+                    <h2 class="landing_section-title reveal">Built on Trust, Driven by Care</h2>
+                    <p class="landing_section-subtitle reveal">
+                        Since 2010, Seattle Grace Hospital has been a cornerstone of the community,
+                        providing accessible, high-quality healthcare to thousands of patients every year.
+                    </p>
+                    <ul class="landing_about-list">
+                        <li class="reveal"><i class="ti ti-circle-check-filled"></i> Patient-first approach in every decision</li>
+                        <li class="reveal"><i class="ti ti-circle-check-filled"></i> Fully accredited medical facility</li>
+                        <li class="reveal"><i class="ti ti-circle-check-filled"></i> Secure digital patient records via MediPortal</li>
+                        <li class="reveal"><i class="ti ti-circle-check-filled"></i> Multidisciplinary specialist team</li>
+                        <li class="reveal"><i class="ti ti-circle-check-filled"></i> 24/7 emergency response availability</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================================================
+         PORTAL CTA
+         Full-width gradient block pushing users to log in or sign up.
+         The ::before pseudo-element adds light radial highlights — see styles.css.
+    ====================================================== -->
+    <div class="landing_cta">
+        <div class="landing_cta-inner">
+            <h2 class="landing_cta-title reveal">Ready to Access Your Portal?</h2>
+            <p class="landing_cta-subtitle reveal">
+                Manage your appointments, view your medical records and stay connected
+                with your care team — all in one place.
+            </p>
+            <div class="landing_cta-actions">
+                <a href="index.html" class="landing_btn landing_btn--white reveal">
+                    <i class="ti ti-login"></i> Log In
+                </a>
+                <a href="index.html" class="landing_btn landing_btn--white-outline reveal">
+                    <i class="ti ti-user-plus"></i> Register as Patient
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================
+         FOOTER
+    ====================================================== -->
+    <footer class="landing_footer">
+        <div class="landing_footer-inner">
+
+            <div class="landing_footer-logo">
+                <div class="landing_footer-mark">SG</div>
+                <div class="landing_footer-name">Seattle Grace Hospital</div>
+            </div>
+
+            <ul class="landing_footer-links">
+                <li><a href="#services">Services</a></li>
+                <li><a href="#departments">Departments</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="index.html">Patient Portal</a></li>
+            </ul>
+
+            <div class="landing_footer-copy">&copy; 2026 Seattle Grace Hospital. All rights reserved.</div>
+
+        </div>
+    </footer>
+
+    <script src="js/landing.js"></script>
+
+</body>
+</html>
