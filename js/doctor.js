@@ -232,6 +232,27 @@ function handleBookingDecision(requestID, decision) {
         if (BOOKING_REQUESTS[i].requestID === requestID) {
             //Update its status to "accepted" or "declined".
             BOOKING_REQUESTS[i].status = decision;
+            //Record when acceptance decision was made at.
+            BOOKING_REQUESTS[i].decideAt = Date.now();
+
+            //If doctor accepted, turn request into a real booked appointment so it shows in patient's 'Upcoming'
+            if (decision === "accepted") {
+                var req = BOOKING_REQUESTS[i];
+                var newAppt = {
+                    appointmentID: "ap" + (APPOINTMENTS.length + 100),
+                    patientID: req.patientID,
+                    doctorID: req.doctorID,
+                    date: req.date,
+                    time: req.time,
+                    reason: req.reason,
+                    status: "booked",
+                    notes: "",
+                    bookedBy: req.patientID,
+                    checkInStatus: "pending"
+                };
+                APPOINTMENTS.push(newAppt);
+            }
+
             break;
         }
     }
