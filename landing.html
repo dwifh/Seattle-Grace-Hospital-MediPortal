@@ -10,11 +10,7 @@
 </head>
 <body>
 
-    <!-- ======================================================
-         NAVBAR
-         Fixed to top. .scrolled class added by landing.js on scroll.
-         Active link tracking handled by IntersectionObserver in landing.js.
-    ====================================================== -->
+    <!-- Navbar -->
     <nav class="landing_navbar" id="navbar">
 
         <a href="landing.html" class="landing_navbar-logo">
@@ -40,23 +36,15 @@
 
     </nav>
 
-    <!-- ======================================================
-         HERO
-         Full-viewport section with dot grid pattern, colour blobs,
-         headline, subtitle and two call-to-action buttons.
-         The hero content div is animated via CSS (landing_fadeUp keyframe).
-    ====================================================== -->
+    <!--HERO -->
     <section id="home" class="landing_hero">
-
-        <div class="landing_hero-pattern"></div>
-        <div class="landing_hero-blob landing_hero-blob--blue"></div>
-        <div class="landing_hero-blob landing_hero-blob--green"></div>
-
         <div class="landing_hero-content">
             <div class="landing_hero-eyebrow">
                 <i class="ti ti-heart-filled"></i>
                 Compassionate Care, Advanced Medicine
             </div>
+
+            <!--em tag for the emphasis on prioty-->
             <h1 class="landing_hero-title">
                 Your Health Is Our <em>Priority</em>
             </h1>
@@ -66,26 +54,16 @@
             </p>
             <div class="landing_hero-actions">
                 <a href="index.html" class="landing_btn landing_btn--primary">
-                    <i class="ti ti-login"></i> Patient Portal
+                     Patient Portal
                 </a>
                 <a href="#services" class="landing_btn landing_btn--outline">
                     Our Services
                 </a>
             </div>
         </div>
-
-        <a href="#services" class="landing_hero-scroll">
-            <i class="ti ti-chevron-down"></i>
-            Scroll
-        </a>
-
     </section>
 
-    <!-- ======================================================
-         STATS BAR
-         Key figures displayed in the primary blue band.
-         Each item uses the .reveal class — animated in by landing.js.
-    ====================================================== -->
+    <!-- STATS BAR-->
     <div class="landing_stats">
         <div class="landing_stats-inner">
             <div class="landing_stats-item reveal">
@@ -97,21 +75,17 @@
                 <div class="landing_stats-label">Specialist Doctors</div>
             </div>
             <div class="landing_stats-item reveal">
-                <div class="landing_stats-value">20</div>
-                <div class="landing_stats-label">Hospital Beds</div>
+                <div class="landing_stats-value">945</div>
+                <div class="landing_stats-label">Operational Capacity</div>
             </div>
             <div class="landing_stats-item reveal">
-                <div class="landing_stats-value">Est. 2010</div>
-                <div class="landing_stats-label">Serving Seattle</div>
+                <div class="landing_stats-value">Est. 2026</div>
+                <div class="landing_stats-label">Serving MDX</div>
             </div>
         </div>
     </div>
 
-    <!-- ======================================================
-         SERVICES
-         Six service cards in a 3-column grid.
-         Each card has a top border that slides in on hover (CSS ::before).
-    ====================================================== -->
+    <!--SERVICES-->
     <section id="services" class="landing_section landing_section--alt">
         <div class="landing_section-inner">
 
@@ -163,11 +137,7 @@
         </div>
     </section>
 
-    <!-- ======================================================
-         DEPARTMENTS
-         Eight department cards in a 4-column grid.
-         Cards invert colour on hover — handled entirely in CSS.
-    ====================================================== -->
+    <!-- DEPARTMENTS -->
     <section id="departments" class="landing_section">
         <div class="landing_section-inner">
 
@@ -231,28 +201,19 @@
         </div>
     </section>
 
-    <!-- ======================================================
-         ABOUT
-         Two-column layout: gradient visual block on left, text on right.
-         The floating badge is absolutely positioned over the visual block.
-    ====================================================== -->
+    <!-- ABOUT -->
     <section id="about" class="landing_section landing_section--alt">
         <div class="landing_section-inner">
             <div class="landing_about-inner">
 
                 <div class="landing_about-visual reveal">
-                    <i class="ti ti-building-hospital landing_about-visual-icon"></i>
-                    <div class="landing_about-badge">
-                        <div class="landing_about-badge-value">15+</div>
-                        <div class="landing_about-badge-label">Years of Service</div>
-                    </div>
                 </div>
 
                 <div class="landing_about-content">
                     <p class="landing_section-eyebrow reveal">Who We Are</p>
                     <h2 class="landing_section-title reveal">Built on Trust, Driven by Care</h2>
                     <p class="landing_section-subtitle reveal">
-                        Since 2010, Seattle Grace Hospital has been a cornerstone of the community,
+                        Since 2026, Seattle Grace Hospital has been a cornerstone of the community,
                         providing accessible, high-quality healthcare to thousands of patients every year.
                     </p>
                     <ul class="landing_about-list">
@@ -268,32 +229,7 @@
         </div>
     </section>
 
-    <!-- ======================================================
-         PORTAL CTA
-         Full-width gradient block pushing users to log in or sign up.
-         The ::before pseudo-element adds light radial highlights — see styles.css.
-    ====================================================== -->
-    <div class="landing_cta">
-        <div class="landing_cta-inner">
-            <h2 class="landing_cta-title reveal">Ready to Access Your Portal?</h2>
-            <p class="landing_cta-subtitle reveal">
-                Manage your appointments, view your medical records and stay connected
-                with your care team — all in one place.
-            </p>
-            <div class="landing_cta-actions">
-                <a href="index.html" class="landing_btn landing_btn--white reveal">
-                    <i class="ti ti-login"></i> Log In
-                </a>
-                <a href="index.html" class="landing_btn landing_btn--white-outline reveal">
-                    <i class="ti ti-user-plus"></i> Register as Patient
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- ======================================================
-         FOOTER
-    ====================================================== -->
+    <!-- FOOTER -->
     <footer class="landing_footer">
         <div class="landing_footer-inner">
 
@@ -309,7 +245,7 @@
                 <li><a href="index.html">Patient Portal</a></li>
             </ul>
 
-            <div class="landing_footer-copy">&copy; 2026 Seattle Grace Hospital. All rights reserved.</div>
+            <div class="landing_footer-copy">&copy; 2026 Seattle Grace Hospital (Made for CST2590).</div>
 
         </div>
     </footer>

@@ -1,10 +1,6 @@
 // landing.js — OWNED BY AYUSH
-// Handles all interactivity for landing.html:
-// navbar scroll effect, active nav link tracking, and scroll reveal animations.
 
-// ── NAVBAR SCROLL EFFECT ─────────────────────────────────────
-// Adds a shadow to the navbar once the user scrolls past 20px.
-// This gives the navbar visual depth without being distracting at the top.
+//NAVBAR SCROLL EFFECT 
 
 const navbar = document.getElementById('navbar');
 
@@ -12,10 +8,7 @@ window.addEventListener('scroll', function() {
     navbar.classList.toggle('scrolled', window.scrollY > 20);
 });
 
-// ── ACTIVE NAV LINK ON SCROLL ────────────────────────────────
-// Uses IntersectionObserver to track which section is currently in view.
-// When a section crosses the 40% threshold, its matching nav link is highlighted.
-// This avoids having to manually calculate scroll positions with offsetTop.
+//ACTIVE NAV LINK ON SCROLL
 
 const sections  = document.querySelectorAll('section[id], div[id]');
 const navLinks  = document.querySelectorAll('.nav-link');
@@ -37,11 +30,7 @@ sections.forEach(function(section) {
     navObserver.observe(section);
 });
 
-// ── SCROLL REVEAL ────────────────────────────────────────────
-// Any element with the class "reveal" starts invisible (opacity: 0, translateY: 24px).
-// Once it enters the viewport past a 12% threshold, the "visible" class is added
-// which transitions it to full opacity and its natural position.
-// After becoming visible, the element is unobserved so the transition only fires once.
+// SCROLL REVEAL
 
 const revealObserver = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
@@ -52,6 +41,7 @@ const revealObserver = new IntersectionObserver(function(entries) {
     });
 }, { threshold: 0.12 });
 
+// use "reveal" in tag for smooth reveal animation
 document.querySelectorAll('.reveal').forEach(function(el) {
     revealObserver.observe(el);
 });

@@ -7,7 +7,7 @@ function loadReceptionistDashboard() {
     loadPatientDirectory();
 }
 
-// ── STATS ────────────────────────────────────────────────────
+// STATS
 
 function loadReceptionistStats() {
     document.getElementById('receptionistTotalAppointments').textContent = APPOINTMENTS.length;
@@ -32,7 +32,7 @@ function loadReceptionistStats() {
     document.getElementById('receptionistPending').textContent = pending;
 }
 
-// ── TODAY'S SCHEDULE ─────────────────────────────────────────
+// TODAY'S SCHEDULE 
 
 function loadTodaySchedule() {
     const tbody = document.getElementById('receptionistTodayTbody');
@@ -77,7 +77,7 @@ function loadTodaySchedule() {
     });
 }
 
-// ── ALL APPOINTMENTS ─────────────────────────────────────────
+// ALL APPOINTMENTS
 
 function loadAllAppointments() {
     const tbody = document.getElementById('receptionistAppointmentsTbody');
@@ -112,7 +112,7 @@ function loadAllAppointments() {
     });
 }
 
-// ── PATIENT DIRECTORY ────────────────────────────────────────
+// PATIENT DIRECTORY
 
 function loadPatientDirectory() {
     const tbody = document.getElementById('receptionistPatientsTbody');

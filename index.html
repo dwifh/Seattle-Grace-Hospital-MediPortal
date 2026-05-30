@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
     <link rel="stylesheet" href="css/styles.css"/>
     <link rel="stylesheet" href="css/dashboard.css"/>
 
@@ -202,71 +203,151 @@
 <!-- ==================================================================================================================================== -->
 
         <!--      AYUSH      -->
-
-
         <!--The login PAGE SECTION-->
-        <div id="dashboard-login" >
+        <div id="dashboard-login">
             <div class="login_page">
+        <!-- Back to landing page -->
+                <a href="landing.html" class="login_back">
+                    <i class="ti ti-arrow-left"></i> Back to site
+                </a>
+
                 <div class="login_card">
  
+                    <!-- LOGO -->
                     <div class="login_header">
-                        <div class="login_logo">Seattle Grace Hospital</div>
-                        <h1 class="login_title">Portal Login</h1>
+                        <div class="login_logo-wrap">
+                            <div class="login_logo-mark">SG</div>
+                            <div>
+                                <div class="login_logo-name">Seattle Grace</div>
+                                <div class="login_logo-sub">MediPortal</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- TAB SWITCHER — toggles between login and register -->
+                    <div class="login_tabs">
+                        <button class="login_tab login_tab--active" id="tabLogin" onclick="showTab('login')">Sign In</button>
+                        <button class="login_tab" id="tabRegister" onclick="showTab('register')">Register</button>
+                    </div>
+        
+                    <!-- LOGIN FORM -->
+                    <div id="loginPanel">
                         <p class="login_subtitle">Sign in to access your portal</p>
+        
+                        <!--Using novalidate to remove the automatic browser validation logic (we have a custom one)-->
+                        <form class="login_form" id="loginForm" novalidate>
+        
+                            <div class="login_field">
+                                <label class="login_label" for="username">Username</label>
+                                <input
+                                    class="login_input"
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    placeholder="Enter your username"
+                                    required
+                                />
+                            </div>
+        
+                            <div class="login_field">
+                                <label class="login_label" for="password">Password</label>
+                                <input
+                                    class="login_input"
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    required
+                                />
+                            </div>
+        
+                            <!-- Error message — shown by auth.js on failed login -->
+                            <div class="login_error" id="loginError" hidden>
+                                Invalid username or password. Please try again.
+                            </div>
+        
+                            <!-- Lockout message — placeholder for Tiana's rate-limit logic -->
+                            <div class="login_lockout" id="loginLockout" hidden>
+                                Too many failed attempts. Please wait before trying again.
+                            </div>
+        
+                            <button class="login_btn" type="submit" id="loginBtn">
+                                Sign In
+                            </button>
+        
+                        </form>
+        
+                        <div class="login_footer">
+                            <p>Forgot your credentials? Contact your system administrator.</p>
+                        </div>
                     </div>
-                    
-                    <!--Using novalidate to remove the automatic browser validation logic (we have a custom one)-->
-                    <form class="login_form" id="loginForm" novalidate>
- 
-                        <div class="login_field">
-                            <label class="login_label" for="username">Username</label>
-                            <!--Username input field-->
-                            <input
-                                class="login_input"
-                                type="text"
-                                id="username"
-                                name="username"
-                                placeholder="username"
-                                required
-                            />
-                        </div>
- 
-                        <div class="login_field">
-                            <label class="login_label" for="password">Password</label>
-                            <!--Password input field-->
-                            <input
-                                class="login_input"
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="password"
-                                required
-                            />
-                        </div>
- 
-                        <!-- Error message — shown by auth.js on failed login -->
-                        <div class="login_error" id="loginError" hidden>
-                            Invalid username or password. Please try again.
-                        </div>
- 
-                        <!-- Lockout message — placeholder for the rate-limit logic -->
-                        <div class="login_lockout" id="loginLockout" hidden>
-                            Too many failed attempts. Please wait before trying again.
-                        </div>
- 
-                        <button class="login_btn" type="submit" id="loginBtn">
-                            Sign In
-                        </button>
- 
-                    </form>
- 
-                    <div class="login_footer">
-                        <p>Forgot your credentials? Contact your system administrator.</p>
+        
+                    <!-- REGISTER FORM — placeholder, not functional until backend -->
+                    <div id="registerPanel" hidden>
+                        <p class="login_subtitle">Create a new patient account</p>
+        
+                        <form class="login_form" id="registerForm" novalidate>
+        
+                            <div class="login_form-row">
+                                <div class="login_field">
+                                    <label class="login_label" for="reg_firstName">First Name</label>
+                                    <input class="login_input" type="text" id="reg_firstName" placeholder="First name" />
+                                </div>
+                                <div class="login_field">
+                                    <label class="login_label" for="reg_lastName">Last Name</label>
+                                    <input class="login_input" type="text" id="reg_lastName" placeholder="Last name" />
+                                </div>
+                            </div>
+        
+                            <div class="login_field">
+                                <label class="login_label" for="reg_dob">Date of Birth</label>
+                                <input class="login_input" type="date" id="reg_dob" />
+                            </div>
+        
+                            <div class="login_field">
+                                <label class="login_label" for="reg_nhs">NHS Number</label>
+                                <input class="login_input" type="text" id="reg_nhs" placeholder="000 000 0000" />
+                            </div>
+        
+                            <div class="login_field">
+                                <label class="login_label" for="reg_address">Address</label>
+                                <input class="login_input" type="text" id="reg_address" placeholder="Full address" />
+                            </div>
+        
+                            <div class="login_field">
+                                <label class="login_label" for="reg_telephone">Telephone</label>
+                                <input class="login_input" type="tel" id="reg_telephone" placeholder="07700 000000" />
+                            </div>
+        
+                            <div class="login_field">
+                                <label class="login_label" for="reg_email">Email</label>
+                                <input class="login_input" type="email" id="reg_email" placeholder="email@example.com" />
+                            </div>
+        
+                            <div class="login_form-row">
+                                <div class="login_field">
+                                    <label class="login_label" for="reg_username">Username</label>
+                                    <input class="login_input" type="text" id="reg_username" placeholder="Choose a username" />
+                                </div>
+                                <div class="login_field">
+                                    <label class="login_label" for="reg_password">Password</label>
+                                    <input class="login_input" type="password" id="reg_password" placeholder="Min 8 characters" />
+                                </div>
+                            </div>
+        
+                            <!-- Placeholder notice — registration not functional yet -->
+                            <div class="login_notice">
+                                <i class="ti ti-info-circle"></i>
+                                Registration will be fully functional once the backend is implemented.
+                            </div>
+        
+                            <button class="login_btn" type="button" onclick="alert('Registration coming soon — backend implementation required.')">
+                                Create Account
+                            </button>
+                        </form>
                     </div>
- 
                 </div>
             </div>
- 
         </div>
 
         <div id="dashboard-admin" hidden>
