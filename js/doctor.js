@@ -36,6 +36,7 @@ function loadDoctorDashboard() {
     showDoctorName(doctor);
     showTodayDate();
     showTodayAppointments(doctor);
+    showBookingNotifications(doctor);
     showDoctorStats(doctor);
     showPatientList(doctor);
     fillMedicineDropdown();
@@ -136,6 +137,130 @@ function showTodayAppointments(doctor) {
     setupStatusPills();
 }
 
+//It will show booking notifications for this specific doctor.
+function showBookingNotifications(doctor) {
+    //Get list of where requests will go.
+    var list = document.getElementById("bookingNotifList");
+    list.innerHTML = "";
+
+    //Counter for pending requests.
+    var count = 0;
+
+    //Loop through BOOKING_REQUESTS.
+    for (var i = 0; i < BOOKING_REQUESTS.length; i++) {
+        var req = BOOKING_REQUESTS[i];
+
+        //Skip if the request is not for this doctor OR not still pending.
+        if (req.doctorID !== doctor.doctorID || req.status !== "pending") {
+            continue;
+        }
+
+        count++;
+
+        //Find the patient who sent this request so we can show their name.
+        var patient = null;
+        for (var j = 0; j < PATIENTS.length; j++) {
+            if (PATIENTS[j].patientID === req.patientID) {
+                patient = PATIENTS[j];
+                break;
+            }
+        }
+
+        //Check patient name for display, else "Unknown patient"
+        var patientName = patient ? patient.firstName + " " + patient.lastName : "Unknown patient";
+
+        //Format the date.
+        var dateText = new Date(req.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+        //Build the request row with Accept and Decline buttons.
+        //The buttons carry the request ID so the click handler knows which one to update.
+        var item = document.createElement("li");
+        item.className = "booking_notif_item";
+        item.setAttribute("data-request-id", req.requestID);
+        item.innerHTML =
+            '<div class="booking_notif_body">' +
+                '<p class="booking_notif_name">' + patientName + '</p>' +
+                '<p class="booking_notif_meta">' + dateText + ' · ' + req.time + ' · ' + req.reason + '</p>' +
+            '</div>' +
+            '<div class="booking_notif_actions">' +
+                '<button type="button" class="btn_accept" data-request-id="' + req.requestID + '">Accept</button>' +
+                '<button type="button" class="btn_decline" data-request-id="' + req.requestID + '">Decline</button>' +
+            '</div>';
+        //Append new list to booking_notif_item
+        list.appendChild(item);
+    }
+
+    //Show the count in the header.
+    document.getElementById("bookingNotifCount").textContent = count + " pending";
+
+    //If there are no pending requests, show a friendly message.
+    if (count === 0) {
+        list.innerHTML = "<li class='booking_notif_empty'>No pending booking requests.</li>";
+    }
+
+    //Call to attach the click handlers to the Accept and Decline buttons we just built.
+    setupBookingButtons();
+}
+
+
+//It attaches click handlers to every Accept and Decline button in the booking panel.
+function setupBookingButtons() {
+    //Accept buttons.
+    var acceptBtns = document.querySelectorAll(".btn_accept");
+    for (var i = 0; i < acceptBtns.length; i++) {
+        acceptBtns[i].addEventListener("click", function() {
+            var requestID = this.getAttribute("data-request-id");
+            handleBookingDecision(requestID, "accepted");
+        });
+    }
+
+    //Decline buttons.
+    var declineBtns = document.querySelectorAll(".btn_decline");
+    for (var i = 0; i < declineBtns.length; i++) {
+        declineBtns[i].addEventListener("click", function() {
+            var requestID = this.getAttribute("data-request-id");
+            handleBookingDecision(requestID, "declined");
+        });
+    }
+}
+
+
+//It updates a booking request when the doctor accepts or declines it.
+function handleBookingDecision(requestID, decision) {
+    //Find the request in the BOOKING_REQUESTS array.
+    for (var i = 0; i < BOOKING_REQUESTS.length; i++) {
+        if (BOOKING_REQUESTS[i].requestID === requestID) {
+            //Update its status to "accepted" or "declined".
+            BOOKING_REQUESTS[i].status = decision;
+            //Record when acceptance decision was made at.
+            BOOKING_REQUESTS[i].decideAt = Date.now();
+
+            //If doctor accepted, turn request into a real booked appointment so it shows in patient's 'Upcoming'
+            if (decision === "accepted") {
+                var req = BOOKING_REQUESTS[i];
+                var newAppt = {
+                    appointmentID: "ap" + (APPOINTMENTS.length + 100),
+                    patientID: req.patientID,
+                    doctorID: req.doctorID,
+                    date: req.date,
+                    time: req.time,
+                    reason: req.reason,
+                    status: "booked",
+                    notes: "",
+                    bookedBy: req.patientID,
+                    checkInStatus: "pending"
+                };
+                APPOINTMENTS.push(newAppt);
+            }
+
+            break;
+        }
+    }
+
+    //Refresh the panel so the handled request disappears and the count updates.
+    var doctor = getLoggedInDoctor();
+    showBookingNotifications(doctor);
+}
 
 //It makes every status pill in "Today's patient" clickable
 //When clicked, it will cycle from Waiting, In Progress, Done, Waiting...

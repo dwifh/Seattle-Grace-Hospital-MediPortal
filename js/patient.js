@@ -40,6 +40,7 @@ function loadPatientDashboard() {
     showPatientPrescriptions(patient);
     showPatientHistory(patient);
     showWeekStrip(patient);
+    showBookingStatus(patient)
     fillDoctorDropdown();
     setupFilterButtons();
     setupBookingForm();
@@ -242,6 +243,9 @@ function showPatientHistory(patient) {
     var timeline = document.getElementById("historyTimeline");
     timeline.innerHTML = "";
 
+    //Design for animated timeline. 'ALL' is the default selected filter.
+    timeline.classList.add("timeline_all_active");
+
     //Collect medical history entries for specific patients in their own personal array
     var entries = []
     //Loop through MEDICAL_HISTORY array and push items at the end of array
@@ -314,6 +318,14 @@ function setupFilterButtons() {
  
             //Read which filter this button represents from its data-filter attribute
             var filter = this.getAttribute("data-filter");
+
+            //Animated design for timeline should only show when filter is on 'ALL'
+             var timeline = document.getElementById("historyTimeline");
+            if (filter === "all") {
+                timeline.classList.add("timeline_all_active");
+            } else {
+                timeline.classList.remove("timeline_all_active");
+            }
  
             //Get all timeline items so we can show or hide them
             var items = document.querySelectorAll(".timeline_item");
@@ -435,7 +447,13 @@ function fillDoctorDropdown() {
  
     //Get the <select> element in the booking form
     var select = document.getElementById("apptDoctor");
- 
+    
+    //It clears any existing options if there's a re-login so doctors don't stack up and appear twice.
+    while(select.options.length > 1) {
+        select.remove(1)
+    }
+
+
     //Add one <option> for each doctor in the DOCTORS array
     for (var i = 0; i < DOCTORS.length; i++) {
  
@@ -450,6 +468,77 @@ function fillDoctorDropdown() {
  
         //append this option to the select — it appears below the default "Choose a doctor..." option
         select.appendChild(option);
+    }
+}
+
+//It handles booking status bar
+function showBookingStatus(patient) {
+    //Get the table body where the rows will go.
+    var tableBody = document.getElementById("bookingStatusBody");
+
+    //If the bar isn't on the page for some reason, stop safely.
+    if (!tableBody) return;
+
+    tableBody.innerHTML = "";
+
+    //Time constants in milliseconds.
+    var oneDay = 24 * 60 * 60 * 1000;
+    var sevenDays = 7 * oneDay;
+    var now = Date.now();
+
+    //Counter so we can show an empty message if nothing is visible.
+    var shown = 0;
+
+    //Loop through BOOKING_REQUESTS and show the ones that belong to this patient.
+    for (var i = 0; i < BOOKING_REQUESTS.length; i++) {
+        var req = BOOKING_REQUESTS[i];
+
+        //Skip requests that aren't this patient's.
+        if (req.patientID !== patient.patientID) continue;
+
+        //Work out how long ago this request was submitted or decided on.
+        var stamp = req.decidedAt ? req.decidedAt : (req.submittedAt ? req.submittedAt : now);
+        var age = now - stamp;
+
+        //Apply the clearing rules based on status.
+        if (req.status === "pending" && age > sevenDays) continue;
+        if (req.status === "accepted" && age > oneDay) continue;
+        if (req.status === "declined" && age > oneDay) continue;
+
+        //Find the doctor for this request so we can show their name.
+        var doc = null;
+        for (var j = 0; j < DOCTORS.length; j++) {
+            if (DOCTORS[j].doctorID === req.doctorID) {
+                doc = DOCTORS[j];
+                break;
+            }
+        }
+        var docName = doc ? "Dr " + doc.lastName : "Unknown";
+
+        //Format the date nicely e.g. "15 Jun 2026".
+        var dateText = new Date(req.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+        //Pick the colour class for the status pill.
+        var statusClass = "status_bar_pending";
+        if (req.status === "accepted") statusClass = "status_bar_accepted";
+        if (req.status === "declined") statusClass = "status_bar_declined";
+
+        //Build the row: Booking column (reason, date, time, doctor) + Status column.
+        var row = document.createElement("tr");
+        row.innerHTML =
+            '<td>' +
+                '<p class="status_bar_reason">' + req.reason + '</p>' +
+                '<p class="status_bar_meta">' + dateText + ' · ' + req.time + ' · ' + docName + '</p>' +
+            '</td>' +
+            '<td><span class="status_bar_pill ' + statusClass + '">' + req.status + '</span></td>';
+
+        tableBody.appendChild(row);
+        shown++;
+    }
+
+    //If nothing is visible, show a friendly empty row spanning both columns.
+    if (shown === 0) {
+        tableBody.innerHTML = "<tr><td colspan='2' class='status_bar_empty'>No booking requests yet.</td></tr>";
     }
 }
 
@@ -468,6 +557,7 @@ function setupBookingForm() {
  
         //Read the current value from each form field
         var date   = document.getElementById("apptDate").value;
+        var time = document.getElementById("apptTime").value;
         var doctor = document.getElementById("apptDoctor").value;
         var reason = document.getElementById("apptReason").value;
  
@@ -481,16 +571,33 @@ function setupBookingForm() {
  
         //Validation check: check none of the fields are empty
         //An empty input has value "" which is a falsy value in JavaScript
-        if (date === "" || doctor === "" || reason === "") {
+        if (date === "" || time === "" || doctor === "" || reason === "") {
             //Show the red error paragraph
             errorMsg.hidden = false; 
             return;
         }
  
-        //All fields are filled that show the green success message
+        var patient = getLoggedInPatient();
+        var newRequest = {
+            requestID: "br" + (BOOKING_REQUESTS.length + 100),
+            patientID: patient.patientID,
+            doctorID: doctor,
+            date: date,
+            time: time,
+            reason: reason,
+            status: "pending",
+            //submittedAt lets the Status Bar know when to clear the request.
+            submittedAt: Date.now()
+        };
+        BOOKING_REQUESTS.push(newRequest);
+
+        //Show the green success message.
         successMsg.hidden = false;
- 
+
         //.reset() clears all the form fields back to their default empty state
         form.reset();
+
+        //Refresh our own Booking Status Bar so the new pending request appears.
+        showBookingStatus(patient);
     });
 }
