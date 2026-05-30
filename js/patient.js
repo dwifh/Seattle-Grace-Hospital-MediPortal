@@ -446,7 +446,13 @@ function fillDoctorDropdown() {
  
     //Get the <select> element in the booking form
     var select = document.getElementById("apptDoctor");
- 
+    
+    //It clears any existing options if there's a re-login so doctors don't stack up and appear twice.
+    while(select.options.length > 1) {
+        select.remove(1);
+    }
+
+
     //Add one <option> for each doctor in the DOCTORS array
     for (var i = 0; i < DOCTORS.length; i++) {
  
