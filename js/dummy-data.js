@@ -128,6 +128,7 @@ const DOCTORS = [
     gmcNumber: "GMC7421988",
     specialty: "General Practice",        
     email: "priya.patel@mediportal.us",
+    information: "A board-certified general practitioner with over 12 years of experience, Dr. Patel is known for her compassionate, patient-first approach to family medicine. She earned her MD from the University of Washington and has a special interest in preventive care and chronic disease management."
   },
 
  {
@@ -138,6 +139,7 @@ const DOCTORS = [
     gmcNumber: "GMC8993211",
     specialty: "General Practice",
     email: "james.whitfield@mediportal.us",
+    information: "With a background in sports medicine and urgent care, Dr. Whitfield brings 9 years of hands-on experience to Seattle Grace Hospital. Patients appreciate his direct, evidence-based style and his dedication to helping busy Seattle professionals maintain their health."
   },
 
   {
@@ -148,6 +150,7 @@ const DOCTORS = [
     gmcNumber: "GMC6112847",
     specialty: "Paediatrics",              //child specialist for Liam
     email: "aisha.khan@mediportal.us",
+    information: "A fellowship-trained paediatrician who has been caring for children of all ages for over a decade, Dr. Khan is passionate about early childhood development and asthma management. She is known for her warm, playful demeanor that puts both kids and parents at ease during every visit."
   }
 ];
 
