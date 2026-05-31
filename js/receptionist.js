@@ -12,7 +12,7 @@ function loadReceptionistDashboard() {
 function loadReceptionistStats() {
     document.getElementById('receptionistTotalAppointments').textContent = APPOINTMENTS.length;
 
-    // Get today's date in YYYY-MM-DD format to match dummy-data.js date strings
+    // Get today's date in YYYY-MM-DD format (ISO Format) to match dummy-data.js date strings
     const today = new Date().toISOString().slice(0, 10);
 
     const todayAppointments = APPOINTMENTS.filter(function(a) {
