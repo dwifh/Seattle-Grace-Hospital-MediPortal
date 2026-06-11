@@ -17,7 +17,9 @@ function seedDatabase() {
             seedDoctors();
             seedMedicines();
             seedAdmins();
-            seed
+            seedNurses();
+            seedReceptionists();
+            seedGuardians();
         });
     });
 }
