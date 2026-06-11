@@ -1,0 +1,57 @@
+[
+ {
+    "guardianID": "g001",
+    "firstName": "Sinead",
+    "lastName": "O'Connor",
+    "relationship": "son",               
+    "linkedPatientID": "p003",               
+    "email": "sinead.guardian@example.com",
+    "telephone": "07700 900345",
+    "consentGranted": true,                  
+    "consentDate": "2026-01-15"
+  },
+  {
+    "guardianID": "g002",
+    "firstName": "Niamh",
+    "lastName": "Osei",
+    "relationship": "grandfather",
+    "linkedPatientID": "p005",
+    "email": "niamh.osei@example.com",
+    "telephone": "07292 570269",
+    "consentGranted": true,
+    "consentDate": "2026-01-16"
+  },
+  {
+    "guardianID": "g003",
+    "firstName": "Cora",
+    "lastName": "Santos",
+    "relationship": "grandmother",
+    "linkedPatientID": "p006",
+    "email": "cora.santos@example.com",
+    "telephone": "07477 486129",
+    "consentGranted": true,
+    "consentDate": "2026-01-26"
+  },
+  {
+    "guardianID": "g004",
+    "firstName": "Beth",
+    "lastName": "Lawson",
+    "relationship": "grandmother",
+    "linkedPatientID": "p007",
+    "email": "beth.lawson@example.com",
+    "telephone": "07818 233059",
+    "consentGranted": true,
+    "consentDate": "2026-01-23"
+  },
+  {
+    "guardianID": "g005",
+    "firstName": "Zoe",
+    "lastName": "Andersen",
+    "relationship": "uncle",
+    "linkedPatientID": "p008",
+    "email": "zoe.andersen@example.com",
+    "telephone": "07937 810572",
+    "consentGranted": true,
+    "consentDate": "2026-01-22"
+  }
+]
