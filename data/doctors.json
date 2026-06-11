@@ -1,0 +1,102 @@
+[
+ {
+    "doctorID": "d001",
+    "firstName": "Priya",
+    "lastName": "Patel",
+    "title": "Dr",
+    "gmcNumber": "GMC7421988",
+    "specialty": "General Practice",        
+    "email": "priya.patel@mediportal.us",
+    "information": "A board-certified general practitioner with over 12 years of experience, Dr. Patel is known for her compassionate, patient-first approach to family medicine. She earned her MD from the University of Washington and has a special interest in preventive care and chronic disease management."
+  },
+  {
+    "doctorID": "d002",
+    "firstName": "James",
+    "lastName": "Whitfield",
+    "title": "Dr",
+    "gmcNumber": "GMC8993211",
+    "specialty": "General Practice",
+    "email": "james.whitfield@mediportal.us",
+    "information": "With a background in sports medicine and urgent care, Dr. Whitfield brings 9 years of hands-on experience to Seattle Grace Hospital. Patients appreciate his direct, evidence-based style and his dedication to helping busy Seattle professionals maintain their health."
+  },
+  {
+    "doctorID": "d003",
+    "firstName": "Aisha",
+    "lastName": "Khan",
+    "title": "Dr",
+    "gmcNumber": "GMC6112847",
+    "specialty": "Paediatrics",              
+    "email": "aisha.khan@mediportal.us",
+    "information": "A fellowship-trained paediatrician who has been caring for children of all ages for over a decade, Dr. Khan is passionate about early childhood development and asthma management. She is known for her warm, playful demeanor that puts both kids and parents at ease during every visit."
+  },
+  {
+    "doctorID": "d004",
+    "firstName": "Declan",
+    "lastName": "Osei",
+    "title": "Dr",
+    "gmcNumber": "GMC1524750",
+    "specialty": "Rheumatology",
+    "email": "declan.osei@mediportal.us",
+    "information": "A dedicated specialist with over 8 years of clinical experience, committed to evidence-based care and strong patient communication."
+  },
+  {
+    "doctorID": "d005",
+    "firstName": "Tariq",
+    "lastName": "Adeyemi",
+    "title": "Dr",
+    "gmcNumber": "GMC8166815",
+    "specialty": "Rheumatology",
+    "email": "tariq.adeyemi@mediportal.us",
+    "information": "A dedicated specialist with over 8 years of clinical experience, committed to evidence-based care and strong patient communication."
+  },
+  {
+    "doctorID": "d006",
+    "firstName": "Ryan",
+    "lastName": "Tran",
+    "title": "Dr",
+    "gmcNumber": "GMC9324912",
+    "specialty": "Neurology",
+    "email": "ryan.tran@mediportal.us",
+    "information": "An enthusiastic educator and clinician who mentors junior staff while maintaining an active patient caseload."
+  },
+  {
+    "doctorID": "d007",
+    "firstName": "Zoe",
+    "lastName": "Lawson",
+    "title": "Dr",
+    "gmcNumber": "GMC9792433",
+    "specialty": "Cardiology",
+    "email": "zoe.lawson@mediportal.us",
+    "information": "Combines technical expertise with genuine empathy, building long-term relationships with patients and their families."
+  },
+  {
+    "doctorID": "d008",
+    "firstName": "Leon",
+    "lastName": "Santos",
+    "title": "Dr",
+    "gmcNumber": "GMC4487096",
+    "specialty": "Gastroenterology",
+    "email": "leon.santos@mediportal.us",
+    "information": "A highly regarded clinician whose research background informs a precise, data-driven approach to diagnosis and treatment."
+  },
+  {
+    "doctorID": "d009",
+    "firstName": "Isla",
+    "lastName": "Murphy",
+    "title": "Dr",
+    "gmcNumber": "GMC3661553",
+    "specialty": "Gastroenterology",
+    "email": "isla.murphy@mediportal.us",
+    "information": "Specialises in complex case management and cross-disciplinary collaboration within multidisciplinary teams."
+  },
+  {
+    "doctorID": "d010",
+    "firstName": "Leon",
+    "lastName": "Nguyen",
+    "title": "Dr",
+    "gmcNumber": "GMC2667143",
+    "specialty": "Rheumatology",
+    "email": "leon.nguyen@mediportal.us",
+    "information": "An enthusiastic educator and clinician who mentors junior staff while maintaining an active patient caseload."
+  }
+]

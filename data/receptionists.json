@@ -1,0 +1,42 @@
+[
+  {
+    "receptionistID": "r001",
+    "firstName": "Chloe",
+    "lastName": "Davies",
+    "email": "chloe.davies@mediportal.us",
+    "deskNumber": "Reception 1",
+    "canCancelAppointments": true         
+  },
+  {
+    "receptionistID": "r002",
+    "firstName": "Omar",
+    "lastName": "Hussain",
+    "email": "omar.hussain@mediportal.us",
+    "deskNumber": "Reception 2",
+    "canCancelAppointments": true
+  },
+  {
+    "receptionistID": "r003",
+    "firstName": "Serena",
+    "lastName": "Wright",
+    "email": "serena.wright@mediportal.us",
+    "deskNumber": "Reception 3",
+    "canCancelAppointments": true
+  },
+  {
+    "receptionistID": "r004",
+    "firstName": "Finn",
+    "lastName": "Castillo",
+    "email": "finn.castillo@mediportal.us",
+    "deskNumber": "Reception 4",
+    "canCancelAppointments": true
+  },
+  {
+    "receptionistID": "r005",
+    "firstName": "Niamh",
+    "lastName": "Reid",
+    "email": "niamh.reid@mediportal.us",
+    "deskNumber": "Reception 5",
+    "canCancelAppointments": true
+  }
+]

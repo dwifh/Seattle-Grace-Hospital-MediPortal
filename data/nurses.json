@@ -1,0 +1,82 @@
+[
+    {
+    "nurseID": "n001",
+    "firstName": "Karen",
+    "lastName": "Smith",
+    "title": "Nurse",
+    "nmcNumber": "NMC1234567",
+    "email": "karen.smith@mediportal.us",
+    "registeredPatient": ["p001"],
+    "canCheckVitals": true                    
+  },
+  {
+    "nurseID": "n002",
+    "firstName": "David",
+    "lastName": "Johnson",
+    "title": "Nurse",
+    "nmcNumber": "NMC7654321",
+    "email": "david.johnson@mediportal.us",
+    "registeredPatient": ["p003"],
+    "canCheckVitals": true
+  },
+  {
+    "nurseID": "n003",
+    "firstName": "Emily",
+    "lastName": "Clark",
+    "title": "Nurse",
+    "nmcNumber": "NMC2468101",
+    "email": "emily.clark@mediportal.us",
+    "registeredPatient": ["p004", "p002"],
+    "canCheckVitals": true
+  },
+  {
+    "nurseID": "n004",
+    "firstName": "Talia",
+    "lastName": "Hassan",
+    "title": "Nurse",
+    "nmcNumber": "NMC2220454",
+    "email": "talia.hassan@mediportal.us",
+    "registeredPatient": ["p014","p008"],
+    "canCheckVitals": true
+  },
+  {
+    "nurseID": "n005",
+    "firstName": "Matteo",
+    "lastName": "Nakamura",
+    "title": "Nurse",
+    "nmcNumber": "NMC1111267",
+    "email": "matteo.nakamura@mediportal.us",
+    "registeredPatient": ["p013","p005"],
+    "canCheckVitals": true
+  },
+  {
+    "nurseID": "n006",
+    "firstName": "Yasmin",
+    "lastName": "Ferreira",
+    "title": "Nurse",
+    "nmcNumber": "NMC6224746",
+    "email": "yasmin.ferreira@mediportal.us",
+    "registeredPatient": ["p009","p011"],
+    "canCheckVitals": true
+  },
+  {
+    "nurseID": "n007",
+    "firstName": "Alex",
+    "lastName": "Murphy",
+    "title": "Nurse",
+    "nmcNumber": "NMC1509685",
+    "email": "alex.murphy@mediportal.us",
+    "registeredPatient": ["p007","p014"],
+    "canCheckVitals": true
+  },
+  {
+    "nurseID": "n008",
+    "firstName": "Tariq",
+    "lastName": "Fleming",
+    "title": "Nurse",
+    "nmcNumber": "NMC7935733",
+    "email": "tariq.fleming@mediportal.us",
+    "registeredPatient": ["p011","p001"],
+    "canCheckVitals": true
+  }
+]
