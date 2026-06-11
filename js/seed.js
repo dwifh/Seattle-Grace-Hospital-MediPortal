@@ -33,6 +33,7 @@ function seedPeople() {
             //Loop through every person in JSON file.
             for (var i = 0; i < people.length; i++) {
                 var person = people[i];
+                //debugging purposes: check if required fields are present. If not, skip this record and move to the next one.
                 if (!person.First || !person.Last || !person.NHS) {
                     console.log("Skipping person id " + person.id + " — missing required field.");
                     continue;    // ← jumps to the next person, doesn't crash
@@ -140,9 +141,10 @@ function seedAdmins() {
         .then(function(admins) {
             for (var i = 0; i < admins.length; i++) {
                 var admin = admins[i];
-                if (!admin.username) {
-                console.log("Skipping admin record at index " + i + " — missing username.");
-                continue;
+                //debugging: check if required fields are present. If not, skip this record and move to the next one.
+                if (!admin.username || !admin.password) {
+                    console.log("Skipping admin record at index " + i + " — missing required fields.");
+                    continue;
                 }
                 putRecord("users", {
                     username: admin.username,

@@ -1,0 +1,23 @@
+[
+  {
+    "adminID": "a001",
+    "firstName": "Helen",
+    "lastName": "Morgan",
+    "role": "Practice Manager",
+    "email": "helen.morgan@mediportal.us"
+  },
+  {
+    "adminID": "a002",
+    "firstName": "Zoe",
+    "lastName": "Tran",
+    "role": "Finance Officer",
+    "email": "zoe.tran@mediportal.us"
+  },
+  {
+    "adminID": "a003",
+    "firstName": "Talia",
+    "lastName": "Fleming",
+    "role": "Compliance Officer",
+    "email": "talia.fleming@mediportal.us"
+  }
+]

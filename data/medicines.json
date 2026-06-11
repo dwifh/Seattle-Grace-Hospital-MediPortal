@@ -1,162 +1,162 @@
 [
-    {
-        "id": 1,
-        "Drug": "Nabumetone"
-    },
-    {
-        "id": 2,
-        "Drug": "Vanilla"
-    },
-    {
-        "id": 3,
-        "Drug": "atovaquone and proguanil hydrochloride"
-    },
-    {
-        "id": 4,
-        "Drug": "lorazepam"
-    },
-    {
-        "id": 5,
-        "Drug": "Aconitum napellus, Onion, Arnica montana, Antropa Belladonna, Solanum Dulcamara Top, Eupatorium Cannabinum Whole Flowering, Gelsemium Sempervirens Root"
-    },
-    {
-        "id": 6,
-        "Drug": "BETHANECHOL CHLORIDE"
-    },
-    {
-        "id": 7,
-        "Drug": "Hydrocodone Bitartrate and Acetaminophen"
-    },
-    {
-        "id": 8,
-        "Drug": "alprazolam"
-    },
-    {
-        "id": 9,
-        "Drug": "Acetaminophen, Dextromethorphan HBr, Doxylamine succinate, Phenylephrine HCl"
-    },
-    {
-        "id": 10,
-        "Drug": "Docusate Sodium and Senna"
-    },
-    {
-        "id": 11,
-        "Drug": "DROSERA, ARNICA MONTANA, BRYONIA, CETRARIA ISLANDICA, BELLADONNA, COCCUS CACTI, CORALLIUM RUBRUM, STANNUM METALLICUM, CHAMOMILLA, COFFEA CRUDA"
-    },
-    {
-        "id": 12,
-        "Drug": "Trazodone Hydrochloride"
-    },
-    {
-        "id": 13,
-        "Drug": "Chlordiazepoxide Hydrochloride"
-    },
-    {
-        "id": 14,
-        "Drug": "Trazodone Hydrochloride"
-    },
-    {
-        "id": 15,
-        "Drug": "Magnesium Hydroxide"
-    },
-    {
-        "id": 16,
-        "Drug": "Zinc Oxide"
-    },
-    {
-        "id": 17,
-        "Drug": "TOBRAMYCIN SULFATE"
-    },
-    {
-        "id": 18,
-        "Drug": "Atomoxetine hydrochloride"
-    },
-    {
-        "id": 19,
-        "Drug": "CAMPHOR, EUCALYPTUS OIL and MENTHOL"
-    },
-    {
-        "id": 20,
-        "Drug": "Diphenhydramine Hydrochloride"
-    },
-    {
-        "id": 21,
-        "Drug": "lamotrigine"
-    },
-    {
-        "id": 22,
-        "Drug": "Acetaminophen"
-    },
-    {
-        "id": 23,
-        "Drug": "polyethylene glycol"
-    },
-    {
-        "id": 24,
-        "Drug": "Hydralazine Hydrochloride"
-    },
-    {
-        "id": 25,
-        "Drug": "Ramipril"
-    },
-    {
-        "id": 26,
-        "Drug": "CAMPHOR (NATURAL), MENTHOL,METHYL SALICYLATE"
-    },
-    {
-        "id": 27,
-        "Drug": "Menthol"
-    },
-    {
-        "id": 28,
-        "Drug": "Gabapentin"
-    },
-    {
-        "id": 29,
-        "Drug": "Fexofenadine HCl"
-    },
-    {
-        "id": 30,
-        "Drug": "Famotidine"
-    },
-    {
-        "id": 31,
-        "Drug": "Galantamine hydrobromide"
-    },
-    {
-        "id": 32,
-        "Drug": "RISPERIDONE"
-    },
-    {
-        "id": 33,
-        "Drug": "Amlodipine Besylate"
-    },
-    {
-        "id": 34,
-        "Drug": "OCTINOXATE, OCTISALATE, OXYBENZONE, OCTOCRYLENE, and AVOBENZONE"
-    },
-    {
-        "id": 35,
-        "Drug": "Labetalol Hydrochloride"
-    },
-    {
-        "id": 36,
-        "Drug": "Lovastatin"
-    },
-    {
-        "id": 37,
-        "Drug": "Ethyl Alcohol"
-    },
-    {
-        "id": 38,
-        "Drug": "Bupropion Hydrochloride"
-    },
-    {
-        "id": 39,
-        "Drug": "OXYBENZONE, AVOBENZONE, OCTOCRYLENE"
-    },
-    {
-        "id": 40,
-        "Drug": "Salicylic Acid"
-    }
+{
+    "medicineID": "m001",
+    "name": "Amoxicillin",
+    "form": "capsule",                       
+    "strength": "500mg",
+    "category": "antibiotic",
+    "commonSideEffects": ["nausea","rash"]
+  },
+  {
+    "medicineID": "m002",
+    "name": "Ibuprofen",
+    "form": "tablet",
+    "strength": "400mg",
+    "category": "painkiller",
+    "commonSideEffects": ["upset stomach","dizziness"]
+  },
+  {
+    "medicineID": "m003",
+    "name": "Salbutamol Inhaler",
+    "form": "inhaler",
+    "strength": "100mcg/puff",
+    "category": "respiratory",
+    "commonSideEffects": ["tremor","headache"]
+  },
+  {
+    "medicineID": "m004",
+    "name": "Paracetamol",
+    "form": "tablet",
+    "strength": "500mg",
+    "category": "painkiller",
+    "commonSideEffects": []
+  },
+  {
+    "medicineID": "m005",
+    "name": "Loratadine",
+    "form": "tablet",
+    "strength": "10mg",
+    "category": "antihistamine",
+    "commonSideEffects": ["drowsiness"]
+  },
+  {
+    "medicineID": "m006",
+    "name": "Metformin",
+    "form": "tablet",
+    "strength": "500mg",
+    "category": "antidiabetic",
+    "commonSideEffects": ["nausea","diarrhoea"]
+  },
+  {
+    "medicineID": "m007",
+    "name": "Atorvastatin",
+    "form": "tablet",
+    "strength": "20mg",
+    "category": "statin",
+    "commonSideEffects": ["muscle pain","headache"]
+  },
+  {
+    "medicineID": "m008",
+    "name": "Lisinopril",
+    "form": "tablet",
+    "strength": "10mg",
+    "category": "ACE inhibitor",
+    "commonSideEffects": ["dry cough","dizziness"]
+  },
+  {
+    "medicineID": "m009",
+    "name": "Omeprazole",
+    "form": "capsule",
+    "strength": "20mg",
+    "category": "antacid",
+    "commonSideEffects": ["headache","nausea"]
+  },
+  {
+    "medicineID": "m010",
+    "name": "Sertraline",
+    "form": "tablet",
+    "strength": "50mg",
+    "category": "antidepressant",
+    "commonSideEffects": ["insomnia","dry mouth"]
+  },
+  {
+    "medicineID": "m011",
+    "name": "Cetirizine",
+    "form": "tablet",
+    "strength": "10mg",
+    "category": "antihistamine",
+    "commonSideEffects": ["drowsiness","dry mouth"]
+  },
+  {
+    "medicineID": "m012",
+    "name": "Ramipril",
+    "form": "tablet",
+    "strength": "5mg",
+    "category": "ACE inhibitor",
+    "commonSideEffects": ["dizziness","fatigue"]
+  },
+  {
+    "medicineID": "m013",
+    "name": "Amlodipine",
+    "form": "tablet",
+    "strength": "5mg",
+    "category": "calcium channel blocker",
+    "commonSideEffects": ["ankle swelling","flushing"]
+  },
+  {
+    "medicineID": "m014",
+    "name": "Levothyroxine",
+    "form": "tablet",
+    "strength": "50mcg",
+    "category": "thyroid hormone",
+    "commonSideEffects": ["palpitations","weight loss"]
+  },
+  {
+    "medicineID": "m015",
+    "name": "Prednisolone",
+    "form": "tablet",
+    "strength": "5mg",
+    "category": "corticosteroid",
+    "commonSideEffects": ["weight gain","mood changes"]
+  },
+  {
+    "medicineID": "m016",
+    "name": "Codeine",
+    "form": "tablet",
+    "strength": "30mg",
+    "category": "opioid analgesic",
+    "commonSideEffects": ["constipation","drowsiness"]
+  },
+  {
+    "medicineID": "m017",
+    "name": "Fluoxetine",
+    "form": "capsule",
+    "strength": "20mg",
+    "category": "antidepressant",
+    "commonSideEffects": ["anxiety","insomnia"]
+  },
+  {
+    "medicineID": "m018",
+    "name": "Warfarin",
+    "form": "tablet",
+    "strength": "5mg",
+    "category": "anticoagulant",
+    "commonSideEffects": ["bruising","bleeding risk"]
+  },
+  {
+    "medicineID": "m019",
+    "name": "Trimethoprim",
+    "form": "tablet",
+    "strength": "200mg",
+    "category": "antibiotic",
+    "commonSideEffects": ["nausea","rash"]
+  },
+  {
+    "medicineID": "m020",
+    "name": "Furosemide",
+    "form": "tablet",
+    "strength": "40mg",
+    "category": "diuretic",
+    "commonSideEffects": ["thirst","low blood pressure"]
+  }
 ]
