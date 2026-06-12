@@ -1,12 +1,7 @@
-//doctor.js — wired to IndexedDB (Tiana).
-//Same strategy as patient.js: read from IndexedDB first, fall back to the dummy-data.js
-//arrays if a store is empty or the DB hasn't been seeded yet, so the dashboard keeps
-//working in parallel during the migration. All write actions (booking decisions, status
-//pill changes, clinical notes, prescriptions) persist into IndexedDB via putRecord.
+//doctor.js being wired to IndexedDB.
 
-//DDATA is the module-level cache for the doctor dashboard. It is filled once by
-//loadDoctorData() before anything renders, so the render functions stay synchronous and
-//read from here instead of the global arrays.
+//DDATA is the module-level cache for the doctor dashboard. It is filled once by loadDoctorData().
+
 var DDATA = {
     doctor: null,
     doctors: [],
@@ -19,10 +14,8 @@ var DDATA = {
 };
 
 
-//----DATA LOADING HELPERS----
-
-//loadStoreD fetches every record from one object store. If the store is empty (not seeded
-//yet) or the read fails, it hands back the dummy-data fallback array instead.
+//loadStoreD fetches every record from one object store. 
+//It hands back the dummy-data fallback array if read fails.
 function loadStoreD(storeName, fallbackArray, callback) {
     getAllRecords(storeName, function(records) {
         if (records && records.length > 0) {
@@ -40,7 +33,7 @@ function findDoctorInDummy(doctorID) {
             return DOCTORS[i];
         }
     }
-    //Demo fallback — Dr Priya Patel (d001).
+    //Demo fallback;  Dr Priya Patel (d001).
     for (var i = 0; i < DOCTORS.length; i++) {
         if (DOCTORS[i].doctorID === "d001") {
             return DOCTORS[i];
@@ -716,8 +709,7 @@ function setupNoteForm() {
             return;
         }
 
-        //Build a new history entry. historyID is the keyPath of the medicalHistory store,
-        //so it MUST be set or the record cannot be stored (this was missing before).
+        //Build a new history entry. historyID is the keyPath of the medicalHistory store.
         var newEntry = {
             historyID: "h" + Date.now(),
             patientID: patient.patientID,
@@ -771,8 +763,7 @@ function setupRxForm() {
         }
 
 
-        //Build new prescription. prescriptionID is the keyPath of the prescriptions store,
-        //so it MUST be set or the record cannot be stored (this was missing before).
+        //Build new prescription. prescriptionID is the keyPath of the prescriptions store.
         var newRx = {
             prescriptionID: "rx" + Date.now(),
             patientID: patient.patientID,
