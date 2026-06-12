@@ -1,11 +1,11 @@
-//doctor.js being wired to IndexedDB.
+//doctor.js, wired to IndexedDB (Tiana).
 
-//DDATA is the module-level cache for the doctor dashboard. It is filled once by loadDoctorData().
-
+//DDATA is the module-level cache for the doctor dashboard. It is filled once by loadDoctorData()
 var DDATA = {
     doctor: null,
     doctors: [],
     patients: [],
+    guardians: [],
     appointments: [],
     bookingRequests: [],
     prescriptions: [],
@@ -13,9 +13,8 @@ var DDATA = {
     history: []
 };
 
-
-//loadStoreD fetches every record from one object store. 
-//It hands back the dummy-data fallback array if read fails.
+//loadStoreD fetches every record from one object store. If the store is empty (not seeded
+//yet) or the read fails, it hands back the dummy-data fallback array instead.
 function loadStoreD(storeName, fallbackArray, callback) {
     getAllRecords(storeName, function(records) {
         if (records && records.length > 0) {
@@ -33,7 +32,7 @@ function findDoctorInDummy(doctorID) {
             return DOCTORS[i];
         }
     }
-    //Demo fallback;  Dr Priya Patel (d001).
+    //Demo fallback — Dr Priya Patel (d001).
     for (var i = 0; i < DOCTORS.length; i++) {
         if (DOCTORS[i].doctorID === "d001") {
             return DOCTORS[i];
@@ -56,6 +55,7 @@ function loadDoctorData(onReady) {
         var jobs = [
             ["doctors",          DOCTORS,          "doctors"],
             ["patients",         PATIENTS,         "patients"],
+            ["guardians",        GUARDIAN,         "guardians"],
             ["appointments",     APPOINTMENTS,     "appointments"],
             ["booking_requests", BOOKING_REQUESTS, "bookingRequests"],
             ["prescriptions",    PRESCRIPTIONS,    "prescriptions"],
@@ -88,6 +88,64 @@ function getLoggedInDoctor() {
     var session = getSession();
     var doctorID = (session && session.doctorID) ? session.doctorID : "d001";
     return findDoctorInDummy(doctorID);
+}
+
+
+//----NOTIFICATION SIDE-EFFECTS (doctor → guardian)----
+//A notification comes When a doctor acts on a CHILD patient (one whose guardianID is not null)
+//Created for that patient's GUARDIAN, not the patient.
+//If the patient is an adult (guardianID is null), no guardian notification is created.
+
+//Builds a guardian's username with the same formula seed.js uses: firstname.lastname, letters only.
+function makeGuardianUsername(guardian) {
+    return guardian.firstName.toLowerCase().replace(/[^a-z]/g, "")
+        + "."
+        + guardian.lastName.toLowerCase().replace(/[^a-z]/g, "");
+}
+
+//Creates and persists one notification for the guardian of the given patient.
+//Does nothing (safely) if the patient has no guardian or the guardian can't be found.
+function createNotificationForPatient(patientID, type, message) {
+    //Find the patient in the cache so we can read their guardianID.
+    var patient = null;
+    for (var i = 0; i < DDATA.patients.length; i++) {
+        if (DDATA.patients[i].patientID === patientID) {
+            patient = DDATA.patients[i];
+            break;
+        }
+    }
+
+    //No patient, or an adult patient with no guardian → nothing to notify.
+    if (!patient || !patient.guardianID) {
+        return;
+    }
+
+    //Find the guardian linked to this patient.
+    var guardian = null;
+    for (var j = 0; j < DDATA.guardians.length; j++) {
+        if (DDATA.guardians[j].guardianID === patient.guardianID) {
+            guardian = DDATA.guardians[j];
+            break;
+        }
+    }
+
+    //Guardian record missing (e.g. not seeded) → skip safely.
+    if (!guardian) {
+        return;
+    }
+
+    //Build the notification matching the store schema (keyPath: notificationID).
+    var notification = {
+        notificationID: "nt" + Date.now(),
+        recipientID: makeGuardianUsername(guardian),
+        type: type,
+        message: message,
+        isRead: false,
+        createdAt: new Date().toISOString().slice(0, 10)
+    };
+
+    //Persist to IndexedDB. The guardian dashboard will pick it up on next load.
+    putRecord("notifications", notification);
 }
 
 
@@ -297,8 +355,8 @@ function setupBookingButtons() {
 
 
 //It updates a booking request when the doctor accepts or declines it.
-//WRITES: updates the booking_requests record, and on "accepted" also creates a new
-//appointments record. Both persist to IndexedDB so the patient sees the result on reload.
+//WRITES: updates the booking_requests record, and on "accepted".
+//Creates new appointments record. Both persist to IndexedDB so the patient sees the result on reload.
 function handleBookingDecision(requestID, decision) {
     //Find the request in the cached booking requests.
     for (var i = 0; i < DDATA.bookingRequests.length; i++) {
@@ -330,6 +388,14 @@ function handleBookingDecision(requestID, decision) {
                 //Keep the cache in sync and persist the new appointment.
                 DDATA.appointments.push(newAppt);
                 putRecord("appointments", newAppt);
+
+                //Side-effect: if this patient has a guardian, notify them of the booking.
+                var apptDate = new Date(req.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                createNotificationForPatient(
+                    req.patientID,
+                    "appt",
+                    "An appointment was booked for " + apptDate + " at " + req.time + " (" + req.reason + ")."
+                );
             }
 
             break;
@@ -709,7 +775,8 @@ function setupNoteForm() {
             return;
         }
 
-        //Build a new history entry. historyID is the keyPath of the medicalHistory store.
+        //Build a new history entry. historyID is the keyPath of the medicalHistory store,
+        //so it MUST be set or the record cannot be stored (this was missing before).
         var newEntry = {
             historyID: "h" + Date.now(),
             patientID: patient.patientID,
@@ -723,6 +790,13 @@ function setupNoteForm() {
         //Keep the cache in sync and persist to IndexedDB.
         DDATA.history.push(newEntry);
         putRecord("medicalHistory", newEntry);
+
+        //Side-effect: if this patient has a guardian, notify them a new record is available.
+        createNotificationForPatient(
+            patient.patientID,
+            "result",
+            "A new medical record was added: " + title + "."
+        );
 
         //Show success message and reset form.
         successMsg.hidden = false;
@@ -763,7 +837,8 @@ function setupRxForm() {
         }
 
 
-        //Build new prescription. prescriptionID is the keyPath of the prescriptions store.
+        //Build new prescription. prescriptionID is the keyPath of the prescriptions store,
+        //so it MUST be set or the record cannot be stored (this was missing before).
         var newRx = {
             prescriptionID: "rx" + Date.now(),
             patientID: patient.patientID,
@@ -781,6 +856,21 @@ function setupRxForm() {
         //Keep the cache in sync and persist to IndexedDB.
         DDATA.prescriptions.push(newRx);
         putRecord("prescriptions", newRx);
+
+        //Side-effect: if this patient has a guardian, notify them of the new prescription.
+        //Look up the medicine name for a friendlier message (falls back to a generic line).
+        var medName = "a new medicine";
+        for (var m = 0; m < DDATA.medicines.length; m++) {
+            if (DDATA.medicines[m].medicineID === medicineID) {
+                medName = DDATA.medicines[m].name;
+                break;
+            }
+        }
+        createNotificationForPatient(
+            patient.patientID,
+            "rx",
+            "A new prescription was issued: " + medName + " for " + Number(duration) + " days."
+        );
 
         successMsg.hidden = false;
         form.reset();
