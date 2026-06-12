@@ -1,73 +1,141 @@
-//getLoggedInPatient checks session storage, finds the patientID, and then loops through the PATIENTS array.
-function getLoggedInPatient() {
-    //It retuns the patientID of the currently logged in from session storage.
-    var savedID = sessionStorage.getItem("patientID");
-
-    //It loops through PATIENTS array from dummy-data.js.
+//patient.js wiring to IndexedDB.
+//A module-level cache that holds the logged-in patient plus its details. It is filled by LoadPatientData().
+var PDATA = {
+    patient: null,
+    doctors: [],
+    appointments: [],
+    prescriptions: [],
+    medicines: [],
+    history: [],
+    vitals: [],
+    bookingRequests: []
+};
+ 
+//loadStore fetches every record from one object store. If it fails, dummy-data fallback is used instead.
+function loadStore(storeName, fallbackArray, callback) {
+    getAllRecords(storeName, function(records) {
+        if (records && records.length > 0) {
+            callback(records);
+        } else {
+            callback(fallbackArray);
+        }
+    });
+}
+ 
+//findPatientInDummy is the fallbaack lookup for the logged-in patient.
+function findPatientInDummy(patientID) {
     for (var i = 0; i < PATIENTS.length; i++) {
-
-        //If patientID matches from session storage, it's our user.
-        if (PATIENTS[i].patientID === savedID) {
+        if (PATIENTS[i].patientID === patientID) {
             return PATIENTS[i];
         }
     }
-
-    //Load Aanya sharma as demo patient
+    //Demo fallback — Aanya Sharma — if the requested ID isn't found at all.
     for (var i = 0; i < PATIENTS.length; i++) {
         if (PATIENTS[i].patientID === "p001") {
             return PATIENTS[i];
         }
     }
-
-    //However, if no matches were found, return null.
     return null;
 }
-
-//loadPatientDashboard just calls other functions that populate the different sections of the patient dashboard.
-function loadPatientDashboard() {
-    //Obtain patient login first.
-    var patient = getLoggedInPatient();
-
-    //If patient is not found, console.log will show "No patient found" and the function will stop executing.
-    if (!patient) {
-        console.log("No patient found");
-        return;
-    }
-
-    showPatientName(patient);
-    showDoctorCard(patient);
-    showPatientStats(patient);
-    showPatientPrescriptions(patient);
-    showPatientHistory(patient);
-    showWeekStrip(patient);
-    showBookingStatus(patient)
-    fillDoctorDropdown();
-    setupFilterButtons();
-    setupBookingForm();
-
+ 
+//It fills PDATA from IndexedDB + dummy-data fallback, then calls onReady.
+function loadPatientData(onReady) {
+    //Work out the logged-in patient's ID from the session object saved by auth.js.
+    //getSession() returns the whole currentUser; we read patientID off it.
+    var session = getSession();
+    var patientID = (session && session.patientID) ? session.patientID : "p001";
+ 
+    //Load the patient profile; IndexedDB first then dummy-data fallback.
+    getRecord("patients", patientID, function(record) {
+        PDATA.patient = record ? record : findPatientInDummy(patientID);
+ 
+        //Each job is [storeName, fallbackArray, keyInPDATA].
+        var jobs = [
+            ["doctors",          DOCTORS,          "doctors"],
+            ["appointments",     APPOINTMENTS,     "appointments"],
+            ["prescriptions",    PRESCRIPTIONS,    "prescriptions"],
+            ["medicines",        MEDICINES,        "medicines"],
+            ["medicalHistory",   MEDICAL_HISTORY,  "history"],
+            ["vitals",           VITALS,           "vitals"],
+            ["booking_requests", BOOKING_REQUESTS, "bookingRequests"]
+        ];
+ 
+        //Load every store in parallel and only continue once all have come back.
+        var remaining = jobs.length;
+        for (var i = 0; i < jobs.length; i++) {
+            //IIFE captures the current job so the async callback uses the right one.
+            (function(job) {
+                loadStore(job[0], job[1], function(records) {
+                    PDATA[job[2]] = records;
+                    remaining--;
+                    if (remaining === 0) {
+                        onReady();
+                    }
+                });
+            })(jobs[i]);
+        }
+    });
 }
 
+//getLoggedInPatient returns the cached patient record. It is also used by the booking form.
+//It falls to dummy lookup if cache is empty.
+function getLoggedInPatient() {
+    if (PDATA.patient) {
+        return PDATA.patient;
+    }
+    var session = getSession();
+    var patientID = (session && session.patientID) ? session.patientID : "p001";
+    return findPatientInDummy(patientID);
+}
+ 
+//loadPatientDashboard opens the DB, loads all data, then renders every section.
+//openDatabase is called here so the dashboard works even if seeding is still in progress.
+function loadPatientDashboard() {
+    openDatabase(function() {
+        loadPatientData(function() {
+            var patient = PDATA.patient;
+ 
+            //If no patient could be resolved at all, stop here.
+            if (!patient) {
+                console.log("No patient found");
+                return;
+            }
+ 
+            showPatientName(patient);
+            showDoctorCard(patient);
+            showPatientStats(patient);
+            showPatientPrescriptions(patient);
+            showPatientHistory(patient);
+            showWeekStrip(patient);
+            showBookingStatus(patient);
+            fillDoctorDropdown();
+            setupFilterButtons();
+            setupBookingForm();
+        });
+    });
+}
+ 
 //This function will show the patient's name in the welcome message at the top of the dashboard.
 function showPatientName(patient) {
     //It finds the element with id="patientName" in HTML and sets the visible text to be the patient's first and last name.
     document.getElementById("patientName").textContent = patient.firstName + " " + patient.lastName;
 }
-
+ 
 //This function will show the doctor card on the dashboard and its details.
 function showDoctorCard(patient) {
     var doctor = null;
-
-    //Loop through DOCTORS array. If found, store the doctor in a variable and break the loop.
-    for (var i = 0; i < DOCTORS.length; i++) {
-        if (DOCTORS[i].doctorID === patient.registeredDoctorID) {
-            doctor =  DOCTORS[i];
+ 
+    //Loop through the loaded doctors. If found, store the doctor in a variable and break the loop.
+    for (var i = 0; i < PDATA.doctors.length; i++) {
+        if (PDATA.doctors[i].doctorID === patient.registeredDoctorID) {
+            doctor =  PDATA.doctors[i];
             break;
         }
     }
-
+ 
     //Else, if doctor not found, exit function.
     if (!doctor) return;
-    
+ 
     //Doctor details; first name and last name, speciality, and GMC number are shown in the doctor card on the dashboard.
     document.getElementById("doctorName").textContent = doctor.title + " " + doctor.firstName + " " + doctor.lastName;
     document.getElementById("doctorSpecialty").textContent = doctor.specialty;
@@ -75,100 +143,100 @@ function showDoctorCard(patient) {
     document.getElementById("doctorEmail").textContent = doctor.email;
     document.getElementById("doctorInfo").textContent = doctor.information;
 }
-
+ 
 function showPatientStats(patient) {
     //APPOINTMENTS SECTION
     var nextAppointment = null;
-
-    //It loops through APPOINTMENTS array.
-    for (var i = 0; i < APPOINTMENTS.length; i++) {
-        var appt = APPOINTMENTS[i];
-
+ 
+    //It loops through the loaded appointments.
+    for (var i = 0; i < PDATA.appointments.length; i++) {
+        var appt = PDATA.appointments[i];
+ 
         //Skip if the appointment is not for this patient OR if the appointment status is "booked"
         if (appt.patientID !== patient.patientID || appt.status !== "booked") {
             continue;
         }
-
-        //It shows the next upcoming appointment by comparing the date of each appointment to the current date and time. 
+ 
+        //It shows the next upcoming appointment by comparing the date of each appointment to the current date and time.
         //If the appointment is in the future and is sooner than any previously found upcoming appointment, it becomes the new nextAppointment.
         if (nextAppointment === null || appt.date < nextAppointment.date) {
             nextAppointment = appt;
         }
     }
-
+ 
     //It displays the date and time of the next appointment on the dashboard.
     //However, if there are no upcoming appointments, it can display a message
     if (nextAppointment !== null) {
-
+ 
         //Convert the appointment date string to a Date object, then format it to a more readable form (e.g. "26 May 2026").
         var apptDate = new Date(nextAppointment.date);
         var dateText = apptDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-
-        //Find the doctor for this appointment by looping through DOCTORS array and matching doctorID.
+ 
+        //Find the doctor for this appointment by looping through the loaded doctors and matching doctorID.
         var apptDoctor = null;
-        for (var i = 0; i < DOCTORS.length; i++) {
-            if (DOCTORS[i].doctorID === nextAppointment.doctorID) {
-                apptDoctor = DOCTORS[i];
+        for (var i = 0; i < PDATA.doctors.length; i++) {
+            if (PDATA.doctors[i].doctorID === nextAppointment.doctorID) {
+                apptDoctor = PDATA.doctors[i];
                 break;
             }
         }
         //Display the date of the next appointment and the time + doctor details in the stats section of the dashboard.
         document.getElementById("statNextAppt").textContent = dateText;
         document.getElementById("statNextApptMeta").textContent = nextAppointment.time + " · Dr " + apptDoctor.lastName;
-
+ 
     } else {
         //If no upcoming appointments, display "-" for the date and a message in the meta text.
         document.getElementById("statNextAppt").textContent = "-";
         document.getElementById("statNextApptMeta").textContent = "No upcoming appointments";
     }
-
+ 
     //PRESCRIPTIONS SECTION
     //Medicine name preview and counter for active prescriptions.
     var firstMedName = null;
     var rxCount = 0;
-
-    for (var i = 0; i < PRESCRIPTIONS.length; i++) {
+ 
+    for (var i = 0; i < PDATA.prescriptions.length; i++) {
           //If the prescription is not for this patient OR if the prescription status is not "active", skip it.
-          if (PRESCRIPTIONS[i].patientID !== patient.patientID || PRESCRIPTIONS[i].status !== "active") {
+          if (PDATA.prescriptions[i].patientID !== patient.patientID || PDATA.prescriptions[i].status !== "active") {
             continue;
           }
           //Increment the prescription counter till active prescription.
           rxCount++;
-
+ 
           //If it's the first active prescription found, find the medicine name by matching medicineID.
           if (rxCount === 1) {
-            //Loop through MEDICINES array to find the medicine name for this prescription.
-            for (var j = 0; j < MEDICINES.length; j++) {
+            //Loop through the loaded medicines to find the medicine name for this prescription.
+            for (var j = 0; j < PDATA.medicines.length; j++) {
                 //If medicineID matches, store the medicine name and duration in a variable, then break the loop.
-                if (MEDICINES[j].medicineID === PRESCRIPTIONS[i].medicineID) {
-                    firstMedName = MEDICINES[j].name + " · " + PRESCRIPTIONS[i].durationDays + " days";
+                if (PDATA.medicines[j].medicineID === PDATA.prescriptions[i].medicineID) {
+                    firstMedName = PDATA.medicines[j].name + " · " + PDATA.prescriptions[i].durationDays + " days";
                     break;
                 }
             }
           }
     }
-
+ 
     //Display the prescription count and the name of the first active prescription.
     //'?' condition = shows value if true & value if false.
     document.getElementById("statRxCount").textContent = rxCount;
     document.getElementById("statRxSub").textContent = rxCount > 0 ? firstMedName : "No active prescriptions";
-
-    
+ 
+ 
     //BLOOD GROUP SECTION
     document.getElementById("statBloodGroup").textContent = patient.bloodGroup;
-
+ 
     //VITALS SECTION
     var vitalsRecord = null;
-
-    //Loop through VITALS array to find the vitals record for this patient by matching patientID.
-    for (var i = 0; i < VITALS.length; i++) {
-        if (VITALS[i].patientID === patient.patientID) {
-            vitalsRecord = VITALS[i];
+ 
+    //Loop through the loaded vitals to find the vitals record for this patient by matching patientID.
+    for (var i = 0; i < PDATA.vitals.length; i++) {
+        if (PDATA.vitals[i].patientID === patient.patientID) {
+            vitalsRecord = PDATA.vitals[i];
             break;
         }
     }
-
-    //If vitals record is found, display the date of the last vitals record. 
+ 
+    //If vitals record is found, display the date of the last vitals record.
     //If not found, display a message like "No vitals recorded".
     if (vitalsRecord) {
         var vitalsDate = new Date(vitalsRecord.lastUpdated);
@@ -176,49 +244,49 @@ function showPatientStats(patient) {
     } else {
         document.getElementById("statVitalsDate").textContent = "No vitals recorded";
     }
-
+ 
     //ALLERGIES SECTION
     var allergies = patient.allergies;
-
+ 
     //Display the number of allergies and a preview of the first allergy. If no allergies, show "No allergies".
     document.getElementById("statAllergiesCount").textContent = allergies.length;
     document.getElementById("statAllergiesList").textContent = allergies.length > 0 ? allergies.join(", ") : "No allergies";
 }
-
+ 
 //It handles the prescription list table
 function showPatientPrescriptions(patient) {
       //Get the unordered list where the items will go
       var list = document.getElementById("rxGrid")
       //Clear anything that was present
       list.innerHTML = "";
-
+ 
       //Boolean condition to track if found at least 1 prescription
       var found = false;
-
-      //Loop through PRESCRIPTIONS ARRAY
-      for (var i = 0; i < PRESCRIPTIONS.length; i++) {
-        var rx = PRESCRIPTIONS[i]
+ 
+      //Loop through the loaded prescriptions
+      for (var i = 0; i < PDATA.prescriptions.length; i++) {
+        var rx = PDATA.prescriptions[i]
         //Skip prescriptions that belongs to other patients
         if (rx.patientID !== patient.patientID) continue;
         //Prescription has been found
         found = true
-
-        //Look up MEDICINES details using medicineID stored in PRESCRIPTIONS
+ 
+        //Look up medicine details using medicineID stored in the prescription
         var med = null;
-        for (var j = 0; j < MEDICINES.length; j++) {
-            if (MEDICINES[j].medicineID === rx.medicineID) {
-                med = MEDICINES[j];
+        for (var j = 0; j < PDATA.medicines.length; j++) {
+            if (PDATA.medicines[j].medicineID === rx.medicineID) {
+                med = PDATA.medicines[j];
                 break;
             }
-        } 
-
+        }
+ 
         //Combine name and strength, if medicine not found, display "Unknown"
         var medName = med ? med.name + " " + med.strength : "Unknown";
-
+ 
         //Create new HTML element & css class
         var item = document.createElement("li");
         item.className = "rx_item";
-
+ 
         //innerHTML helps us create tags inside the list element
         item.innerHTML =
             '<div class="rx_item_pill">💊</div>' +
@@ -238,25 +306,25 @@ function showPatientPrescriptions(patient) {
         list.innerHTML = "<li>No prescriptions found.</li>";
     }
 }
-
+ 
 //It handles medical history
 function showPatientHistory(patient) {
     //Get ordered list for medical history
     var timeline = document.getElementById("historyTimeline");
     timeline.innerHTML = "";
-
+ 
     //Design for animated timeline. 'ALL' is the default selected filter.
     timeline.classList.add("timeline_all_active");
-
+ 
     //Collect medical history entries for specific patients in their own personal array
     var entries = []
-    //Loop through MEDICAL_HISTORY array and push items at the end of array
-    for (var i = 0; i < MEDICAL_HISTORY.length; i++) {
-        if (MEDICAL_HISTORY[i].patientID === patient.patientID) {
-            entries.push(MEDICAL_HISTORY[i]);
+    //Loop through the loaded medical history and push items at the end of array
+    for (var i = 0; i < PDATA.history.length; i++) {
+        if (PDATA.history[i].patientID === patient.patientID) {
+            entries.push(PDATA.history[i]);
         }
     }
-
+ 
     //sort() rearranges array using a comparison function
     //If B - A, positive; B goes first, if negative; A goes first
     entries.sort(function(a, b) {
@@ -264,19 +332,19 @@ function showPatientHistory(patient) {
         var dateB = b.date ? new Date(b.date) : new Date(0);
         return dateB - dateA
     });
-
+ 
     //Build card list for each entry
     for (var i = 0; i < entries.length; i++) {
         var entry = entries[i];
-
+ 
         //format date if exists
         var dateText = entry.date ? new Date(entry.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric"}) : "Unknown date";
-        //badge class is built from the type 
+        //badge class is built from the type
         var badgeClass = "badge_" + entry.type;
-
+ 
         //"test_result" to "test result" for the label text
         var typeLabel = entry.type.replace("_", " ");
-
+ 
         //create list item
         var item = document.createElement("li");
         item.className = "timeline_item";
@@ -295,7 +363,7 @@ function showPatientHistory(patient) {
         timeline.appendChild(item);
     }
 }
-
+ 
 function setupFilterButtons() {
  
     //querySelectorAll scans and returns all elements that match filter_pill
@@ -320,7 +388,7 @@ function setupFilterButtons() {
  
             //Read which filter this button represents from its data-filter attribute
             var filter = this.getAttribute("data-filter");
-
+ 
             //Animated design for timeline should only show when filter is on 'ALL'
              var timeline = document.getElementById("historyTimeline");
             if (filter === "all") {
@@ -348,7 +416,7 @@ function setupFilterButtons() {
         });
     }
 }
-
+ 
 //It handles date shown for upcoming appointment when booking
 function showWeekStrip(patient) {
     //Get the container where we'll put the day pills
@@ -356,7 +424,7 @@ function showWeekStrip(patient) {
     //Clear previous services
     container.innerHTML = "";
     //new Date() with no arguments gives today's date and time
-    var today = new Date(); 
+    var today = new Date();
  
     //Array of short day names — getDay() returns 0–6, so we use this to look up the name
     var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -368,11 +436,11 @@ function showWeekStrip(patient) {
         //We start fresh each time so we don't accidentally change the today variable
         var day = new Date();
         //.setDate moves the date forward by i days
-        day.setDate(today.getDate() + i); 
+        day.setDate(today.getDate() + i);
  
         var pill = document.createElement("div");
  
-        // if today (i === 0), it gets main highlight, as the rest will have their default highlight 
+        // if today (i === 0), it gets main highlight, as the rest will have their default highlight
         pill.className = i === 0 ? "day_pill day_pill_active" : "day_pill";
  
         //.toISOString() gives a string like "2026-06-04T00:00:00.000Z"
@@ -392,7 +460,7 @@ function showWeekStrip(patient) {
                 allPills[j].classList.remove("day_pill_active");
             }
             //Highlight the one that was clicked
-            this.classList.add("day_pill_active"); 
+            this.classList.add("day_pill_active");
         });
         //Add pill to page
         container.appendChild(pill);
@@ -406,11 +474,11 @@ function showWeekStrip(patient) {
     var detailBox = document.getElementById("weekStripDetail");
     var nextAppt = null;
  
-    //Loop through every APPOINTMENTS that belongs to patient
-    for (var i = 0; i < APPOINTMENTS.length; i++) {
-        if (APPOINTMENTS[i].patientID === patient.patientID && APPOINTMENTS[i].status === "booked") {
-            if (nextAppt === null || APPOINTMENTS[i].date < nextAppt.date) {
-                nextAppt = APPOINTMENTS[i];
+    //Loop through every loaded appointment that belongs to patient
+    for (var i = 0; i < PDATA.appointments.length; i++) {
+        if (PDATA.appointments[i].patientID === patient.patientID && PDATA.appointments[i].status === "booked") {
+            if (nextAppt === null || PDATA.appointments[i].date < nextAppt.date) {
+                nextAppt = PDATA.appointments[i];
             }
         }
     }
@@ -419,9 +487,9 @@ function showWeekStrip(patient) {
  
         //Find the doctor for this appointment
         var doc = null;
-        for (var i = 0; i < DOCTORS.length; i++) {
-            if (DOCTORS[i].doctorID === nextAppt.doctorID) {
-                doc = DOCTORS[i];
+        for (var i = 0; i < PDATA.doctors.length; i++) {
+            if (PDATA.doctors[i].doctorID === nextAppt.doctorID) {
+                doc = PDATA.doctors[i];
                 break;
             }
         }
@@ -442,89 +510,89 @@ function showWeekStrip(patient) {
         detailBox.innerHTML = "<p>No upcoming appointments.</p>";
     }
 }
-
-
-//It handles choosing doctor 
+ 
+ 
+//It handles choosing doctor
 function fillDoctorDropdown() {
  
     //Get the <select> element in the booking form
     var select = document.getElementById("apptDoctor");
-    
+ 
     //It clears any existing options if there's a re-login so doctors don't stack up and appear twice.
     while(select.options.length > 1) {
         select.remove(1)
     }
-
-
-    //Add one <option> for each doctor in the DOCTORS array
-    for (var i = 0; i < DOCTORS.length; i++) {
+ 
+ 
+    //Add one <option> for each doctor in the loaded doctors list
+    for (var i = 0; i < PDATA.doctors.length; i++) {
  
         //createElement creates an <option> element in memory
         var option = document.createElement("option");
  
         //value is what gets submitted or read by JavaScript
-        option.value = DOCTORS[i].doctorID;
+        option.value = PDATA.doctors[i].doctorID;
  
         //textContent is what the user actually sees in the dropdown
-        option.textContent = DOCTORS[i].title + " " + DOCTORS[i].firstName + " " + DOCTORS[i].lastName + " · " + DOCTORS[i].specialty;
+        option.textContent = PDATA.doctors[i].title + " " + PDATA.doctors[i].firstName + " " + PDATA.doctors[i].lastName + " · " + PDATA.doctors[i].specialty;
  
         //append this option to the select — it appears below the default "Choose a doctor..." option
         select.appendChild(option);
     }
 }
-
+ 
 //It handles booking status bar
 function showBookingStatus(patient) {
     //Get the table body where the rows will go.
     var tableBody = document.getElementById("bookingStatusBody");
-
+ 
     //If the bar isn't on the page for some reason, stop safely.
     if (!tableBody) return;
-
+ 
     tableBody.innerHTML = "";
-
+ 
     //Time constants in milliseconds.
     var oneDay = 24 * 60 * 60 * 1000;
     var sevenDays = 7 * oneDay;
     var now = Date.now();
-
+ 
     //Counter so we can show an empty message if nothing is visible.
     var shown = 0;
-
-    //Loop through BOOKING_REQUESTS and show the ones that belong to this patient.
-    for (var i = 0; i < BOOKING_REQUESTS.length; i++) {
-        var req = BOOKING_REQUESTS[i];
-
+ 
+    //Loop through the loaded booking requests and show the ones that belong to this patient.
+    for (var i = 0; i < PDATA.bookingRequests.length; i++) {
+        var req = PDATA.bookingRequests[i];
+ 
         //Skip requests that aren't this patient's.
         if (req.patientID !== patient.patientID) continue;
-
+ 
         //Work out how long ago this request was submitted or decided on.
         var stamp = req.decidedAt ? req.decidedAt : (req.submittedAt ? req.submittedAt : now);
         var age = now - stamp;
-
+ 
         //Apply the clearing rules based on status.
         if (req.status === "pending" && age > sevenDays) continue;
         if (req.status === "accepted" && age > oneDay) continue;
         if (req.status === "declined" && age > oneDay) continue;
-
+ 
         //Find the doctor for this request so we can show their name.
         var doc = null;
-        for (var j = 0; j < DOCTORS.length; j++) {
-            if (DOCTORS[j].doctorID === req.doctorID) {
-                doc = DOCTORS[j];
+        for (var j = 0; j < PDATA.doctors.length; j++) {
+            if (PDATA.doctors[j].doctorID === req.doctorID) {
+                doc = PDATA.doctors[j];
                 break;
             }
         }
         var docName = doc ? "Dr " + doc.lastName : "Unknown";
-
+ 
         //Format the date nicely e.g. "15 Jun 2026".
         var dateText = new Date(req.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-
+ 
         //Pick the colour class for the status pill.
         var statusClass = "status_bar_pending";
         if (req.status === "accepted") statusClass = "status_bar_accepted";
         if (req.status === "declined") statusClass = "status_bar_declined";
-
+ 
         //Build the row: Booking column (reason, date, time, doctor) + Status column.
         var row = document.createElement("tr");
         row.innerHTML =
@@ -533,18 +601,18 @@ function showBookingStatus(patient) {
                 '<p class="status_bar_meta">' + dateText + ' · ' + req.time + ' · ' + docName + '</p>' +
             '</td>' +
             '<td><span class="status_bar_pill ' + statusClass + '">' + req.status + '</span></td>';
-
+ 
         tableBody.appendChild(row);
         shown++;
     }
-
+ 
     //If nothing is visible, show a friendly empty row spanning both columns.
     if (shown === 0) {
         tableBody.innerHTML = "<tr><td colspan='2' class='status_bar_empty'>No booking requests yet.</td></tr>";
     }
 }
-
-
+ 
+ 
 //It handles submit function when booking
 function setupBookingForm() {
  
@@ -575,13 +643,15 @@ function setupBookingForm() {
         //An empty input has value "" which is a falsy value in JavaScript
         if (date === "" || time === "" || doctor === "" || reason === "") {
             //Show the red error paragraph
-            errorMsg.hidden = false; 
+            errorMsg.hidden = false;
             return;
         }
  
         var patient = getLoggedInPatient();
         var newRequest = {
-            requestID: "br" + (BOOKING_REQUESTS.length + 100),
+            //Unique key for the booking_requests store. Date.now() guarantees no clash
+            //with seeded IDs (br001, br002) or with other new requests.
+            requestID: "br" + Date.now(),
             patientID: patient.patientID,
             doctorID: doctor,
             date: date,
@@ -591,14 +661,24 @@ function setupBookingForm() {
             //submittedAt lets the Status Bar know when to clear the request.
             submittedAt: Date.now()
         };
-        BOOKING_REQUESTS.push(newRequest);
-
+ 
+        //WRITE the new request into IndexedDB so it survives a page reload.
+        putRecord("booking_requests", newRequest, function(saved) {
+            if (!saved) {
+                console.log("Could not save booking request to IndexedDB.");
+            }
+        });
+ 
+        //Keep the in-memory cache in sync so the Status Bar refresh shows it immediately,
+        //without needing another round-trip to the database.
+        PDATA.bookingRequests.push(newRequest);
+ 
         //Show the green success message.
         successMsg.hidden = false;
-
+ 
         //.reset() clears all the form fields back to their default empty state
         form.reset();
-
+ 
         //Refresh our own Booking Status Bar so the new pending request appears.
         showBookingStatus(patient);
     });
