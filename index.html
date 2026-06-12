@@ -1126,6 +1126,15 @@
     <script src="js/guardian.js"></script>
     <script src="js/receptionist.js"></script>
         
+     <!-- IndexedDB bootstrap (Tiana): seed the database once when the app loads, so the -->
+    <!-- dashboards can read from IndexedDB. Seeding is skipped automatically if the DB -->
+    <!-- is already populated (see seedDatabase in seed.js). Dummy-data still loads in -->
+    <!-- parallel as a fallback, so nothing breaks while seeding runs. -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            seedDatabase();
+        });
+    </script>
     </body>
 
 </html>
