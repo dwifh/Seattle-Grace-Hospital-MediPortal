@@ -1,0 +1,66 @@
+[
+  {
+    "notificationID": "nt001",
+    "recipientID": "sinead.oconnor",
+    "type": "result",
+    "message": "Liam's spirometry test result has been uploaded by Dr Khan.",
+    "isRead": false,
+    "createdAt": "2026-05-26"
+  },
+  {
+    "notificationID": "nt002",
+    "recipientID": "sinead.oconnor",
+    "type": "appt",
+    "message": "Liam's asthma review has been moved to 25 May 2026 at 12:00.",
+    "isRead": false,
+    "createdAt": "2026-05-20"
+  },
+  {
+    "notificationID": "nt003",
+    "recipientID": "sinead.oconnor",
+    "type": "rx",
+    "message": "Salbutamol inhaler prescription has been renewed for 90 days.",
+    "isRead": true,
+    "createdAt": "2026-04-02"
+  },
+  {
+    "notificationID": "nt004",
+    "recipientID": "sinead.oconnor",
+    "type": "appt",
+    "message": "Asthma review booked for 25 May 2026 at 10:15.",
+    "isRead": true,
+    "createdAt": "2026-03-15"
+  },
+  {
+    "notificationID": "nt005",
+    "recipientID": "niamh.osei",
+    "type": "appt",
+    "message": "A new appointment has been booked for your ward.",
+    "isRead": false,
+    "createdAt": "2026-05-28"
+  },
+  {
+    "notificationID": "nt006",
+    "recipientID": "niamh.osei",
+    "type": "rx",
+    "message": "A new prescription has been issued by the doctor.",
+    "isRead": false,
+    "createdAt": "2026-05-10"
+  },
+  {
+    "notificationID": "nt007",
+    "recipientID": "cora.santos",
+    "type": "result",
+    "message": "A new test result is available for your ward.",
+    "isRead": false,
+    "createdAt": "2026-05-22"
+  },
+  {
+    "notificationID": "nt008",
+    "recipientID": "beth.lawson",
+    "type": "appt",
+    "message": "Your ward's appointment has been confirmed.",
+    "isRead": true,
+    "createdAt": "2026-04-18"
+  }
+]
