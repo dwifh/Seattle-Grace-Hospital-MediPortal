@@ -210,10 +210,8 @@ function isLockedOut() {
 //END OF TIANA SECTION
 
 // LOGIN ALGORITHM
-// IndexedDB-first: looks up the username as a key in the "users" store (Tiana).
-// If the store is empty or unseeded, falls back to the USERS array in dummy-data.js
-// so the app still works before seeding has run. All rate-limit, lockout, session,
-// and routing logic is unchanged from the original.
+// IndexedDB-first: looks up the username as a key in the "users" store.
+// If the store is empty or unseeded, falls back to the USERS array in dummy-data.js.
 
 function handleLogin(event) {
     event.preventDefault();
@@ -259,16 +257,14 @@ function handleLogin(event) {
         showDashboard(matchedUser.role);
     }
 
-    //Try IndexedDB first. getRecord looks up the username directly since "username"
-    //is the keyPath of the "users" store — one lookup, no full-table scan.
+    //Try IndexedDB first. getRecord looks up the username directly since "username" is the keyPath of the "users" store.
     openDatabase(function() {
         getRecord("users", username, function(idbUser) {
             if (idbUser) {
-                //Found in IndexedDB — use it.
+                //Found in IndexedDB, then use it.
                 attemptLogin(idbUser);
             } else {
-                //Not in IndexedDB (store empty or not seeded yet) — fall back to
-                //the USERS array in dummy-data.js so the app still works.
+                //Not in IndexedDB,  fall back to the USERS array in dummy-data.js so the app still works.
                 const fallbackUser = USERS.find(function(user) {
                     return user.username === username && user.password === password;
                 });
@@ -288,17 +284,13 @@ function handleLogout() {
 }
 
 
-// REGISTRATION ALGORITHM (Tiana)
+// REGISTRATION ALGORITHM
 // Creates a NEW patient account from the registration form and writes it to IndexedDB.
 // Writes to the SAME stores and record shapes as seed.js, so a registered patient is
 // indistinguishable from a seeded one to auth.js and the dashboards.
 //
-// Patient-supplied fields are collected here. Clinically-assigned fields are NOT asked
-// of the user — they default to null and are set later by an admin/clinician:
-//   registeredDoctorID -> assigned by an administrator after registration
-//   bloodGroup         -> confirmed by a clinician (blood test)
-//   guardianID         -> null; minor registration is out of scope (adults only)
-// age is NOT stored as a fixed number — it is derived from dob whenever needed.
+// Patient-supplied fields are collected here. Clinically-assigned fields are NOT asked of the user.
+//  They default to null and are set later by an admin/clinician.
 
 //Calculates age from a date-of-birth string, so we never store a stale age integer.
 function calculateAge(dob) {
@@ -313,6 +305,7 @@ function calculateAge(dob) {
     return age;
 }
 
+//handleRegister helps the user to create a new patient account.
 function handleRegister(event) {
     event.preventDefault();
 
@@ -343,7 +336,7 @@ function handleRegister(event) {
         }
     }
 
-    //----VALIDATION----
+    //----VALIDATION CHECKS----
 
     //1. All required fields must be filled.
     if (firstName === "" || lastName === "" || dob === "" || nhsNumber === "" ||
@@ -382,8 +375,7 @@ function handleRegister(event) {
     //Open the DB first so the stores are available.
     openDatabase(function() {
 
-        //6. Duplicate-username check: a username is the primary key of the users store,
-        //   so we must not silently overwrite an existing account.
+        //6. Duplicate-username check: a username is the primary key of the users store, so we must not silently overwrite an existing account.
         getRecord("users", username, function(existing) {
             if (existing) {
                 fail("That username is already taken. Please choose another.");
@@ -411,14 +403,13 @@ function handleRegister(event) {
                 telephone: telephone,
                 email: email,
                 registeredDoctorID: null,   //assigned by an administrator after registration
-                bloodGroup: null,           //confirmed by a clinician
-                allergies: [],              //empty array, not null — safe for .length / .join
+                bloodGroup: null,           //confirmed by a doctor
+                allergies: [],              //empty array, not null
                 guardianID: null            //adults only; minor registration is out of scope
             };
 
             //Build the login account. Same shape as the users seeded by seed.js.
-            //NOTE: password is plaintext here — this is the exact value Ayush's crypto.js
-            //will encrypt before storing in the encryption phase.
+            //NOTE: password is plaintext here.
             var newUser = {
                 username: username,
                 password: password,
