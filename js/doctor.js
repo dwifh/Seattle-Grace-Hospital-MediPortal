@@ -1,49 +1,127 @@
-//Checks session storage, finds doctor ID and loops it through DOCTORS array
-function getLoggedInDoctor() {
-    //It returns the doctorID of the currently logged in from session storage.
-    var savedID = sessionStorage.getItem("doctorID");
+//doctor.js — wired to IndexedDB (Tiana).
+//Same strategy as patient.js: read from IndexedDB first, fall back to the dummy-data.js
+//arrays if a store is empty or the DB hasn't been seeded yet, so the dashboard keeps
+//working in parallel during the migration. All write actions (booking decisions, status
+//pill changes, clinical notes, prescriptions) persist into IndexedDB via putRecord.
 
+//DDATA is the module-level cache for the doctor dashboard. It is filled once by
+//loadDoctorData() before anything renders, so the render functions stay synchronous and
+//read from here instead of the global arrays.
+var DDATA = {
+    doctor: null,
+    doctors: [],
+    patients: [],
+    appointments: [],
+    bookingRequests: [],
+    prescriptions: [],
+    medicines: [],
+    history: []
+};
+
+
+//----DATA LOADING HELPERS----
+
+//loadStoreD fetches every record from one object store. If the store is empty (not seeded
+//yet) or the read fails, it hands back the dummy-data fallback array instead.
+function loadStoreD(storeName, fallbackArray, callback) {
+    getAllRecords(storeName, function(records) {
+        if (records && records.length > 0) {
+            callback(records);
+        } else {
+            callback(fallbackArray);
+        }
+    });
+}
+
+//findDoctorInDummy is the fallback lookup for the logged-in doctor.
+function findDoctorInDummy(doctorID) {
     for (var i = 0; i < DOCTORS.length; i++) {
-
-        //DoctorID = session storage, then it's our legit user.
-        if (DOCTORS[i].doctorID === savedID) {
+        if (DOCTORS[i].doctorID === doctorID) {
             return DOCTORS[i];
         }
     }
-
-    //Load Dr Priya Patel as demo doctor
+    //Demo fallback — Dr Priya Patel (d001).
     for (var i = 0; i < DOCTORS.length; i++) {
         if (DOCTORS[i].doctorID === "d001") {
             return DOCTORS[i];
         }
     }
-
-    //Else return null.
     return null;
 }
 
+//loadDoctorData fills DDATA from IndexedDB (with dummy-data fallback), then calls onReady.
+function loadDoctorData(onReady) {
+    //Work out the logged-in doctor's ID from the session object saved by auth.js.
+    var session = getSession();
+    var doctorID = (session && session.doctorID) ? session.doctorID : "d001";
 
-//loadDoctorDashboard it just calls other function to load in dashboard
-function loadDoctorDashboard() {
-    //Get doctor login
-    var doctor = getLoggedInDoctor();
+    //Load the doctor profile — IndexedDB first, dummy-data fallback.
+    getRecord("doctors", doctorID, function(record) {
+        DDATA.doctor = record ? record : findDoctorInDummy(doctorID);
 
-    if (!doctor) {
-        console.log("No doctor found");
-        return;
+        //Each job is [storeName, fallbackArray, keyInDDATA].
+        var jobs = [
+            ["doctors",          DOCTORS,          "doctors"],
+            ["patients",         PATIENTS,         "patients"],
+            ["appointments",     APPOINTMENTS,     "appointments"],
+            ["booking_requests", BOOKING_REQUESTS, "bookingRequests"],
+            ["prescriptions",    PRESCRIPTIONS,    "prescriptions"],
+            ["medicines",        MEDICINES,        "medicines"],
+            ["medicalHistory",   MEDICAL_HISTORY,  "history"]
+        ];
+
+        //Load every store in parallel and only continue once all have come back.
+        var remaining = jobs.length;
+        for (var i = 0; i < jobs.length; i++) {
+            (function(job) {
+                loadStoreD(job[0], job[1], function(records) {
+                    DDATA[job[2]] = records;
+                    remaining--;
+                    if (remaining === 0) {
+                        onReady();
+                    }
+                });
+            })(jobs[i]);
+        }
+    });
+}
+
+//getLoggedInDoctor returns the cached doctor record. Used by the write handlers too.
+//If the cache isn't ready (called very early), it falls back to a synchronous dummy lookup.
+function getLoggedInDoctor() {
+    if (DDATA.doctor) {
+        return DDATA.doctor;
     }
+    var session = getSession();
+    var doctorID = (session && session.doctorID) ? session.doctorID : "d001";
+    return findDoctorInDummy(doctorID);
+}
 
-    showDoctorName(doctor);
-    showTodayDate();
-    showTodayAppointments(doctor);
-    showBookingNotifications(doctor);
-    showDoctorStats(doctor);
-    showPatientList(doctor);
-    fillMedicineDropdown();
-    setupNoteForm();
-    setupRxForm();
-    setupCloseRecord();
-    setupPatientSearch();
+
+//loadDoctorDashboard opens the DB, loads all data, then renders every section.
+function loadDoctorDashboard() {
+    openDatabase(function() {
+        loadDoctorData(function() {
+            var doctor = DDATA.doctor;
+
+            if (!doctor) {
+                console.log("No doctor found");
+                return;
+            }
+
+            showDoctorName(doctor);
+            showTodayDate();
+            showTodayAppointments(doctor);
+            showBookingNotifications(doctor);
+            showDoctorStats(doctor);
+            showPatientList(doctor);
+            fillMedicineDropdown();
+            setupNoteForm();
+            setupRxForm();
+            setupCloseRecord();
+            setupPatientSearch();
+        });
+    });
 }
 
 
@@ -77,8 +155,8 @@ function showTodayAppointments(doctor) {
     //found is a boolean condition to track if we found at least 1 appointment for today.
     var found = false;
 
-    for (var i = 0; i < APPOINTMENTS.length; i++) {
-        var appt = APPOINTMENTS[i];
+    for (var i = 0; i < DDATA.appointments.length; i++) {
+        var appt = DDATA.appointments[i];
 
         //Skip if appointment is not for specific doctor OR not for today
         if (appt.doctorID !== doctor.doctorID || appt.date !== todayString) {
@@ -89,9 +167,9 @@ function showTodayAppointments(doctor) {
 
         //Check patients for appointment.
         var patient = null;
-        for (var j = 0; j < PATIENTS.length; j++) {
-            if (PATIENTS[j].patientID === appt.patientID) {
-                patient = PATIENTS[j];
+        for (var j = 0; j < DDATA.patients.length; j++) {
+            if (DDATA.patients[j].patientID === appt.patientID) {
+                patient = DDATA.patients[j];
                 break;
             }
         }
@@ -146,9 +224,9 @@ function showBookingNotifications(doctor) {
     //Counter for pending requests.
     var count = 0;
 
-    //Loop through BOOKING_REQUESTS.
-    for (var i = 0; i < BOOKING_REQUESTS.length; i++) {
-        var req = BOOKING_REQUESTS[i];
+    //Loop through booking requests.
+    for (var i = 0; i < DDATA.bookingRequests.length; i++) {
+        var req = DDATA.bookingRequests[i];
 
         //Skip if the request is not for this doctor OR not still pending.
         if (req.doctorID !== doctor.doctorID || req.status !== "pending") {
@@ -159,9 +237,9 @@ function showBookingNotifications(doctor) {
 
         //Find the patient who sent this request so we can show their name.
         var patient = null;
-        for (var j = 0; j < PATIENTS.length; j++) {
-            if (PATIENTS[j].patientID === req.patientID) {
-                patient = PATIENTS[j];
+        for (var j = 0; j < DDATA.patients.length; j++) {
+            if (DDATA.patients[j].patientID === req.patientID) {
+                patient = DDATA.patients[j];
                 break;
             }
         }
@@ -226,20 +304,26 @@ function setupBookingButtons() {
 
 
 //It updates a booking request when the doctor accepts or declines it.
+//WRITES: updates the booking_requests record, and on "accepted" also creates a new
+//appointments record. Both persist to IndexedDB so the patient sees the result on reload.
 function handleBookingDecision(requestID, decision) {
-    //Find the request in the BOOKING_REQUESTS array.
-    for (var i = 0; i < BOOKING_REQUESTS.length; i++) {
-        if (BOOKING_REQUESTS[i].requestID === requestID) {
+    //Find the request in the cached booking requests.
+    for (var i = 0; i < DDATA.bookingRequests.length; i++) {
+        if (DDATA.bookingRequests[i].requestID === requestID) {
             //Update its status to "accepted" or "declined".
-            BOOKING_REQUESTS[i].status = decision;
-            //Record when acceptance decision was made at.
-            BOOKING_REQUESTS[i].decideAt = Date.now();
+            DDATA.bookingRequests[i].status = decision;
+            //Record when the decision was made (fixed key name: decidedAt, matching the schema).
+            DDATA.bookingRequests[i].decidedAt = Date.now();
+
+            //Persist the updated request to IndexedDB.
+            putRecord("booking_requests", DDATA.bookingRequests[i]);
 
             //If doctor accepted, turn request into a real booked appointment so it shows in patient's 'Upcoming'
             if (decision === "accepted") {
-                var req = BOOKING_REQUESTS[i];
+                var req = DDATA.bookingRequests[i];
                 var newAppt = {
-                    appointmentID: "ap" + (APPOINTMENTS.length + 100),
+                    //Unique, collision-safe appointment ID (was "ap"+length+100, which could clash).
+                    appointmentID: "ap" + Date.now(),
                     patientID: req.patientID,
                     doctorID: req.doctorID,
                     date: req.date,
@@ -250,7 +334,9 @@ function handleBookingDecision(requestID, decision) {
                     bookedBy: req.patientID,
                     checkInStatus: "pending"
                 };
-                APPOINTMENTS.push(newAppt);
+                //Keep the cache in sync and persist the new appointment.
+                DDATA.appointments.push(newAppt);
+                putRecord("appointments", newAppt);
             }
 
             break;
@@ -260,11 +346,13 @@ function handleBookingDecision(requestID, decision) {
     //Refresh the panel so the handled request disappears and the count updates.
     var doctor = getLoggedInDoctor();
     showBookingNotifications(doctor);
+    showTodayAppointments(doctor);
+    showDoctorStats(doctor);
 }
 
 //It makes every status pill in "Today's patient" clickable
 //When clicked, it will cycle from Waiting, In Progress, Done, Waiting...
-//It holds internal appointment data
+//WRITES: persists the new checkInStatus on the appointments record.
 function setupStatusPills() {
     //Selects all elements that have class status_pill and will return an array.
     var pills = document.querySelectorAll(".status_pill");
@@ -276,11 +364,11 @@ function setupStatusPills() {
             var item = this.parentNode;
             var apptID = item.getAttribute("data-appt-id");
 
-            //Look for appointment in APPOINTMENTS array.
+            //Look for appointment in the cached appointments.
             var appt = null;
-            for (var j = 0; j < APPOINTMENTS.length; j++) {
-                if (APPOINTMENTS[j].appointmentID === apptID) {
-                    appt = APPOINTMENTS[j];
+            for (var j = 0; j < DDATA.appointments.length; j++) {
+                if (DDATA.appointments[j].appointmentID === apptID) {
+                    appt = DDATA.appointments[j];
                     break;
                 }
             }
@@ -307,16 +395,19 @@ function setupStatusPills() {
                 newLabel = "Waiting";
             }
 
-            //It will update appointment in APPOINTMENTS array with new status.
+            //It will update appointment with new status.
             appt.checkInStatus = newStatus;
+
+            //Persist the status change to IndexedDB.
+            putRecord("appointments", appt);
 
             //It will update the visible pill text while cycling and dynamic colour class
             this.textContent = newLabel;
             this.className = "status_pill status_" + newStatus;
 
-            //It will get data from current demo doctor and pills will auto update at the top of the page.
+            //It will get data from current doctor and stat cards auto update at the top of the page.
             var doctor = getLoggedInDoctor();
-            showStats(doctor);
+            showDoctorStats(doctor);
         });
     }
 }
@@ -333,9 +424,9 @@ function showDoctorStats(doctor) {
     var inProgress = 0;
     var done = 0;
 
-    //Loop through array and count by status.
-    for (var i = 0; i < APPOINTMENTS.length; i++) {
-        var appt = APPOINTMENTS[i];
+    //Loop through cached appointments and count by status.
+    for (var i = 0; i < DDATA.appointments.length; i++) {
+        var appt = DDATA.appointments[i];
 
         //Skip if it's not for this doctor OR not for today.
         if (appt.doctorID !== doctor.doctorID || appt.date !== todayString) {
@@ -377,9 +468,9 @@ function showPatientList(doctor) {
     //Counter to track how many patients are displayed.
     var count = 0;
 
-    //Loop through PATIENTS array.
-    for (var i = 0; i < PATIENTS.length; i++) {
-        var p = PATIENTS[i];
+    //Loop through cached patients.
+    for (var i = 0; i < DDATA.patients.length; i++) {
+        var p = DDATA.patients[i];
 
         //Skip if patient is not registered for specific doctor.
         if (p.registeredDoctorID !== doctor.doctorID) continue;
@@ -420,11 +511,11 @@ function showPatientList(doctor) {
 
 //This will open a record viewer for the patient ID.
 function openPatientRecord(patientID) {
-    //Look for patient in PATIENTS array.
+    //Look for patient in the cached patients.
     var patient = null;
-    for (var i = 0; i < PATIENTS.length; i++) {
-        if (PATIENTS[i].patientID === patientID) {
-            patient = PATIENTS[i];
+    for (var i = 0; i < DDATA.patients.length; i++) {
+        if (DDATA.patients[i].patientID === patientID) {
+            patient = DDATA.patients[i];
             break;
         }
     }
@@ -460,10 +551,10 @@ function getSelectedPatient() {
     var patientID = document.getElementById("recordViewer").getAttribute("data-current-patient");
     if (!patientID) return null;
 
-    //Loop through PATIENTS array.
-    for (var i = 0; i < PATIENTS.length; i++) {
-        if (PATIENTS[i].patientID === patientID) {
-            return PATIENTS[i];
+    //Loop through the cached patients.
+    for (var i = 0; i < DDATA.patients.length; i++) {
+        if (DDATA.patients[i].patientID === patientID) {
+            return DDATA.patients[i];
         }
     }
     return null;
@@ -477,9 +568,9 @@ function showRecordHistory(patient) {
 
     //Collect patient entries.
     var entries = [];
-    for (var i = 0; i < MEDICAL_HISTORY.length; i++) {
-        if (MEDICAL_HISTORY[i].patientID === patient.patientID) {
-            entries.push(MEDICAL_HISTORY[i]);
+    for (var i = 0; i < DDATA.history.length; i++) {
+        if (DDATA.history[i].patientID === patient.patientID) {
+            entries.push(DDATA.history[i]);
         }
     }
 
@@ -527,19 +618,19 @@ function showRecordPrescriptions(patient) {
     //Track if found at least one active prescription.
     var found = false;
 
-    for (var i = 0; i < PRESCRIPTIONS.length; i++) {
-        var rx = PRESCRIPTIONS[i];
+    for (var i = 0; i < DDATA.prescriptions.length; i++) {
+        var rx = DDATA.prescriptions[i];
 
         //Skip if prescription does not belong to current patient OR prescription not active
         if (rx.patientID !== patient.patientID || rx.status !== "active") continue;
 
         found = true;
 
-        //Loop through MEDICINES array to see if medicineID = prescription medicineID
+        //Loop through cached medicines to see if medicineID = prescription medicineID
         var med = null;
-        for (var j = 0; j < MEDICINES.length; j++) {
-            if (MEDICINES[j].medicineID === rx.medicineID) {
-                med = MEDICINES[j];
+        for (var j = 0; j < DDATA.medicines.length; j++) {
+            if (DDATA.medicines[j].medicineID === rx.medicineID) {
+                med = DDATA.medicines[j];
                 break;
             }
         }
@@ -584,12 +675,12 @@ function fillMedicineDropdown() {
     while(select.options.length > 1) {
         select.remove(1)
     }
-    //Loop through MEDICINES array
+    //Loop through cached medicines
     //Create option element, medicineID & set visible text of medicine details.
-    for (var i = 0; i < MEDICINES.length; i++) {
+    for (var i = 0; i < DDATA.medicines.length; i++) {
         var option = document.createElement("option");
-        option.value = MEDICINES[i].medicineID;
-        option.textContent = MEDICINES[i].name + " " + MEDICINES[i].strength + " · " + MEDICINES[i].form;
+        option.value = DDATA.medicines[i].medicineID;
+        option.textContent = DDATA.medicines[i].name + " " + DDATA.medicines[i].strength + " · " + DDATA.medicines[i].form;
         //Append option to select element.
         select.appendChild(option);
     }
@@ -597,6 +688,7 @@ function fillMedicineDropdown() {
 
 
 //It sets up clinical note form submission
+//WRITES: a new medicalHistory record, persisted to IndexedDB.
 function setupNoteForm() {
     var form = document.getElementById("noteForm");
     //Add submit event to form and stops browser from sending HTTP request
@@ -624,8 +716,10 @@ function setupNoteForm() {
             return;
         }
 
-        //Build a new history entry and push it to MEDICAL_HISTORY.
+        //Build a new history entry. historyID is the keyPath of the medicalHistory store,
+        //so it MUST be set or the record cannot be stored (this was missing before).
         var newEntry = {
+            historyID: "h" + Date.now(),
             patientID: patient.patientID,
             date: new Date().toISOString().slice(0, 10),
             type: "diagnosis",
@@ -634,7 +728,9 @@ function setupNoteForm() {
             recordedBy: getLoggedInDoctor().doctorID
         };
 
-        MEDICAL_HISTORY.push(newEntry);
+        //Keep the cache in sync and persist to IndexedDB.
+        DDATA.history.push(newEntry);
+        putRecord("medicalHistory", newEntry);
 
         //Show success message and reset form.
         successMsg.hidden = false;
@@ -647,6 +743,7 @@ function setupNoteForm() {
 
 
 //It will setup prescription form submission.
+//WRITES: a new prescriptions record, persisted to IndexedDB.
 function setupRxForm() {
     var form = document.getElementById("rxForm");
 
@@ -674,8 +771,10 @@ function setupRxForm() {
         }
 
 
-        //Build new prescription and push ut into PRESCRIPTIONS
+        //Build new prescription. prescriptionID is the keyPath of the prescriptions store,
+        //so it MUST be set or the record cannot be stored (this was missing before).
         var newRx = {
+            prescriptionID: "rx" + Date.now(),
             patientID: patient.patientID,
             doctorID: getLoggedInDoctor().doctorID,
             medicineID: medicineID,
@@ -688,7 +787,9 @@ function setupRxForm() {
             status: "active"
         };
 
-        PRESCRIPTIONS.push(newRx);
+        //Keep the cache in sync and persist to IndexedDB.
+        DDATA.prescriptions.push(newRx);
+        putRecord("prescriptions", newRx);
 
         successMsg.hidden = false;
         form.reset();
