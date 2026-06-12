@@ -335,13 +335,11 @@
                                 </div>
                             </div>
         
-                            <!-- Placeholder notice — registration not functional yet -->
-                            <div class="login_notice">
-                                <i class="ti ti-info-circle"></i>
-                                Registration will be fully functional once the backend is implemented.
-                            </div>
-        
-                            <button class="login_btn" type="button" onclick="alert('Registration coming soon — backend implementation required.')">
+                           <!-- Validation feedback (shown by handleRegister in auth.js) -->
+                            <p class="login_error" id="registerError" hidden>Please fill in all fields.</p>
+                            <p class="login_ok" id="registerOk" hidden>Account created. Signing you in…</p>
+
+                            <button class="login_btn" type="submit">
                                 Create Account
                             </button>
                         </form>

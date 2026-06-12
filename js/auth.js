@@ -210,8 +210,10 @@ function isLockedOut() {
 //END OF TIANA SECTION
 
 // LOGIN ALGORITHM
-// Checks submitted credentials against USERS in dummy-data.js (Edited to handle tiana's dummy data)
-
+// IndexedDB-first: looks up the username as a key in the "users" store (Tiana).
+// If the store is empty or unseeded, falls back to the USERS array in dummy-data.js
+// so the app still works before seeding has run. All rate-limit, lockout, session,
+// and routing logic is unchanged from the original.
 
 function handleLogin(event) {
     event.preventDefault();
@@ -232,34 +234,48 @@ function handleLogin(event) {
     // -- Tiana's rate-limit check goes here --
     if (isLockedOut()) {
         lockoutBox.hidden = false;
-         return;
-    }
-
-    // Find matching user in dummy-data.js; USERS array
-    //USERS.find is looping through the USERS ARRAY
-    //If the corresponding user is found, it is stored in matchedUser. If not then it is an "undefined" value.
-    const matchedUser = USERS.find(function(user) {
-        // This is checking whether the user's username and password matches the data they entered 
-        return user.username === username && user.password === password;
-    });
-
-    //If login failed, display an error message, clear the password box, put focus back on it, and stop.
-    if (!matchedUser) {
-        // -- Tiana's failed attempt counter goes here --
-        recordFailedAttempt();
-        errorBox.hidden = false;
-        //clear the password field
-        passwordInput.value = '';
-        //puts cursor back so user can try again (quality of life implementation)
-        passwordInput.focus();
         return;
     }
 
-    // Valid login — save session and route to dashboard
-    saveSession(matchedUser);   
-    sessionStorage.removeItem("loginAttempts");
-    sessionStorage.removeItem("lockoutTime");
-    showDashboard(matchedUser.role);
+    //attemptLogin does the actual credential check once we have a user record.
+    //It is called by both the IndexedDB path and the dummy-data fallback below.
+    function attemptLogin(matchedUser) {
+        //If login failed, display an error message, clear the password box, put focus back on it, and stop.
+        if (!matchedUser || matchedUser.password !== password) {
+            // -- Tiana's failed attempt counter goes here --
+            recordFailedAttempt();
+            errorBox.hidden = false;
+            //clear the password field
+            passwordInput.value = '';
+            //puts cursor back so user can try again (quality of life implementation)
+            passwordInput.focus();
+            return;
+        }
+
+        // Valid login — save session and route to dashboard
+        saveSession(matchedUser);
+        sessionStorage.removeItem("loginAttempts");
+        sessionStorage.removeItem("lockoutTime");
+        showDashboard(matchedUser.role);
+    }
+
+    //Try IndexedDB first. getRecord looks up the username directly since "username"
+    //is the keyPath of the "users" store — one lookup, no full-table scan.
+    openDatabase(function() {
+        getRecord("users", username, function(idbUser) {
+            if (idbUser) {
+                //Found in IndexedDB — use it.
+                attemptLogin(idbUser);
+            } else {
+                //Not in IndexedDB (store empty or not seeded yet) — fall back to
+                //the USERS array in dummy-data.js so the app still works.
+                const fallbackUser = USERS.find(function(user) {
+                    return user.username === username && user.password === password;
+                });
+                attemptLogin(fallbackUser);
+            }
+        });
+    });
 }
 
 // LOGOUT LOGIC
@@ -269,6 +285,167 @@ function handleLogout() {
     clearSession();
     //force the login page
     showLogin();
+}
+
+
+// REGISTRATION ALGORITHM (Tiana)
+// Creates a NEW patient account from the registration form and writes it to IndexedDB.
+// Writes to the SAME stores and record shapes as seed.js, so a registered patient is
+// indistinguishable from a seeded one to auth.js and the dashboards.
+//
+// Patient-supplied fields are collected here. Clinically-assigned fields are NOT asked
+// of the user — they default to null and are set later by an admin/clinician:
+//   registeredDoctorID -> assigned by an administrator after registration
+//   bloodGroup         -> confirmed by a clinician (blood test)
+//   guardianID         -> null; minor registration is out of scope (adults only)
+// age is NOT stored as a fixed number — it is derived from dob whenever needed.
+
+//Calculates age from a date-of-birth string, so we never store a stale age integer.
+function calculateAge(dob) {
+    var today = new Date();
+    var birth = new Date(dob);
+    var age = today.getFullYear() - birth.getFullYear();
+    var m = today.getMonth() - birth.getMonth();
+    //If this year's birthday hasn't happened yet, subtract one.
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    return age;
+}
+
+function handleRegister(event) {
+    event.preventDefault();
+
+    //Grab every field from the registration form.
+    var firstName = stripHtml(document.getElementById('reg_firstName').value.trim());
+    var lastName  = stripHtml(document.getElementById('reg_lastName').value.trim());
+    var dob       = document.getElementById('reg_dob').value;
+    var nhsNumber = document.getElementById('reg_nhs').value.trim();
+    var address   = stripHtml(document.getElementById('reg_address').value.trim());
+    var telephone = document.getElementById('reg_telephone').value.trim();
+    var email     = document.getElementById('reg_email').value.trim();
+    var username  = document.getElementById('reg_username').value.trim();
+    var password  = document.getElementById('reg_password').value.trim();
+
+    //Message elements (added to the form in index.html).
+    var errorBox   = document.getElementById('registerError');
+    var successBox = document.getElementById('registerOk');
+
+    //Hide any previous messages.
+    if (errorBox)   errorBox.hidden = true;
+    if (successBox) successBox.hidden = true;
+
+    //Small helper to show an error message and stop.
+    function fail(message) {
+        if (errorBox) {
+            errorBox.textContent = message;
+            errorBox.hidden = false;
+        }
+    }
+
+    //----VALIDATION----
+
+    //1. All required fields must be filled.
+    if (firstName === "" || lastName === "" || dob === "" || nhsNumber === "" ||
+        address === "" || telephone === "" || email === "" || username === "" || password === "") {
+        fail("Please fill in all fields.");
+        return;
+    }
+
+    //2. Date of birth must be a real date in the past.
+    var birthDate = new Date(dob);
+    if (isNaN(birthDate.getTime()) || birthDate > new Date()) {
+        fail("Please enter a valid date of birth.");
+        return;
+    }
+
+    //3. NHS number format: 3 digits, 3 digits, 4 digits (spaces optional on input).
+    var nhsPattern = /^\d{3}\s?\d{3}\s?\d{4}$/;
+    if (!nhsPattern.test(nhsNumber)) {
+        fail("NHS number must be in the format 000 000 0000.");
+        return;
+    }
+
+    //4. Email must look valid (reuses isEmail from validate.js).
+    if (!isEmail(email)) {
+        fail("Please enter a valid email address.");
+        return;
+    }
+
+    //5. Password must be strong enough (reuses isStrongPassword from validate.js — min 8 chars).
+    if (!isStrongPassword(password)) {
+        fail("Password must be at least 8 characters long.");
+        return;
+    }
+
+    //----WRITE TO IndexedDB----
+    //Open the DB first so the stores are available.
+    openDatabase(function() {
+
+        //6. Duplicate-username check: a username is the primary key of the users store,
+        //   so we must not silently overwrite an existing account.
+        getRecord("users", username, function(existing) {
+            if (existing) {
+                fail("That username is already taken. Please choose another.");
+                return;
+            }
+
+            //Build a unique, collision-safe patient ID.
+            var patientID = "p" + Date.now();
+
+            //Normalise the NHS number to the stored "000 000 0000" format.
+            var digits = nhsNumber.replace(/\s/g, "");
+            var formattedNhs = digits.slice(0, 3) + " " + digits.slice(3, 6) + " " + digits.slice(6);
+
+            //Build the patient profile. Same shape as patients.json.
+            //Clinically-assigned fields default to null; allergies defaults to an empty array.
+            var newPatient = {
+                patientID: patientID,
+                firstName: firstName,
+                lastName: lastName,
+                age: calculateAge(dob),
+                nhsNumber: formattedNhs,
+                dob: dob,
+                gender: "",                 //not collected on this form; can be set in profile later
+                address: address,
+                telephone: telephone,
+                email: email,
+                registeredDoctorID: null,   //assigned by an administrator after registration
+                bloodGroup: null,           //confirmed by a clinician
+                allergies: [],              //empty array, not null — safe for .length / .join
+                guardianID: null            //adults only; minor registration is out of scope
+            };
+
+            //Build the login account. Same shape as the users seeded by seed.js.
+            //NOTE: password is plaintext here — this is the exact value Ayush's crypto.js
+            //will encrypt before storing in the encryption phase.
+            var newUser = {
+                username: username,
+                password: password,
+                role: "patient",
+                patientID: patientID
+            };
+
+            //Persist both records.
+            putRecord("patients", newPatient);
+            putRecord("users", newUser, function(saved) {
+                if (!saved) {
+                    fail("Could not create your account. Please try again.");
+                    return;
+                }
+
+                //Success — show message, then log the new patient straight in.
+                if (successBox) {
+                    successBox.textContent = "Account created. Signing you in…";
+                    successBox.hidden = false;
+                }
+
+                //Auto-login: save session and route to the patient dashboard.
+                saveSession(newUser);
+                showDashboard("patient");
+            });
+        });
+    });
 }
 
 // INITIALISE the inputs and the buttons
@@ -282,6 +459,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
+    }
+
+    // Wire up the registration form
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
     }
 
     // Wire up the logout button
