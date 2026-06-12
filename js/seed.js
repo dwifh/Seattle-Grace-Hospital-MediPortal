@@ -20,6 +20,7 @@ function seedDatabase() {
             seedNurses();
             seedReceptionists();
             seedGuardians();
+            seedNotifications();
         });
     });
 }
@@ -293,3 +294,33 @@ function seedMedicines() {
             console.log("Could not seed medicines: " + error);
         });
 }
+
+//----NOTIFICATIONS SECTION----
+function seedNotifications() {
+    fetch("data/notifications.json")
+        .then(function(response) {
+            if (!response.ok) { throw new Error("HTTP " + response.status); }
+            return response.json();
+        })
+        .then(function(notifications) {
+            if (!Array.isArray(notifications)) { console.log("notifications.json — expected an array."); return; }
+ 
+            for (var i = 0; i < notifications.length; i++) {
+                var n = notifications[i];
+ 
+                //notificationID is the keyPath of the store, so it must be present.
+                if (!n.notificationID || !n.recipientID) {
+                    console.log("Skipping notification at index " + i + " — missing required field.");
+                    continue;
+                }
+ 
+                putRecord("notifications", n);
+            }
+ 
+            console.log("Seeded " + notifications.length + " notification(s).");
+        })
+        .catch(function(error) {
+            console.log("Could not seed notifications: " + error);
+        });
+}
+ 
