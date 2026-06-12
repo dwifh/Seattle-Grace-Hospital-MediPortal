@@ -1,85 +1,157 @@
-//CONSENT_ITEMS & NOTIFICATIONS are hardcoded for Phase 1.
+//guardian.js wired to IndexedDB.
 
-//List of items that guardian is authorised to see for patient.
+//CONSENT_ITEMS is intentionally kept in code, not in a store: the schema models consent as a single guardian.consentGranted flag, not per-category
 var CONSENT_ITEMS = [
-    { label: "Medical history", granted: true },
-    { label: "Active prescriptions", granted: true },
-    { label: "Appointments", granted: true },
-    { label: "Allergies and blood group", granted: true },
-    { label: "Lab test results", granted: true },
-    { label: "Mental health records", granted: false },
-    { label: "Genetic test results", granted: false }
+    { label: "Medical history",          grantable: true  },
+    { label: "Active prescriptions",     grantable: true  },
+    { label: "Appointments",             grantable: true  },
+    { label: "Allergies and blood group",grantable: true  },
+    { label: "Lab test results",         grantable: true  },
+    { label: "Mental health records",    grantable: false },
+    { label: "Genetic test results",     grantable: false }
 ];
 
-//Alert notifs about ward, newer notifications come first then a backlog of old notifs.
+//Hardcoded notifications kept ONLY as the dummy-data fallback for the guardian dashboard,
+//Used if the notifications store is empty/unseeded.
 var NOTIFICATIONS = [
-    { type: "result", title: "New test result available", message: "Liam's spirometry test result has been uploaded by Dr Khan.", date: "2026-05-26" },
-    { type: "appt", title: "Appointment rescheduled", message: "Liam's asthma review has been moved to 25 May 12:00.", date: "2026-05-20" },
-    { type: "rx", title: "Prescription renewed", message: "Salbutamol inhaler prescription has been renewed for 90 days.", date: "2026-04-02" },
-    { type: "appt", title: "New appointment booked", message: "Asthma review booked for 25 May 2026 at 10:15.", date: "2026-03-15" }
+    { type: "result", message: "Liam's spirometry test result has been uploaded by Dr Khan.", createdAt: "2026-05-26", recipientID: "sinead.oconnor" },
+    { type: "appt",   message: "Liam's asthma review has been moved to 25 May 2026 at 12:00.", createdAt: "2026-05-20", recipientID: "sinead.oconnor" },
+    { type: "rx",     message: "Salbutamol inhaler prescription has been renewed for 90 days.", createdAt: "2026-04-02", recipientID: "sinead.oconnor" },
+    { type: "appt",   message: "Asthma review booked for 25 May 2026 at 10:15.", createdAt: "2026-03-15", recipientID: "sinead.oconnor" }
 ];
 
 
-//It will check session storage, find guardianID.
-function getLoggedInGuardian() {
+//GDATA is the module-level cache for the guardian dashboard, filled once by loadGuardianData()
+var GDATA = {
+    guardian: null,
+    ward: null,
+    doctors: [],
+    appointments: [],
+    prescriptions: [],
+    medicines: [],
+    history: [],
+    vitals: [],
+    notifications: []
+};
 
-    var savedID = sessionStorage.getItem("guardianID");
 
-    //Loop through GUARDIAN array.
+//loadStoreG fetches every record from one store, or returns the dummy-data fallback if empty.
+function loadStoreG(storeName, fallbackArray, callback) {
+    getAllRecords(storeName, function(records) {
+        if (records && records.length > 0) {
+            callback(records);
+        } else {
+            callback(fallbackArray);
+        }
+    });
+}
+
+//Fallback lookup for the logged-in guardian from the dummy-data GUARDIAN array.
+function findGuardianInDummy(guardianID) {
     for (var i = 0; i < GUARDIAN.length; i++) {
-
-        //If it matches from session storage, it's our user.
-        if (GUARDIAN[i].guardianID === savedID) {
+        if (GUARDIAN[i].guardianID === guardianID) {
             return GUARDIAN[i];
         }
     }
-    //Sinead O'Connor is our demo guardian.
+    //Demo fallback — Sinead O'Connor (g001).
     for (var i = 0; i < GUARDIAN.length; i++) {
         if (GUARDIAN[i].guardianID === "g001") {
             return GUARDIAN[i];
         }
     }
-    //If no matches, return null.
     return null;
 }
 
-//It will find patient that is linked to guardian.
+//It will check the session, find guardianID, and return the cached guardian record.
+//If the cache isn't ready, falls back to a synchronous dummy lookup.
+function getLoggedInGuardian() {
+    if (GDATA.guardian) {
+        return GDATA.guardian;
+    }
+    var session = getSession();
+    var guardianID = (session && session.guardianID) ? session.guardianID : "g001";
+    return findGuardianInDummy(guardianID);
+}
+
+//It will find the patient (ward) that is linked to the guardian, from the cached patients.
 function getWardForGuardian(guardian) {
-    for (var i = 0; i < PATIENTS.length; i++) {
-        if (PATIENTS[i].patientID === guardian.linkedPatientID) {
-            return PATIENTS[i];
+    for (var i = 0; i < GDATA.patients.length; i++) {
+        if (GDATA.patients[i].patientID === guardian.linkedPatientID) {
+            return GDATA.patients[i];
         }
     }
     return null;
 }
 
-//It will call other functions that will fill the dashboard.
+//loadGuardianData fills GDATA from IndexedDB (with dummy-data fallback), resolves the guardian
+//and their ward, then calls onReady.
+function loadGuardianData(onReady) {
+    var session = getSession();
+    var guardianID = (session && session.guardianID) ? session.guardianID : "g001";
+
+    //Load the guardian profile — IndexedDB first, dummy-data fallback.
+    getRecord("guardians", guardianID, function(record) {
+        GDATA.guardian = record ? record : findGuardianInDummy(guardianID);
+
+        var jobs = [
+            ["patients",       PATIENTS,        "patients"],
+            ["doctors",        DOCTORS,         "doctors"],
+            ["appointments",   APPOINTMENTS,    "appointments"],
+            ["prescriptions",  PRESCRIPTIONS,   "prescriptions"],
+            ["medicines",      MEDICINES,       "medicines"],
+            ["medicalHistory", MEDICAL_HISTORY, "history"],
+            ["vitals",         VITALS,          "vitals"],
+            ["notifications",  NOTIFICATIONS,   "notifications"]
+        ];
+
+        var remaining = jobs.length;
+        for (var i = 0; i < jobs.length; i++) {
+            (function(job) {
+                loadStoreG(job[0], job[1], function(records) {
+                    GDATA[job[2]] = records;
+                    remaining--;
+                    if (remaining === 0) {
+                        //Resolve the ward now that patients are loaded.
+                        GDATA.ward = getWardForGuardian(GDATA.guardian);
+                        onReady();
+                    }
+                });
+            })(jobs[i]);
+        }
+    });
+}
+
+
+//Reads need GDATA.patients loaded first (for getWardForGuardian), so it's done inside loadGuardianData.
+//It opens the DB, loads all data, resolves guardian + ward, then renders.
 function loadGuardianDashboard() {
-    //Get guardian login.
-    var guardian = getLoggedInGuardian();
+    openDatabase(function() {
+        loadGuardianData(function() {
+            var guardian = GDATA.guardian;
 
-    //If guardian not found, show "No guardian found" and will exit function.
-    if (!guardian) {
-        console.log("No guardian found");
-        return;
-    }
+            //If guardian not found, show "No guardian found" and exit.
+            if (!guardian) {
+                console.log("No guardian found");
+                return;
+            }
 
-    //Find patient that guardian is linked to view them.
-    var ward = getWardForGuardian(guardian);
+            var ward = GDATA.ward;
 
-    //If no ward is linked, stop.
-    if (!ward) {
-        console.log("No linked patient found for this guardian");
-        return;
-    }
+            //If no ward is linked, stop.
+            if (!ward) {
+                console.log("No linked patient found for this guardian");
+                return;
+            }
 
-    showGuardianName(guardian);
-    showWardBanner(guardian, ward);
-    showWardStats(ward);
-    showConsentLog();
-    showNotifications();
-    showWardHistory(ward);
-    showWardPrescriptions(ward);
+            showGuardianName(guardian);
+            showWardBanner(guardian, ward);
+            showWardStats(ward);
+            showConsentLog(guardian);
+            showNotifications(guardian);
+            showWardHistory(ward);
+            showWardPrescriptions(ward);
+        });
+    });
 }
 
 //It will display guardian name in welcome message on top of dashboard.
@@ -106,10 +178,10 @@ function showWardStats(ward) {
     //APPOINTMENTS SECTION
     var nextAppointment = null;
 
-    //Loop through APPOINTMENTS array.
-    for (var i = 0; i < APPOINTMENTS.length; i++) {
+    //Loop through cached appointments.
+    for (var i = 0; i < GDATA.appointments.length; i++) {
 
-        var appt = APPOINTMENTS[i];
+        var appt = GDATA.appointments[i];
         //Skip if appointment not for ward OR status not booked.
         if (appt.patientID !== ward.patientID || appt.status !== "booked") {
             continue;
@@ -125,19 +197,19 @@ function showWardStats(ward) {
         var apptDate = new Date(nextAppointment.date);
         var dateText = apptDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
 
-        //Find the doctor for this appointment by looping through DOCTORS array and matching doctorID.
+        //Find the doctor for this appointment by looping through cached doctors and matching doctorID.
         var apptDoctor = null;
-        for (var i = 0; i < DOCTORS.length; i++) {
-            if (DOCTORS[i].doctorID === nextAppointment.doctorID) {
-                apptDoctor = DOCTORS[i];
+        for (var i = 0; i < GDATA.doctors.length; i++) {
+            if (GDATA.doctors[i].doctorID === nextAppointment.doctorID) {
+                apptDoctor = GDATA.doctors[i];
                 break;
             }
         }
         //Display the date of the next appointment and the time + doctor details in the stats section of the dashboard.
         document.getElementById("g_statNextAppt").textContent = dateText;
-        document.getElementById("g_statNextApptMeta").textContent = nextAppointment.time + " · Dr " + apptDoctor.lastName;
+        document.getElementById("g_statNextApptMeta").textContent = nextAppointment.time + " · Dr " + (apptDoctor ? apptDoctor.lastName : "");
     } else {
-        //If no upcoming appointments, display "-" for the date and a message in the meta text. 
+        //If no upcoming appointments, display "-" for the date and a message in the meta text.
         document.getElementById("g_statNextAppt").textContent = "-";
         document.getElementById("g_statNextApptMeta").textContent = "No upcoming appointments";
     }
@@ -146,19 +218,19 @@ function showWardStats(ward) {
     var rxCount = 0;
     var firstMedName = "";
 
-    for (var i = 0; i < PRESCRIPTIONS.length; i++) {
+    for (var i = 0; i < GDATA.prescriptions.length; i++) {
         ////If the prescription is not for this patient OR if the prescription status is not "active", skip it.
-        if (PRESCRIPTIONS[i].patientID !== ward.patientID || PRESCRIPTIONS[i].status !== "active") continue;
+        if (GDATA.prescriptions[i].patientID !== ward.patientID || GDATA.prescriptions[i].status !== "active") continue;
 
         //Increment the prescription counter till active prescription.
         rxCount++;
 
         //If it's the first active prescription found, find the medicine name by matching medicineID.
         if (rxCount === 1) {
-            for (var j = 0; j < MEDICINES.length; j++) {
+            for (var j = 0; j < GDATA.medicines.length; j++) {
                 //If medicineID matches, store the medicine name and duration in a variable, then break the loop.
-                if (MEDICINES[j].medicineID === PRESCRIPTIONS[i].medicineID) {
-                    firstMedName = MEDICINES[j].name + " · " + PRESCRIPTIONS[i].durationDays + " days";
+                if (GDATA.medicines[j].medicineID === GDATA.prescriptions[i].medicineID) {
+                    firstMedName = GDATA.medicines[j].name + " · " + GDATA.prescriptions[i].durationDays + " days";
                     break;
                 }
             }
@@ -175,15 +247,15 @@ function showWardStats(ward) {
 
     //VITALS SECTION
     var vitalsRecord = null;
-    //Loop through VITALS array to find the vitals record for this patient by matching patientID.
-    for (var i = 0; i < VITALS.length; i++) {
-        if (VITALS[i].patientID === ward.patientID) {
-            vitalsRecord = VITALS[i];
+    //Loop through cached vitals to find the vitals record for this patient by matching patientID.
+    for (var i = 0; i < GDATA.vitals.length; i++) {
+        if (GDATA.vitals[i].patientID === ward.patientID) {
+            vitalsRecord = GDATA.vitals[i];
             break;
         }
     }
 
-    //If vitals record is found, display the date of the last vitals record. 
+    //If vitals record is found, display the date of the last vitals record.
     //If not found, display a message like "No vitals recorded".
     if (vitalsRecord) {
         var vitalsDate = new Date(vitalsRecord.lastUpdated);
@@ -194,25 +266,29 @@ function showWardStats(ward) {
 
     //ALLERGIES SECTION
     var allergies = ward.allergies;
-    //Display the number of allergies and a preview of the first allergy. If no allergies, show "No allergies".
+    //Display the number of allergies and a preview of the first allergy. If no allergies, show "None".
     document.getElementById("g_statAllergiesCount").textContent = allergies.length;
     document.getElementById("g_statAllergiesList").textContent = allergies.length > 0 ? allergies.join(", ") : "None";
 }
 
 
 //It shows the consent log and what the guardian is allowed to see.
-function showConsentLog() {
+//Grantable rows reflect the real guardian.consentGranted flag; if consent is withdrawn, they flip to "Not granted". Non-grantable rows are fixed future-scope placeholders.
+function showConsentLog(guardian) {
     var list = document.getElementById("consentList");
     list.innerHTML = "";
 
-    //Loop through CONSENT_ITEMS and build a list of item for each.
+    //Loop through CONSENT_ITEMS and build a list item for each.
     for (var i = 0; i < CONSENT_ITEMS.length; i++) {
         var c = CONSENT_ITEMS[i];
 
+        //A row is "granted" only if it is grantable AND the guardian actually has consent.
+        var isGranted = c.grantable && guardian.consentGranted;
+
         //Icon and class for different status of consent.
-        var icon = c.granted ? "✓" : "✗";
-        var statusClass = c.granted ? "consent_granted" : "consent_denied";
-        var statusLabel = c.granted ? "Granted" : "Not granted";
+        var icon = isGranted ? "✓" : "✗";
+        var statusClass = isGranted ? "consent_granted" : "consent_denied";
+        var statusLabel = isGranted ? "Granted" : "Not granted";
 
         //Create new HTML element & css class.
         var item = document.createElement("li");
@@ -227,17 +303,39 @@ function showConsentLog() {
 }
 
 
-//It will show notification panel using NOTIFICATIONS array.
-function showNotifications() {
+//It will show the notification panel for this guardian, read from the notifications store.
+//Notifications are addressed by recipientID = the guardian's USERS.username (firstname.lastname).
+function showNotifications(guardian) {
     //Create ordered list for notification list.
     var list = document.getElementById("notifList");
     list.innerHTML = "";
 
-    //Update count badge in header.
-    document.getElementById("notifCount").textContent = NOTIFICATIONS.length + " new";
+    //Work out this guardian's username so we only show notifications addressed to them.
+    //Built with the same formula seed.js uses: firstname.lastname, letters only.
+    var username = guardian.firstName.toLowerCase().replace(/[^a-z]/g, "")
+                 + "."
+                 + guardian.lastName.toLowerCase().replace(/[^a-z]/g, "");
 
-    for (var i = 0; i < NOTIFICATIONS.length; i++) {
-        var n = NOTIFICATIONS[i];
+    //Filter the loaded notifications down to this guardian's.
+    var mine = [];
+    for (var i = 0; i < GDATA.notifications.length; i++) {
+        if (GDATA.notifications[i].recipientID === username) {
+            mine.push(GDATA.notifications[i]);
+        }
+    }
+
+    //Sort newest first. Records use createdAt; the old hardcoded fallback used date, so accept either.
+    mine.sort(function(a, b) {
+        var dateA = new Date(a.createdAt || a.date || 0);
+        var dateB = new Date(b.createdAt || b.date || 0);
+        return dateB - dateA;
+    });
+
+    //Update count badge in header.
+    document.getElementById("notifCount").textContent = mine.length + " new";
+
+    for (var i = 0; i < mine.length; i++) {
+        var n = mine[i];
 
         //Use icons to facilitate notification type.
         var icon = "🔔";
@@ -245,20 +343,32 @@ function showNotifications() {
         if (n.type === "appt") icon = "📅";
         if (n.type === "rx") icon = "💊";
 
-        //Format date.
-        var dateText = new Date(n.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+        //Format date (createdAt, with date as fallback for old hardcoded entries).
+        var stamp = n.createdAt || n.date;
+        var dateText = stamp ? new Date(stamp).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "";
+
+        //The store has no title field; derive a short heading from the type so the UI still has one.
+        var title = "Update";
+        if (n.type === "result") title = "New test result available";
+        if (n.type === "appt") title = "Appointment update";
+        if (n.type === "rx") title = "Prescription update";
 
         var item = document.createElement("li");
         item.className = "notif_item";
         item.innerHTML =
             '<div class="notif_icon">' + icon + '</div>' +
             '<div class="notif_body">' +
-                '<p class="notif_title">' + n.title + '</p>' +
+                '<p class="notif_title">' + title + '</p>' +
                 '<p class="notif_message">' + n.message + '</p>' +
                 '<p class="notif_date">' + dateText + '</p>' +
             '</div>';
         //Append new list in notif_item.
         list.appendChild(item);
+    }
+
+    //If there are no notifications for this guardian, show a friendly message.
+    if (mine.length === 0) {
+        list.innerHTML = "<li class='notif_empty'>No notifications.</li>";
     }
 }
 
@@ -271,9 +381,9 @@ function showWardHistory(ward) {
 
     //Select specific ward history and push into their own array.
     var entries = [];
-    for (var i = 0; i < MEDICAL_HISTORY.length; i++) {
-        if (MEDICAL_HISTORY[i].patientID === ward.patientID) {
-            entries.push(MEDICAL_HISTORY[i]);
+    for (var i = 0; i < GDATA.history.length; i++) {
+        if (GDATA.history[i].patientID === ward.patientID) {
+            entries.push(GDATA.history[i]);
         }
     }
 
@@ -325,18 +435,18 @@ function showWardPrescriptions(ward) {
     //Boolean condition to track if found at least 1 prescription
     var found = false;
 
-    for (var i = 0; i < PRESCRIPTIONS.length; i++) {
-        var rx = PRESCRIPTIONS[i];
+    for (var i = 0; i < GDATA.prescriptions.length; i++) {
+        var rx = GDATA.prescriptions[i];
         //Skip prescriptions that belongs to other patients
         if (rx.patientID !== ward.patientID) continue;
         //Prescription has been found
         found = true;
 
-        //Look up MEDICINES details using medicineID stored in PRESCRIPTIONS
+        //Look up medicine details using medicineID stored in the prescription
         var med = null;
-        for (var j = 0; j < MEDICINES.length; j++) {
-            if (MEDICINES[j].medicineID === rx.medicineID) {
-                med = MEDICINES[j];
+        for (var j = 0; j < GDATA.medicines.length; j++) {
+            if (GDATA.medicines[j].medicineID === rx.medicineID) {
+                med = GDATA.medicines[j];
                 break;
             }
         }
