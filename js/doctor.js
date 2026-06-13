@@ -1066,10 +1066,10 @@ function showPrescriptionRequests(doctor) {
     }
  
     var countEl = document.getElementById("rxRequestNotifCount");
-    if (countEl) countEl.textContent = count + " pending";
+    if (countEl) countEl.textContent = count + " Pending Requests";
  
     if (count === 0) {
-        list.innerHTML = "<li class='booking_notif_empty'>No pending prescription requests.</li>";
+        list.innerHTML = "<li class='prescription_notif_empty'>No Prescription Requests</li>";
     }
  
     setupRxRequestButtons();
