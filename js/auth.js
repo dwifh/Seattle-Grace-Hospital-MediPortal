@@ -302,7 +302,7 @@ function handleLogin(event) {
             } else {
                 //If not in IndexedDB, no fallback and login fails.
             attemptLogin(null);
-        }
+            }
         });
     });
 }
