@@ -1,66 +1,96 @@
 // nurse.js — OWNED BY AYUSH
 
 function loadNurseDashboard() {
-    const session = getSession();
-    const nurseRecord = NURSES.find(function(nurse) {
-        return nurse.nurseID === session.nurseID;
+    var session = getSession();
+    var nurseID = session.nurseID;
+
+    openDatabase(function() {
+        // Fetch the nurse's own record first to get assigned patient IDs
+        getRecord('nurses', nurseID, function(idbNurse) {
+            var nurseRecord = idbNurse || NURSES.find(function(n) { return n.nurseID === nurseID; });
+
+            if (!nurseRecord) {
+                console.error('Nurse record not found:', nurseID);
+                return;
+            }
+
+            var assignedPatientIDs = nurseRecord.registeredPatient;
+
+            // Load all required stores in sequence, fall back to dummy-data if empty
+            getAllRecords('patients', function(idbPatients) {
+            getAllRecords('doctors', function(idbDoctors) {
+            getAllRecords('appointments', function(idbAppointments) {
+            getAllRecords('prescriptions', function(idbPrescriptions) {
+            getAllRecords('medicines', function(idbMedicines) {
+            getAllRecords('medicalHistory', function(idbHistory) {
+            getAllRecords('vitals', function(idbVitals) {
+
+                var patients      = idbPatients.length      ? idbPatients      : PATIENTS;
+                var doctors       = idbDoctors.length       ? idbDoctors       : DOCTORS;
+                var appointments  = idbAppointments.length  ? idbAppointments  : APPOINTMENTS;
+                var prescriptions = idbPrescriptions.length ? idbPrescriptions : PRESCRIPTIONS;
+                var medicines     = idbMedicines.length     ? idbMedicines     : MEDICINES;
+                var history       = idbHistory.length       ? idbHistory       : MEDICAL_HISTORY;
+                var vitals        = idbVitals.length        ? idbVitals        : VITALS;
+
+                loadNurseStats(assignedPatientIDs, appointments, prescriptions);
+                loadNursePatientsTable(assignedPatientIDs, patients, doctors);
+                loadNurseVitalsTable(assignedPatientIDs, vitals, patients);
+                loadNurseAppointmentsTable(assignedPatientIDs, appointments, patients, doctors);
+                loadNursePrescriptionsTable(assignedPatientIDs, prescriptions, patients, medicines);
+                loadNurseHistoryTable(assignedPatientIDs, history, patients);
+
+            });
+            });
+            });
+            });
+            });
+            });
+            });
+        });
     });
-
-    if (!nurseRecord) {
-        console.error('Nurse record not found for session:', session);
-        return;
-    }
-
-    const assignedPatientIDs = nurseRecord.registeredPatient;
-
-    loadNurseStats(assignedPatientIDs);
-    loadNursePatientsTable(assignedPatientIDs);
-    loadNurseVitalsTable(assignedPatientIDs);
-    loadNurseAppointmentsTable(assignedPatientIDs);
-    loadNursePrescriptionsTable(assignedPatientIDs);
-    loadNurseHistoryTable(assignedPatientIDs);
 }
 
-// STATS 
+// STATS
 
-function loadNurseStats(assignedPatientIDs) {
+function loadNurseStats(assignedPatientIDs, appointments, prescriptions) {
     document.getElementById('nurseAssignedCount').textContent = assignedPatientIDs.length;
 
-    const upcomingCount = APPOINTMENTS.filter(function(assignedPatient) {
-        return assignedPatientIDs.includes(assignedPatient.patientID) && assignedPatient.status === 'booked';
+    var upcomingCount = appointments.filter(function(a) {
+        return assignedPatientIDs.includes(a.patientID) && a.status === 'booked';
     }).length;
     document.getElementById('nurseUpcomingAppointments').textContent = upcomingCount;
 
-    const activePrescriptionsCount = PRESCRIPTIONS.filter(function(prescription) {
-        return assignedPatientIDs.includes(prescription.patientID) && prescription.status === 'active';
+    var activePrescriptionsCount = prescriptions.filter(function(p) {
+        return assignedPatientIDs.includes(p.patientID) && p.status === 'active';
     }).length;
     document.getElementById('nurseActivePrescriptions').textContent = activePrescriptionsCount;
 }
 
-// ASSIGNED PATIENTS TABLE 
+// ASSIGNED PATIENTS TABLE
 
-function loadNursePatientsTable(assignedPatientIDs) {
-    const tbody = document.getElementById('nursePatientsTbody');
+function loadNursePatientsTable(assignedPatientIDs, patients, doctors) {
+    var tbody = document.getElementById('nursePatientsTbody');
     tbody.innerHTML = '';
 
-    const assignedPatients = PATIENTS.filter(function(patient) {
-        return assignedPatientIDs.includes(patient.patientID);
+    var assignedPatients = patients.filter(function(p) {
+        return assignedPatientIDs.includes(p.patientID);
     });
 
     assignedPatients.forEach(function(patient) {
-        const doctor = DOCTORS.find(function(doctor) {
-            return doctor.doctorID === patient.registeredDoctorID;
+        var doctor = doctors.find(function(d) {
+            return d.doctorID === patient.registeredDoctorID;
         });
 
-        // ternary operator used to check for any allergies (if so, create a string and seperate each allergy by a ", " by using the "join" function)
-        const allergies = patient.allergies.length > 0 ? patient.allergies.join(', ') : 'None';
+        // ternary operator used to check for any allergies (if so, create a string and separate each allergy by ", ")
+        var allergies = patient.allergies.length > 0 ? patient.allergies.join(', ') : 'None';
 
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + patient.patientID + '</td>' +
             '<td>' + patient.firstName + ' ' + patient.lastName + '</td>' +
             '<td>' + patient.dob + '</td>' +
-            '<td>' + patient.bloodGroup + '</td>' +
+            '<td>' + (patient.bloodGroup || 'Unknown') + '</td>' +
             '<td>' + allergies + '</td>' +
             '<td>' + (doctor ? doctor.title + ' ' + doctor.lastName : 'Unknown') + '</td>';
 
@@ -70,20 +100,20 @@ function loadNursePatientsTable(assignedPatientIDs) {
 
 // VITALS TABLE
 
-function loadNurseVitalsTable(assignedPatientIDs) {
-    const tbody = document.getElementById('nurseVitalsTbody');
+function loadNurseVitalsTable(assignedPatientIDs, vitals, patients) {
+    var tbody = document.getElementById('nurseVitalsTbody');
     tbody.innerHTML = '';
 
-    const assignedVitals = VITALS.filter(function(vitals) {
-        return assignedPatientIDs.includes(vitals.patientID);
+    var assignedVitals = vitals.filter(function(v) {
+        return assignedPatientIDs.includes(v.patientID);
     });
 
     assignedVitals.forEach(function(vital) {
-        const patient = PATIENTS.find(function(patient) {
-            return patient.patientID === vital.patientID;
+        var patient = patients.find(function(p) {
+            return p.patientID === vital.patientID;
         });
 
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + (patient ? patient.firstName + ' ' + patient.lastName : vital.patientID) + '</td>' +
             '<td>' + vital.heightCm + '</td>' +
@@ -96,26 +126,26 @@ function loadNurseVitalsTable(assignedPatientIDs) {
     });
 }
 
-// APPOINTMENTS TABLE 
+// APPOINTMENTS TABLE
 
-function loadNurseAppointmentsTable(assignedPatientIDs) {
-    const tbody = document.getElementById('nurseAppointmentsTbody');
+function loadNurseAppointmentsTable(assignedPatientIDs, appointments, patients, doctors) {
+    var tbody = document.getElementById('nurseAppointmentsTbody');
     tbody.innerHTML = '';
 
-    const assignedAppointments = APPOINTMENTS.filter(function(appointment) {
-        return assignedPatientIDs.includes(appointment.patientID);
+    var assignedAppointments = appointments.filter(function(a) {
+        return assignedPatientIDs.includes(a.patientID);
     });
 
     assignedAppointments.forEach(function(appointment) {
-        const patient = PATIENTS.find(function(patient) {
-            return patient.patientID === appointment.patientID;
+        var patient = patients.find(function(p) {
+            return p.patientID === appointment.patientID;
         });
 
-        const doctor = DOCTORS.find(function(doctor) {
-            return doctor.doctorID === appointment.doctorID;
+        var doctor = doctors.find(function(d) {
+            return d.doctorID === appointment.doctorID;
         });
 
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + appointment.appointmentID + '</td>' +
             '<td>' + (patient ? patient.firstName + ' ' + patient.lastName : appointment.patientID) + '</td>' +
@@ -130,21 +160,21 @@ function loadNurseAppointmentsTable(assignedPatientIDs) {
     });
 }
 
-// PRESCRIPTIONS TABLE 
+// PRESCRIPTIONS TABLE
 
-function loadNursePrescriptionsTable(assignedPatientIDs) {
-    const tbody = document.getElementById('nursePrescriptionsTbody');
+function loadNursePrescriptionsTable(assignedPatientIDs, prescriptions, patients, medicines) {
+    var tbody = document.getElementById('nursePrescriptionsTbody');
     tbody.innerHTML = '';
 
-    const assignedPrescriptions = PRESCRIPTIONS.filter(function(prescription) {
-        return assignedPatientIDs.includes(prescription.patientID) && prescription.status === 'active';
+    var assignedPrescriptions = prescriptions.filter(function(p) {
+        return assignedPatientIDs.includes(p.patientID) && p.status === 'active';
     });
 
     assignedPrescriptions.forEach(function(prescription) {
-        const patient = PATIENTS.find(function(patient) { return patient.patientID  === prescription.patientID; });
-        const medicine = MEDICINES.find(function(medicine) { return medicine.medicineID === prescription.medicineID; });
+        var patient  = patients.find(function(p) { return p.patientID   === prescription.patientID; });
+        var medicine = medicines.find(function(m) { return m.medicineID === prescription.medicineID; });
 
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + prescription.prescriptionID + '</td>' +
             '<td>' + (patient  ? patient.firstName + ' ' + patient.lastName : prescription.patientID) + '</td>' +
@@ -158,22 +188,22 @@ function loadNursePrescriptionsTable(assignedPatientIDs) {
     });
 }
 
-// MEDICAL HISTORY TABLE 
+// MEDICAL HISTORY TABLE
 
-function loadNurseHistoryTable(assignedPatientIDs) {
-    const tbody = document.getElementById('nurseHistoryTbody');
+function loadNurseHistoryTable(assignedPatientIDs, history, patients) {
+    var tbody = document.getElementById('nurseHistoryTbody');
     tbody.innerHTML = '';
 
-    const assignedHistory = MEDICAL_HISTORY.filter(function(history) {
-        return assignedPatientIDs.includes(history.patientID);
+    var assignedHistory = history.filter(function(h) {
+        return assignedPatientIDs.includes(h.patientID);
     });
 
     assignedHistory.forEach(function(entry) {
-        const patient = PATIENTS.find(function(patient) {
-            return patient.patientID === entry.patientID;
+        var patient = patients.find(function(p) {
+            return p.patientID === entry.patientID;
         });
 
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + entry.historyID + '</td>' +
             '<td>' + (patient ? patient.firstName + ' ' + patient.lastName : entry.patientID) + '</td>' +

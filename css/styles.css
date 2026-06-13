@@ -1345,3 +1345,304 @@ display: flex;
 from { opacity: 0; transform: translateY(28px); }
 to { opacity: 1; transform: translateY(0); }
 }
+
+/* ADMIN SECTION SEARCH  */
+
+.adminSectionSearch {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    font-family: var(--font);
+    font-size: 12px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    width: 200px;
+    transition: border-color var(--transition), background var(--transition);
+}
+
+.adminSectionSearch:focus {
+    border-color: var(--primary);
+    background: var(--surface);
+}
+
+/* ADMIN MODAL 
+
+/* Full-screen semi-transparent backdrop */
+.adminModal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.52);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+/* The [hidden] attribute alone loses to the class rule above (same specificity, author > UA).
+   This compound selector wins and correctly hides the overlay when hidden is set. */
+.adminModal-overlay[hidden] {
+    display: none;
+}
+
+/* The modal card itself */
+.adminModal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 580px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+    animation: modalSlideIn 0.22s ease;
+}
+
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header row — title on the left, × button on the right */
+.adminModal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+}
+
+.adminModal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.adminModal-closeBtn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition), color var(--transition);
+}
+
+.adminModal-closeBtn:hover {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+/* Scrollable form area */
+.adminModal-body {
+    padding: 22px;
+}
+
+/* Two-column grid for most form fields */
+.adminModal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+/* Standard field wrapper */
+.adminModal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* Selects span the full width so they don't look cramped in half a column */
+.adminModal-field--full {
+    grid-column: 1 / -1;
+}
+
+/* Checkbox fields go horizontal — tick on the left, label on the right */
+.adminModal-field--check {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.adminModal-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.adminModal-input,
+.adminModal-select {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    width: 100%;
+    transition: border-color var(--transition), background var(--transition);
+}
+
+.adminModal-input:focus,
+.adminModal-select:focus {
+    border-color: var(--primary);
+    background: var(--surface);
+}
+
+.adminModal-checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Blue info strip shown on Add modals to explain password generation */
+.adminModal-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--primary);
+    background: var(--primary-soft);
+    border: 1px solid rgba(45, 108, 223, 0.18);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    margin-top: 12px;
+    line-height: 1.5;
+}
+
+.adminModal-hint i { font-size: 15px; flex-shrink: 0; }
+
+/* Inline validation error that appears below the form */
+.adminModal-error {
+    color: var(--danger);
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+/* Sticky footer with action buttons */
+.adminModal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.adminModal-saveBtn {
+    background: var(--primary);
+    color: var(--surface);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 9px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.adminModal-saveBtn:hover { background: var(--primary-dark); }
+
+.adminModal-cancelBtn {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: background var(--transition), color var(--transition);
+}
+
+.adminModal-cancelBtn:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* Red delete button — only shown in the confirm-delete modal */
+.adminModal-deleteBtn {
+    background: var(--danger);
+    color: var(--surface);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 9px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.adminModal-deleteBtn:hover { background: #c81a3e; }
+
+/* Delete confirmation body — centred warning icon + message */
+.adminModal-deleteConfirm {
+    text-align: center;
+    padding: 20px 0 8px;
+}
+
+.adminModal-deleteIcon {
+    display: block;
+    font-size: 44px;
+    color: var(--warn);
+    margin-bottom: 14px;
+}
+
+.adminModal-deleteConfirm p {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* Credentials panel — shown after a successful account creation */
+.adminModal-creds {
+    background: var(--success-soft);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+}
+
+.adminModal-creds-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+/* Each credential row: label on the left, monospace value on the right */
+.adminModal-creds-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 9px 14px;
+    margin-bottom: 8px;
+}
+
+.adminModal-creds-row span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.adminModal-creds-row strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: monospace;
+    letter-spacing: 0.5px;
+}
