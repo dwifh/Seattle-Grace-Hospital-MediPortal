@@ -13,70 +13,44 @@ var PDATA = {
     prescriptionRequests: []
 };
 
-//loadStore fetches every record from one object store. If the store is empty, it hands back the dummy-data fallback array instead.
-function loadStore(storeName, fallbackArray, callback) {
-    try {
-        getAllRecords(storeName, function(records) {
-            if (records && records.length > 0) {
-                callback(records);
-            } else {
-                callback(fallbackArray);
-            }
-        });
-    } catch(e) {
-        //Store doesn't exist in this DB version yet — use the fallback silently.
-        console.log("loadStore: store '" + storeName + "' not available yet, using fallback. (" + e.message + ")");
-        callback(fallbackArray);
-    }
-}
 
-//findPatientInDummy is the fallback lookup for the logged-in patient: it searches the
-//PATIENTS array from dummy-data.js when the record isn't in IndexedDB.
-function findPatientInDummy(patientID) {
-    for (var i = 0; i < PATIENTS.length; i++) {
-        if (PATIENTS[i].patientID === patientID) {
-            return PATIENTS[i];
-        }
-    }
-    //Demo fallback — Aanya Sharma — if the requested ID isn't found at all.
-    for (var i = 0; i < PATIENTS.length; i++) {
-        if (PATIENTS[i].patientID === "p001") {
-            return PATIENTS[i];
-        }
-    }
-    return null;
-}
 
-//loadPatientData fills PDATA from IndexedDB (with dummy-data fallback), then calls onReady.
+//loadPatientData fills PDATA from IndexedDB, then calls onReady.
 function loadPatientData(onReady) {
     //Work out the logged-in patient's ID from the session object saved by auth.js.
-    //getSession() returns the whole currentUser; we read patientID off it (answer: option A).
     var session = getSession();
-    var patientID = (session && session.patientID) ? session.patientID : "p001";
+    var patientID = (session && session.patientID) ? session.patientID : null;
 
-    //Load the patient profile — IndexedDB first, dummy-data fallback.
+    //If no session exists at all, stop here as nothing can load without a patient ID.
+    if (!patientID) {
+        console.log("loadPatientData: no patientID in session.");
+        return;
+    }
+
+    //Load the patient profile directly from IndexedDB.
     getRecord("patients", patientID, function(record) {
-        PDATA.patient = record ? record : findPatientInDummy(patientID);
+        PDATA.patient = record;
 
-        //Each job is [storeName, fallbackArray, keyInPDATA].
+        //Each job is [storeName, keyInPDATA].
+        //If a store is empty the dashboard shows empty state.
         var jobs = [
-            ["doctors",          DOCTORS,          "doctors"],
-            ["appointments",     APPOINTMENTS,     "appointments"],
-            ["prescriptions",    PRESCRIPTIONS,    "prescriptions"],
-            ["medicines",        MEDICINES,        "medicines"],
-            ["medicalHistory",   MEDICAL_HISTORY,  "history"],
-            ["vitals",           VITALS,           "vitals"],
-            ["booking_requests", BOOKING_REQUESTS, "bookingRequests"],
-            ["prescription_requests", [],          "prescriptionRequests"]
+            ["doctors",               "doctors"],
+            ["appointments",          "appointments"],
+            ["prescriptions",         "prescriptions"],
+            ["medicines",             "medicines"],
+            ["medicalHistory",        "history"],
+            ["vitals",                "vitals"],
+            ["booking_requests",      "bookingRequests"],
+            ["prescription_requests", "prescriptionRequests"]
         ];
 
-        //Load every store in parallel and only continue once all have come back.
+        //Load every store in parallel. Only proceed once every getAllRecords has returned.
         var remaining = jobs.length;
         for (var i = 0; i < jobs.length; i++) {
             //IIFE captures the current job so the async callback uses the right one.
             (function(job) {
-                loadStore(job[0], job[1], function(records) {
-                    PDATA[job[2]] = records;
+                getAllRecords(job[0], function(records) {
+                    PDATA[job[1]] = records;
                     remaining--;
                     if (remaining === 0) {
                         onReady();
@@ -88,15 +62,10 @@ function loadPatientData(onReady) {
 }
 
 
-//getLoggedInPatient returns the cached patient record. It is also used by the booking form.
-//If the cache isn't ready yet, it falls back to a synchronous dummy lookup.
+//getLoggedInPatient returns the cached patient record.
+//It is used by the booking form and the prescription request form.
 function getLoggedInPatient() {
-    if (PDATA.patient) {
-        return PDATA.patient;
-    }
-    var session = getSession();
-    var patientID = (session && session.patientID) ? session.patientID : "p001";
-    return findPatientInDummy(patientID);
+    return PDATA.patient;
 }
 
 //loadPatientDashboard opens the DB, loads all data, then renders every section.
@@ -153,9 +122,18 @@ function showDoctorCard(patient) {
     //Doctor details; first name and last name, speciality, and GMC number are shown in the doctor card on the dashboard.
     document.getElementById("doctorName").textContent = doctor.title + " " + doctor.firstName + " " + doctor.lastName;
     document.getElementById("doctorSpecialty").textContent = doctor.specialty;
-    document.getElementById("doctorGmc").textContent = doctor.gmcNumber.replace("GMC", "");
     document.getElementById("doctorEmail").textContent = doctor.email;
     document.getElementById("doctorInfo").textContent = doctor.information;
+
+    //gmcNumber is stored encrypted in IndexedDB as { iv, ciphertext }.
+    //decryptField() returns a Promise, so we put the display inside .then() so it only runs once the decrypted string is ready.
+    decryptField(doctor.gmcNumber).then(function(plainGmc) {
+        document.getElementById("doctorGmc").textContent = plainGmc.replace("GMC", "");
+    }).catch(function(error) {
+        //If decryption fails for any reason, show blank instead of crashing.
+        console.log("Could not decrypt gmcNumber: " + error);
+        document.getElementById("doctorGmc").textContent = "";
+    });
 }
 
 function showPatientStats(patient) {
@@ -336,7 +314,6 @@ function showPatientPrescriptions(patient) {
                     : "") +
             '</div>' +
             '<span class="badge_active">Active</span>';
-
  
         //appendChild adds the finished <li> element to the end of the <ul>.
         list.appendChild(item);
@@ -791,12 +768,12 @@ function setupRxRequestForm() {
         e.preventDefault();
 
         var medicineID = document.getElementById("rxRequestMedicine").value;
-        var notes      = document.getElementById("rxRequestNotes").value.trim();
+        var notes = document.getElementById("rxRequestNotes").value.trim();
 
-        var errorMsg   = document.getElementById("rxRequestError");
+        var errorMsg = document.getElementById("rxRequestError");
         var successMsg = document.getElementById("rxRequestOk");
 
-        errorMsg.hidden   = true;
+        errorMsg.hidden = true;
         successMsg.hidden = true;
 
         //Validate: a medicine must be selected.
@@ -810,14 +787,14 @@ function setupRxRequestForm() {
 
         //Build the prescription request record.
         var newRequest = {
-            rxRequestID:  "rxr" + Date.now(),
-            patientID:    patient.patientID,
-            doctorID:     patient.registeredDoctorID,
-            medicineID:   medicineID,
-            notes:        notes,
-            status:       "pending",
-            submittedAt:  Date.now(),
-            decidedAt:    null
+            rxRequestID: "rxr" + Date.now(),
+            patientID: patient.patientID,
+            doctorID: patient.registeredDoctorID,
+            medicineID: medicineID,
+            notes: notes,
+            status: "pending",
+            submittedAt: Date.now(),
+            decidedAt: null
         };
 
         //Persist to IndexedDB.
