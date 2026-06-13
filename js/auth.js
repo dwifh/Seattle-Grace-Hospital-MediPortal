@@ -236,25 +236,48 @@ function handleLogin(event) {
     }
 
     //attemptLogin does the actual credential check once we have a user record.
-    //It is called by both the IndexedDB path and the dummy-data fallback below.
+    //It is called by the IndexedDB path.
     function attemptLogin(matchedUser) {
-        //If login failed, display an error message, clear the password box, put focus back on it, and stop.
-        if (!matchedUser || matchedUser.password !== password) {
-            // -- Tiana's failed attempt counter goes here --
+        //If no user record was found at all, fail immediately without decrypting.
+        if (!matchedUser) {
             recordFailedAttempt();
             errorBox.hidden = false;
-            //clear the password field
             passwordInput.value = '';
-            //puts cursor back so user can try again (quality of life implementation)
             passwordInput.focus();
             return;
         }
 
-        // Valid login — save session and route to dashboard
-        saveSession(matchedUser);
-        sessionStorage.removeItem("loginAttempts");
-        sessionStorage.removeItem("lockoutTime");
-        showDashboard(matchedUser.role);
+        //The stored password is now an encrypted object { iv, ciphertext } from
+        //Ayush's encryptField(). 
+        //We use decryptField() to get the original string back, then compare it to what the user typed.
+        decryptField(matchedUser.password).then(function(decryptedPassword) {
+
+            //Now we can compare the decrypted stored password to what was typed.
+            if (decryptedPassword !== password) {
+                // -- Tiana's failed attempt counter goes here --
+                recordFailedAttempt();
+                errorBox.hidden = false;
+                //clear the password field
+                passwordInput.value = '';
+                //puts cursor back so user can try again (quality of life implementation)
+                passwordInput.focus();
+                return;
+            }
+
+            // Valid login — save session and route to dashboard
+            saveSession(matchedUser);
+            sessionStorage.removeItem("loginAttempts");
+            sessionStorage.removeItem("lockoutTime");
+            showDashboard(matchedUser.role);
+
+        }).catch(function(error) {
+            //If decryption itself fails, treat it as a failed login rather than crashing.
+            console.log("Decryption error during login: " + error);
+            recordFailedAttempt();
+            errorBox.hidden = false;
+            passwordInput.value = '';
+            passwordInput.focus();
+        });
     }
 
     //Try IndexedDB first. getRecord looks up the username directly since "username" is the keyPath of the "users" store.
@@ -283,11 +306,7 @@ function handleLogout() {
 
 // REGISTRATION ALGORITHM
 // Creates a NEW patient account from the registration form and writes it to IndexedDB.
-// Writes to the SAME stores and record shapes as seed.js, so a registered patient is
-// indistinguishable from a seeded one to auth.js and the dashboards.
-//
-// Patient-supplied fields are collected here. Clinically-assigned fields are NOT asked of the user.
-//  They default to null and are set later by an admin/clinician.
+// Writes to the SAME stores and record shapes as seed.js, so a registered patient is indistinguishable from a seeded one to auth.js and the dashboards.
 
 //Calculates age from a date-of-birth string, so we never store a stale age integer.
 function calculateAge(dob) {
@@ -406,32 +425,49 @@ function handleRegister(event) {
             };
 
             //Build the login account. Same shape as the users seeded by seed.js.
-            //NOTE: password is plaintext here.
+            //The password must be encrypted before storing, so we call encryptField() from crypto.js.
+            encryptField(password).then(function(encryptedPassword) {
+
             var newUser = {
                 username: username,
-                password: password,
+                password: encryptedPassword,   //stored as { iv, ciphertext }, never plaintext
                 role: "patient",
                 patientID: patientID
             };
 
-            //Persist both records.
+            //Save the patient profile first. This has no sensitive fields
+            //that need encrypting at this stage.
             putRecord("patients", newPatient);
+
+            //Save the login account with the encrypted password.
             putRecord("users", newUser, function(saved) {
                 if (!saved) {
                     fail("Could not create your account. Please try again.");
                     return;
                 }
 
-                //Success — show message, then log the new patient straight in.
+                //Success, show message, then log the new patient straight in.
                 if (successBox) {
                     successBox.textContent = "Account created. Signing you in…";
                     successBox.hidden = false;
                 }
 
-                //Auto-login: save session and route to the patient dashboard.
-                saveSession(newUser);
+                //Auto-login: build a session-safe copy of the user WITHOUT the encrypted password — the session only needs role and IDs, not credentials.
+                var sessionUser = {
+                    username: username,
+                    role: "patient",
+                    patientID: patientID
+                };
+                saveSession(sessionUser);
                 showDashboard("patient");
             });
+
+        }).catch(function(error) {
+            //If encryption itself fails (e.g. crypto API unavailable), we stop and
+            //show an error rather than silently storing a plaintext password.
+            console.log("Encryption error during registration: " + error);
+            fail("Could not secure your account. Please try again.");
+        });
         });
     });
 }
