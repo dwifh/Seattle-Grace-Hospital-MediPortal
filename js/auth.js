@@ -238,23 +238,31 @@ function handleLogin(event) {
     //attemptLogin does the actual credential check once we have a user record.
     //It is called by both the IndexedDB path and the dummy-data fallback below.
     function attemptLogin(matchedUser) {
-        //If login failed, display an error message, clear the password box, put focus back on it, and stop.
-        if (!matchedUser || matchedUser.password !== password) {
-            // -- Tiana's failed attempt counter goes here --
+        // If no user record was found, fail immediately.
+        if (!matchedUser) {
             recordFailedAttempt();
             errorBox.hidden = false;
-            //clear the password field
             passwordInput.value = '';
-            //puts cursor back so user can try again (quality of life implementation)
             passwordInput.focus();
             return;
         }
 
-        // Valid login — save session and route to dashboard
-        saveSession(matchedUser);
-        sessionStorage.removeItem("loginAttempts");
-        sessionStorage.removeItem("lockoutTime");
-        showDashboard(matchedUser.role);
+        // Decrypt the stored password first, then compare against what the user typed.
+        decryptField(matchedUser.password).then(function(storedPassword) {
+            if (storedPassword !== password) {
+                recordFailedAttempt();
+                errorBox.hidden = false;
+                passwordInput.value = '';
+                passwordInput.focus();
+                return;
+            }
+
+            // Valid login — save session and route to dashboard
+            saveSession(matchedUser);
+            sessionStorage.removeItem("loginAttempts");
+            sessionStorage.removeItem("lockoutTime");
+            showDashboard(matchedUser.role);
+        });
     }
 
     //Try IndexedDB first. getRecord looks up the username directly since "username" is the keyPath of the "users" store.
@@ -264,9 +272,9 @@ function handleLogin(event) {
                 //Found in IndexedDB, then use it.
                 attemptLogin(idbUser);
             } else {
-                //Not in IndexedDB,  fall back to the USERS array in dummy-data.js so the app still works.
+                //Not in IndexedDB, fall back to the USERS array in dummy-data.js so the app still works.
                 const fallbackUser = USERS.find(function(user) {
-                    return user.username === username && user.password === password;
+                    return user.username === username;
                 });
                 attemptLogin(fallbackUser);
             }
