@@ -22,6 +22,7 @@ function seedDatabase() {
             seedReceptionists();
             seedGuardians();
             seedNotifications();
+            seedAppointments();
         });
     });
 }
@@ -187,9 +188,9 @@ function seedReceptionists() {
                     continue;
                 }
  
-                (function(receptionist) {
-                    var idNum = receptionist.receptionistID.replace(/[^0-9]/g, "");
+                (function(receptionist, index) {
                     var username = makeUsername(receptionist.firstName, receptionist.lastName);
+                    var idNum = String(index + 1).padStart(3, "0");
                     var password = "Reception" + idNum;
 
                     putRecord("receptionists", receptionist);
@@ -201,7 +202,7 @@ function seedReceptionists() {
                             receptionistID: receptionist.receptionistID
                         });
                     });
-                })(r);
+                })(r, i);
             }
 
             console.log("Seeded " + receptionists.length + " receptionist(s) and their login accounts.");

@@ -510,10 +510,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Open the DB before restoring the dashboard — getAllRecords inside loadAdminDashboard
         // (and other role dashboards) needs db to be non-null before it can query any store.
         openDatabase(function() {
+            seedDatabase();
             showDashboard(existingSession.role);
         });
     } else {
         // If there are no active , force login page
+        seedDatabase();
         showLogin();
     }
 
