@@ -1,29 +1,58 @@
 // admin.js — OWNED BY AYUSH
 
-// initialise all table loading functions for the admin dashboard
 function loadAdminDashboard() {
-    loadStats();
-    loadDoctorsTable();
-    loadNursesTable();
-    loadReceptionistsTable();
-    loadPatientsTable();
-    loadGuardiansTable();
+    getAllRecords("patients", function(patients) {
+    getAllRecords("doctors", function(doctors) {
+    getAllRecords("nurses", function(nurses) {
+    getAllRecords("receptionists", function(receptionists) {
+    getAllRecords("guardians", function(guardians) {
+    getAllRecords("appointments", function(appointments) {
+    renderAdminDashboard(patients, doctors, nurses, receptionists, guardians, appointments);
+    });
+    });
+    });
+    });
+    });
+    });
 }
 
-// STATS cards
+// Decrypt all patient NHS numbers before rendering — admin is the only role permitted to see them.
+// THEN - Load the stats and different tables
+function renderAdminDashboard(patients, doctors, nurses, receptionists, guardians, appointments) {
+    // Using Promise.all - .then; To handle an array of items (resolved when promise is resolved and rjected when promise is rejected)
+    Promise.all(patients.map(function(Record) {
+        var copy = Object.assign({}, patient);
+        if (Record.nhsNumber && typeof Record.nhsNumber === "object") {
+            // decryptField derived from crypto.js
+            return decryptField(Record.nhsNumber).then(function(plain) {
+                copy.nhsNumber = plain;
+                return copy;
+            });
+        }
+        return Promise.resolve(copy);
+    })).then(function(decryptedPatients) {
+        loadStats(decryptedPatients, doctors, appointments);
+        loadDoctorsTable(doctors, decryptedPatients);
+        loadNursesTable(nurses);
+        loadReceptionistsTable(receptionists);
+        loadPatientsTable(decryptedPatients, doctors);
+        loadGuardiansTable(guardians, decryptedPatients);
+    });
+}
 
-function loadStats() {
-    document.getElementById('totalPatients').textContent = PATIENTS.length;
-    document.getElementById('totalAppointments').textContent = APPOINTMENTS.length;
-    document.getElementById('totalDoctors').textContent = DOCTORS.length;
+// STATS
 
-    // applying a constant number of beds within the hospital because we havent implemented backend yet
+function loadStats(patients, doctors, appointments) {
+    document.getElementById('totalPatients').textContent = patients.length;
+    document.getElementById('totalAppointments').textContent = appointments.length;
+    document.getElementById('totalDoctors').textContent = doctors.length;
+
     const totalBeds = 20;
-    const availableBeds = totalBeds - PATIENTS.length;
+    const availableBeds = totalBeds - patients.length;
     document.getElementById('availableBeds').textContent = availableBeds;
 }
 
-// USER MANAGEMENT TABLES 
+// USER MANAGEMENT TABLES
 
 function actionButtons(id) {
     return '<td>' +
@@ -32,14 +61,12 @@ function actionButtons(id) {
         '</td>';
 }
 
- // all table loading functions will do the same thing - retreive the data from the dummy-data.js file and put them in the form of a table
- //(I've added add, edit and delete actions next for each actor)
-function loadDoctorsTable() {
+function loadDoctorsTable(doctors, patients) {
     const tbody = document.getElementById('adminDoctorsTbody');
     tbody.innerHTML = '';
 
-    DOCTORS.forEach(function(doctor) {
-        const assignedCount = PATIENTS.filter(function(p) {
+    doctors.forEach(function(doctor) {
+        const assignedCount = patients.filter(function(p) {
             return p.registeredDoctorID === doctor.doctorID;
         }).length;
 
@@ -57,11 +84,11 @@ function loadDoctorsTable() {
     });
 }
 
-function loadNursesTable() {
+function loadNursesTable(nurses) {
     const tbody = document.getElementById('adminNursesTbody');
     tbody.innerHTML = '';
 
-    NURSES.forEach(function(nurse) {
+    nurses.forEach(function(nurse) {
         const row = document.createElement('tr');
         row.innerHTML =
             '<td>' + nurse.nurseID + '</td>' +
@@ -75,11 +102,11 @@ function loadNursesTable() {
     });
 }
 
-function loadReceptionistsTable() {
+function loadReceptionistsTable(receptionists) {
     const tbody = document.getElementById('adminReceptionistsTbody');
     tbody.innerHTML = '';
 
-    RECEPTIONISTS.forEach(function(receptionist) {
+    receptionists.forEach(function(receptionist) {
         const row = document.createElement('tr');
         row.innerHTML =
             '<td>' + receptionist.receptionistID + '</td>' +
@@ -93,12 +120,12 @@ function loadReceptionistsTable() {
     });
 }
 
-function loadPatientsTable() {
+function loadPatientsTable(patients, doctors) {
     const tbody = document.getElementById('adminPatientsTbody');
     tbody.innerHTML = '';
 
-    PATIENTS.forEach(function(patient) {
-        const doctor = DOCTORS.find(function(d) {
+    patients.forEach(function(patient) {
+        const doctor = doctors.find(function(d) {
             return d.doctorID === patient.registeredDoctorID;
         });
 
@@ -118,12 +145,12 @@ function loadPatientsTable() {
     });
 }
 
-function loadGuardiansTable() {
+function loadGuardiansTable(guardians, patients) {
     const tbody = document.getElementById('adminGuardiansTbody');
     tbody.innerHTML = '';
 
-    GUARDIAN.forEach(function(guardian) {
-        const linkedPatient = PATIENTS.find(function(p) {
+    guardians.forEach(function(guardian) {
+        const linkedPatient = patients.find(function(p) {
             return p.patientID === guardian.linkedPatientID;
         });
 
