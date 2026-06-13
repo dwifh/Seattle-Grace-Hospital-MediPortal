@@ -801,7 +801,7 @@
     gap: 10px;
 }
 
-/* ── PRESCRIPTION CARD (patient dashboard) ──────────────────────────────── */
+/*PRESCRIPTION CARD (patient dashboard)*/
 
 .rx_item {
     background: var(--surface);
@@ -878,7 +878,7 @@
 }
 
 
-/* ── PRESCRIPTION REQUEST REVIEW PANEL (doctor dashboard) ───────────────── */
+/*PRESCRIPTION REQUEST REVIEW PANEL (doctor dashboard)*/
 
 #rxRequestNotifList {
     list-style: none;
