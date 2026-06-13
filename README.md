@@ -136,11 +136,6 @@ Classes use a single underscore separator (e.g. `sidebar_item`, `login_card`).
 ## Phase 2 — Planned (Post Front-End Submission)
 
 - Replace all hardcoded arrays with IndexedDB reads/writes
-- Fetch seed data from the four server endpoints:
-  - `https://simulacra.uk/CST2572/doctor.json`
-  - `https://simulacra.uk/CST2572/people.json`
-  - `https://simulacra.uk/CST2572/admin.json`
-  - `https://simulacra.uk/CST2572/medicine.json`
 - Implement AES-256-GCM encryption via the Web Crypto API (`crypto.subtle`) for:
   - Passwords (never stored in plaintext)
   - Patient NHS numbers
@@ -183,5 +178,4 @@ Classes use a single underscore separator (e.g. `sidebar_item`, `login_card`).
 
 - [Web Crypto API — MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API)
 - [IndexedDB API — MDN](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)
-- [Service Workers — MDN](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
 - [DM Sans Font — Google Fonts](https://fonts.google.com/specimen/DM+Sans)

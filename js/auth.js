@@ -48,8 +48,19 @@ function scrollToSection(id) {
 
 // SESSION SAVER - Tiana don't edit this, or else users will have to login everytime the tab is refreshed
 function saveSession(user) {
-    //Save the current user in the session storage as a JSON string
-    sessionStorage.setItem('currentUser', JSON.stringify(user));
+    // Never store the password (plain or encrypted) in sessionStorage.
+    // Only persist what is needed to restore the dashboard on refresh.
+    var sessionData = {
+        username: user.username,
+        role:     user.role
+    };
+    if (user.patientID)sessionData.patientID = user.patientID;
+    if (user.doctorID)sessionData.doctorID = user.doctorID;
+    if (user.nurseID)sessionData.nurseID = user.nurseID;
+    if (user.receptionistID) sessionData.receptionistID = user.receptionistID;
+    if (user.guardianID) sessionData.guardianID = user.guardianID;
+    if (user.adminID) sessionData.adminID = user.adminID;
+    sessionStorage.setItem('currentUser', JSON.stringify(sessionData));
 }
 
 function getSession() {
@@ -238,7 +249,7 @@ function handleLogin(event) {
     //attemptLogin does the actual credential check once we have a user record.
     //It is called by the IndexedDB path.
     function attemptLogin(matchedUser) {
-        //If no user record was found at all, fail immediately without decrypting.
+        // If no user record was found, fail immediately.
         if (!matchedUser) {
             recordFailedAttempt();
             errorBox.hidden = false;
@@ -247,36 +258,38 @@ function handleLogin(event) {
             return;
         }
 
-        //The stored password is now an encrypted object { iv, ciphertext } from
-        //Ayush's encryptField(). 
-        //We use decryptField() to get the original string back, then compare it to what the user typed.
-        decryptField(matchedUser.password).then(function(decryptedPassword) {
-
-            //Now we can compare the decrypted stored password to what was typed.
-            if (decryptedPassword !== password) {
-                // -- Tiana's failed attempt counter goes here --
+        // Passwords are currently stored as plaintext by seed.js.
+        // When crypto.js encryption is wired up for passwords, the stored value will be an object {iv, ciphertext}.
+        // This branch handles both cases so login keeps working through the transition.
+        if (typeof matchedUser.password === 'string') {
+            if (matchedUser.password !== password) {
                 recordFailedAttempt();
                 errorBox.hidden = false;
-                //clear the password field
                 passwordInput.value = '';
-                //puts cursor back so user can try again (quality of life implementation)
                 passwordInput.focus();
                 return;
             }
-
-            // Valid login — save session and route to dashboard
             saveSession(matchedUser);
             sessionStorage.removeItem("loginAttempts");
             sessionStorage.removeItem("lockoutTime");
             showDashboard(matchedUser.role);
+            return;
+        }
 
-        }).catch(function(error) {
-            //If decryption itself fails, treat it as a failed login rather than crashing.
-            console.log("Decryption error during login: " + error);
-            recordFailedAttempt();
-            errorBox.hidden = false;
-            passwordInput.value = '';
-            passwordInput.focus();
+        // Encrypted password path — used once crypto.js starts encrypting stored passwords
+        decryptField(matchedUser.password).then(function(storedPassword) {
+            if (storedPassword !== password) {
+                recordFailedAttempt();
+                errorBox.hidden = false;
+                passwordInput.value = '';
+                passwordInput.focus();
+                return;
+            }
+
+            saveSession(matchedUser);
+            sessionStorage.removeItem("loginAttempts");
+            sessionStorage.removeItem("lockoutTime");
+            showDashboard(matchedUser.role);
         });
     }
 
@@ -297,6 +310,11 @@ function handleLogin(event) {
 // LOGOUT LOGIC
 
 function handleLogout() {
+    // Stop the admin appointment poll if it is running
+    if (typeof _appointmentPollInterval !== 'undefined' && _appointmentPollInterval) {
+        clearInterval(_appointmentPollInterval);
+        _appointmentPollInterval = null;
+    }
     //clear user from current session
     clearSession();
     //force the login page
@@ -424,16 +442,17 @@ function handleRegister(event) {
                 guardianID: null            //adults only; minor registration is out of scope
             };
 
-            //Build the login account. Same shape as the users seeded by seed.js.
-            //The password must be encrypted before storing, so we call encryptField() from crypto.js.
-            encryptField(password).then(function(encryptedPassword) {
-
-            var newUser = {
-                username: username,
-                password: encryptedPassword,   //stored as { iv, ciphertext }, never plaintext
-                role: "patient",
-                patientID: patientID
-            };
+            //Encrypt NHS number and password before storing in IndexedDB.
+            encryptField(formattedNhs).then(function(encNhs) {
+                newPatient.nhsNumber = encNhs;
+                return encryptField(password);
+            }).then(function(encPass) {
+                var newUser = {
+                    username: username,
+                    password: encPass,
+                    role: "patient",
+                    patientID: patientID
+                };
 
             //Save the patient profile first. This has no sensitive fields
             //that need encrypting at this stage.
@@ -452,22 +471,10 @@ function handleRegister(event) {
                     successBox.hidden = false;
                 }
 
-                //Auto-login: build a session-safe copy of the user WITHOUT the encrypted password — the session only needs role and IDs, not credentials.
-                var sessionUser = {
-                    username: username,
-                    role: "patient",
-                    patientID: patientID
-                };
-                saveSession(sessionUser);
-                showDashboard("patient");
+                    saveSession(newUser);
+                    showDashboard("patient");
+                });
             });
-
-        }).catch(function(error) {
-            //If encryption itself fails (e.g. crypto API unavailable), we stop and
-            //show an error rather than silently storing a plaintext password.
-            console.log("Encryption error during registration: " + error);
-            fail("Could not secure your account. Please try again.");
-        });
         });
     });
 }
@@ -500,9 +507,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check for existing session
     const existingSession = getSession();
     if (existingSession) {
-        showDashboard(existingSession.role);
+        // Open the DB before restoring the dashboard — getAllRecords inside loadAdminDashboard
+        // (and other role dashboards) needs db to be non-null before it can query any store.
+        openDatabase(function() {
+            showDashboard(existingSession.role);
+        });
     } else {
-        // If there are no active sessions, force login page
+        // If there are no active , force login page
         showLogin();
     }
 
