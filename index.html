@@ -817,7 +817,7 @@
                             <input type="text" id="apptReason" name="apptReason" placeholder="e.g. Routine Check-up" required/>
                         </div>
                         <p id="bookingError" hidden>Please fill out all fields correctly!</p>
-                        <p id="bookingOk" hidden>Appointment booked successfully! Awaiting confirmation.</p>
+                        <p id="bookingOk" hidden>Appointment booked successfully! Awaiting confirmation from doctor.</p>
                         <button type="submit">Create Appointment</button>
                     </form>
                 </section>
@@ -840,6 +840,7 @@
                             <tr>
                                 <th>Booking</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="bookingStatusBody"></tbody>
@@ -859,12 +860,47 @@
                     <ol id="historyTimeline"></ol>
                 </section>
                 <!--Prescription details-->
-                <section class="rx_panel">
+                 <section class="rx_panel">
                     <div class="rx_panel_header">
                         <h2>Prescriptions</h2>
-                        <button type="button">Request Refill</button>
+                        <button type="button" class="btn_refill" id="btnRequestRx"
+                            onclick="document.getElementById('rxRequestPanel').hidden = !document.getElementById('rxRequestPanel').hidden">
+                            Request Prescription
+                        </button>
                     </div>
                     <ul id="rxGrid"></ul>
+
+                    <!--Prescription request form — shown/hidden by the button above-->
+                    <div id="rxRequestPanel" hidden>
+                        <form id="rxRequestForm" class="rx_request_form" novalidate>
+                            <h3 class="rx_request_title">New Prescription Request</h3>
+                            <p class="rx_request_subtitle">Select the medicine you need. Your doctor will review and respond.</p>
+
+                            <div class="rx_request_field">
+                                <label class="rx_request_label" for="rxRequestMedicine">Medicine</label>
+                                <select class="rx_request_select" id="rxRequestMedicine">
+                                    <option value="">Choose a medicine…</option>
+                                </select>
+                            </div>
+
+                            <div class="rx_request_field">
+                                <label class="rx_request_label" for="rxRequestNotes">Notes for doctor <span class="rx_request_optional">(optional)</span></label>
+                                <input class="rx_request_input" type="text" id="rxRequestNotes"
+                                    placeholder="e.g. Running low, need 30 day supply"/>
+                            </div>
+
+                            <p class="rx_request_error" id="rxRequestError" hidden>Please select a medicine.</p>
+                            <p class="rx_request_ok"    id="rxRequestOk"    hidden>Request sent! Your doctor will review it shortly.</p>
+
+                            <button class="rx_request_submit" type="submit">Send Request</button>
+                        </form>
+
+                        <!--List of this patient's previous prescription requests and their status-->
+                        <div class="rx_request_status">
+                            <p class="rx_request_status_title">Your Requests</p>
+                            <ul id="rxRequestStatusList"></ul>
+                        </div>
+                    </div>
                 </section>
             </main>
         </div>
@@ -929,6 +965,15 @@
                         <p id="bookingNotifCount"></p>
                     </div>
                     <ul id="bookingNotifList"></ul>
+                </section>
+
+                 <!--Prescription request notifications; patient requests reviewed by doctor-->
+                <section class="prescription_notif_panel">
+                    <div class="prescription_notif_header">
+                        <h2>Prescription Requests</h2>
+                        <p id="rxRequestNotifCount"></p>
+                    </div>
+                    <ul id="rxRequestNotifList"></ul>
                 </section>
 
                 <!--With patient list, doctor can click on their name to see details-->
