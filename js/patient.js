@@ -273,10 +273,10 @@ function showPatientPrescriptions(patient) {
       var list = document.getElementById("rxGrid")
       //Clear anything that was present
       list.innerHTML = "";
-
+ 
       //Boolean condition to track if found at least 1 prescription
       var found = false;
-
+ 
       //Loop through the loaded prescriptions
       for (var i = 0; i < PDATA.prescriptions.length; i++) {
         var rx = PDATA.prescriptions[i]
@@ -284,7 +284,7 @@ function showPatientPrescriptions(patient) {
         if (rx.patientID !== patient.patientID) continue;
         //Prescription has been found
         found = true
-
+ 
         //Look up medicine details using medicineID stored in the prescription
         var med = null;
         for (var j = 0; j < PDATA.medicines.length; j++) {
@@ -293,28 +293,55 @@ function showPatientPrescriptions(patient) {
                 break;
             }
         }
-
+ 
         //Combine name and strength, if medicine not found, display "Unknown"
         var medName = med ? med.name + " " + med.strength : "Unknown";
-
+ 
         //Create new HTML element & css class
+        //Convert durationDays number to a human-readable string.
+        var durationText = rx.durationDays ? rx.durationDays + " days" : "—";
+        //Format the issue date nicely.
+        var issuedText = rx.dateIssued
+            ? new Date(rx.dateIssued).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+            : "";
+ 
         var item = document.createElement("li");
         item.className = "rx_item";
-
-        //innerHTML helps us create tags inside the list element
         item.innerHTML =
-            '<div class="rx_item_pill">💊</div>' +
+            '<div class="rx_item_icon">💊</div>' +
             '<div class="rx_item_body">' +
-                '<p class="rx_item_name">' + medName + '</p>' +
-                '<p class="rx_item_dose">' + rx.dosage + ' · ' + rx.frequency + ' · ' + rx.durationDays + ' days</p>' +
-                '<p class="rx_item_note">' + rx.instructions + '</p>' +
+                '<div class="rx_item_header">' +
+                    '<p class="rx_item_name">' + medName + '</p>' +
+                '</div>' +
+                '<div class="rx_item_grid">' +
+                    '<div class="rx_item_detail">' +
+                        '<span class="rx_item_detail_label">Dosage: </span>' +
+                        '<span class="rx_item_detail_value">' + (rx.dosage || "—") + '</span>' +
+                    '</div>' +
+                    '<div class="rx_item_detail">' +
+                        '<span class="rx_item_detail_label">Frequency: </span>' +
+                        '<span class="rx_item_detail_value">' + (rx.frequency || "—") + '</span>' +
+                    '</div>' +
+                    '<div class="rx_item_detail">' +
+                        '<span class="rx_item_detail_label">Duration: </span>' +
+                        '<span class="rx_item_detail_value">' + durationText + '</span>' +
+                    '</div>' +
+                    '<div class="rx_item_detail">' +
+                        '<span class="rx_item_detail_label">Issued: </span>' +
+                        '<span class="rx_item_detail_value">' + issuedText + '</span>' +
+                    '</div>' +
+                '</div>' +
+                (rx.instructions
+                    ? '<p class="rx_item_instructions">' + rx.instructions + '</p>'
+                    : "") +
             '</div>' +
             '<span class="badge_active">Active</span>';
 
+ 
         //appendChild adds the finished <li> element to the end of the <ul>.
         list.appendChild(item);
     }
-
+ 
     //if the loop finished without finding any prescriptions, show a message.
     if (!found) {
         list.innerHTML = "<li>No prescriptions found.</li>";

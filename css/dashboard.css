@@ -801,20 +801,23 @@
     gap: 10px;
 }
 
+/* ── PRESCRIPTION CARD (patient dashboard) ──────────────────────────────── */
+
 .rx_item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    background: var(--primary-soft);
-    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
 }
 
-.rx_item_pill {
-    font-size: 1.1rem;
-    width: 36px;
-    height: 36px;
-    background: var(--surface);
+.rx_item_icon {
+    font-size: 1.3rem;
+    width: 38px;
+    height: 38px;
+    background: var(--primary-soft);
     border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
@@ -822,13 +825,268 @@
     flex-shrink: 0;
 }
 
-.rx_item_body { flex: 1; }
-.rx_item_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
-.rx_item_dose { font-size: 11px; color: var(--text-muted); margin: 0 0 2px 0; }
-.rx_item_note { font-size: 11px; color: var(--text-muted); font-style: italic; margin: 0; }
+.rx_item_body  { flex: 1; min-width: 0; }
+
+.rx_item_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.rx_item_name {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* 2×2 grid of labelled detail rows */
+.rx_item_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 16px;
+    margin-bottom: 8px;
+}
+
+.rx_item_detail {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.rx_item_detail_label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+}
+
+.rx_item_detail_value {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.rx_item_instructions {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 4px 0 0 0;
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+}
 
 
-/*PRESCRIPTION REQUEST FORM, shown/hidden by the Request Prescription button*/
+/* ── PRESCRIPTION REQUEST REVIEW PANEL (doctor dashboard) ───────────────── */
+
+#rxRequestNotifList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Each request is a card — compact row on top, expandable panel below */
+.rx_req_row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.rx_req_row_summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+}
+
+.rx_req_avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.rx_req_row_body { flex: 1; min-width: 0; }
+.rx_req_row_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.rx_req_row_meta { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+/* Review toggle button — same quiet style as the cancel button */
+.btn_rx_review {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    background: var(--bg);
+    color: var(--text-muted);
+    transition: border-color .15s, color .15s;
+    white-space: nowrap;
+}
+.btn_rx_review:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Expandable review panel */
+.rx_review_panel {
+    border-top: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: var(--bg);
+}
+
+/* Patient context block */
+.rx_review_context {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+}
+
+.rx_review_label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    margin: 0 0 6px 0;
+}
+
+.rx_review_active_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.rx_review_active_pill {
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: 999px;
+    padding: 2px 10px;
+}
+
+.rx_review_none {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.rx_review_note {
+    font-size: 12px;
+    color: var(--text);
+    font-style: italic;
+    margin: 0;
+}
+
+/* Prescription detail form inside the panel */
+.rx_review_form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rx_review_fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+}
+
+.rx_review_field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rx_review_field_label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.rx_review_optional {
+    font-weight: 400;
+    font-style: italic;
+}
+
+.rx_review_select,
+.rx_review_input {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-size: 12px;
+    font-family: var(--font);
+    color: var(--text);
+    outline: none;
+}
+.rx_review_select:focus,
+.rx_review_input:focus { border-color: var(--primary); }
+
+.rx_review_error {
+    font-size: 12px;
+    color: var(--danger);
+    margin: 0;
+}
+
+.rx_review_actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+/* Confirm Prescription — solid primary */
+.btn_rx_confirm {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    background: var(--primary);
+    color: #fff;
+    transition: opacity .15s;
+}
+.btn_rx_confirm:hover { opacity: .88; }
+
+/* Decline — matches btn_decline */
+.btn_rx_decline {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    background: var(--danger);
+    color: #fff;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn_rx_decline:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(225,29,72,.4);
+}
+
+
+/*PRESCRIPTION REQUEST FORM — shown/hidden by the Request Prescription button*/
 
 .rx_request_form {
     margin-top: 16px;
@@ -1353,7 +1611,8 @@
     box-shadow: 0 4px 10px rgba(225, 29, 72, 0.4);
 }
 
-/* Cancel booking button — same shape as btn_accept/decline but muted grey since cancelling a pending request is low-stakes and reversible */
+/* Cancel booking button — same shape as btn_accept/decline but muted grey,
+   since cancelling a pending request is low-stakes and reversible */
 .status_bar_cancel {
     border: none;
     border-radius: var(--radius-sm);

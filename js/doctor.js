@@ -920,156 +920,290 @@ function setupPatientSearch() {
 function showPrescriptionRequests(doctor) {
     var list = document.getElementById("rxRequestNotifList");
     if (!list) return;
-
+ 
     list.innerHTML = "";
     var count = 0;
-
+ 
     for (var i = 0; i < DDATA.prescriptionRequests.length; i++) {
         var req = DDATA.prescriptionRequests[i];
-
-        //Only show requests for this doctor that are still pending.
         if (req.doctorID !== doctor.doctorID || req.status !== "pending") continue;
-
         count++;
-
-        //Find the patient who sent the request.
+ 
+        //Look up patient.
         var patient = null;
         for (var j = 0; j < DDATA.patients.length; j++) {
-            if (DDATA.patients[j].patientID === req.patientID) {
-                patient = DDATA.patients[j];
-                break;
-            }
+            if (DDATA.patients[j].patientID === req.patientID) { patient = DDATA.patients[j]; break; }
         }
-        var patientName = patient ? patient.firstName + " " + patient.lastName : "Unknown patient";
-
-        //Look up medicine name.
+        var initials    = patient ? patient.firstName[0] + patient.lastName[0] : "?";
+        var patientName = patient ? patient.firstName + " " + patient.lastName  : "Unknown patient";
+ 
+        //Look up medicine.
         var med = null;
         for (var k = 0; k < DDATA.medicines.length; k++) {
-            if (DDATA.medicines[k].medicineID === req.medicineID) {
-                med = DDATA.medicines[k];
-                break;
-            }
+            if (DDATA.medicines[k].medicineID === req.medicineID) { med = DDATA.medicines[k]; break; }
         }
         var medName = med ? med.name + " " + med.strength : "Unknown medicine";
-
+ 
         //Format date.
         var dateText = new Date(req.submittedAt).toLocaleDateString("en-GB", {
             day: "2-digit", month: "short", year: "numeric"
         });
-
+ 
+        //Build list of patient's ACTIVE prescriptions for the review panel.
+        var activeMeds = "";
+        var activeCount = 0;
+        for (var a = 0; a < DDATA.prescriptions.length; a++) {
+            var rx = DDATA.prescriptions[a];
+            if (rx.patientID !== req.patientID || rx.status !== "active") continue;
+            activeCount++;
+            var rxMed = null;
+            for (var b = 0; b < DDATA.medicines.length; b++) {
+                if (DDATA.medicines[b].medicineID === rx.medicineID) { rxMed = DDATA.medicines[b]; break; }
+            }
+            activeMeds += '<span class="rx_review_active_pill">' + (rxMed ? rxMed.name + " " + rxMed.strength : "Unknown") + '</span>';
+        }
+        if (activeCount === 0) activeMeds = '<span class="rx_review_none">None on record</span>';
+ 
+        //Unique ID for this row's detail panel.
+        var panelID = "rxReview_" + req.rxRequestID;
+ 
         var item = document.createElement("li");
-        item.className = "booking_notif_item";
+        item.className = "rx_req_row";
         item.setAttribute("data-rxr-id", req.rxRequestID);
         item.innerHTML =
-            '<div class="booking_notif_body">' +
-                '<p class="booking_notif_name">' + patientName + '</p>' +
-                '<p class="booking_notif_meta">' + medName + ' · Requested ' + dateText +
-                    (req.notes ? ' · "' + req.notes + '"' : "") + '</p>' +
+            //Compact Row;
+            '<div class="rx_req_row_summary">' +
+                '<div class="rx_req_avatar">' + initials + '</div>' +
+                '<div class="rx_req_row_body">' +
+                    '<p class="rx_req_row_name">' + patientName + '</p>' +
+                    '<p class="rx_req_row_meta">' + medName + ' · ' + dateText + '</p>' +
+                '</div>' +
+                '<button type="button" class="btn_rx_review" data-panel="' + panelID + '">Review</button>' +
             '</div>' +
-            '<div class="booking_notif_actions">' +
-                '<button type="button" class="btn_accept btn_rx_accept" data-rxr-id="' + req.rxRequestID + '">Accept</button>' +
-                '<button type="button" class="btn_decline btn_rx_decline" data-rxr-id="' + req.rxRequestID + '">Decline</button>' +
+ 
+            //Expandable review panel;
+            '<div class="rx_review_panel" id="' + panelID + '" hidden>' +
+ 
+                //Patient context
+                '<div class="rx_review_context">' +
+                    '<p class="rx_review_label">Current active prescriptions</p>' +
+                    '<div class="rx_review_active_list">' + activeMeds + '</div>' +
+                    (req.notes
+                        ? '<p class="rx_review_label" style="margin-top:8px">Patient\'s note</p>' +
+                          '<p class="rx_review_note">"' + req.notes + '"</p>'
+                        : "") +
+                '</div>' +
+ 
+                //Prescription detail form.
+                '<div class="rx_review_form">' +
+                    '<p class="rx_review_label">Prescription details</p>' +
+ 
+                    '<div class="rx_review_fields">' +
+ 
+                        '<div class="rx_review_field">' +
+                            '<label class="rx_review_field_label">Dosage</label>' +
+                            '<select class="rx_review_select" data-field="dosage" data-rxr="' + req.rxRequestID + '">' +
+                                '<option value="">Select…</option>' +
+                                '<option>250mg</option>' +
+                                '<option>500mg</option>' +
+                                '<option>1g</option>' +
+                                '<option>5mg</option>' +
+                                '<option>10mg</option>' +
+                                '<option>20mg</option>' +
+                                '<option>25mg</option>' +
+                                '<option>50mg</option>' +
+                                '<option>100mg</option>' +
+                            '</select>' +
+                        '</div>' +
+ 
+                        '<div class="rx_review_field">' +
+                            '<label class="rx_review_field_label">Frequency</label>' +
+                            '<select class="rx_review_select" data-field="frequency" data-rxr="' + req.rxRequestID + '">' +
+                                '<option value="">Select…</option>' +
+                                '<option>Once daily</option>' +
+                                '<option>Twice daily</option>' +
+                                '<option>Three times daily</option>' +
+                                '<option>Four times daily</option>' +
+                                '<option>Every 8 hours</option>' +
+                                '<option>As needed</option>' +
+                            '</select>' +
+                        '</div>' +
+ 
+                        '<div class="rx_review_field">' +
+                            '<label class="rx_review_field_label">Duration</label>' +
+                            '<select class="rx_review_select" data-field="duration" data-rxr="' + req.rxRequestID + '">' +
+                                '<option value="">Select…</option>' +
+                                '<option value="3">3 days</option>' +
+                                '<option value="5">5 days</option>' +
+                                '<option value="7">7 days</option>' +
+                                '<option value="14">14 days</option>' +
+                                '<option value="28">28 days</option>' +
+                                '<option value="90">3 months</option>' +
+                                '<option value="180">6 months</option>' +
+                                '<option value="365">Ongoing (1 year)</option>' +
+                            '</select>' +
+                        '</div>' +
+ 
+                    '</div>' +
+ 
+                    '<div class="rx_review_field" style="margin-top:8px">' +
+                        '<label class="rx_review_field_label">Special instructions <span class="rx_review_optional">(optional)</span></label>' +
+                        '<input class="rx_review_input" type="text" data-field="instructions" data-rxr="' + req.rxRequestID + '"' +
+                            ' placeholder="e.g. Take after meals, avoid alcohol…" />' +
+                    '</div>' +
+ 
+                    '<p class="rx_review_error" id="rxErr_' + req.rxRequestID + '" hidden>Please fill in all required fields.</p>' +
+ 
+                    '<div class="rx_review_actions">' +
+                        '<button type="button" class="btn_rx_confirm" data-rxr-id="' + req.rxRequestID + '">Confirm Prescription</button>' +
+                        '<button type="button" class="btn_rx_decline" data-rxr-id="' + req.rxRequestID + '">Decline</button>' +
+                    '</div>' +
+                '</div>' +
+ 
             '</div>';
-
+ 
         list.appendChild(item);
     }
-
-    //Update count badge.
+ 
     var countEl = document.getElementById("rxRequestNotifCount");
     if (countEl) countEl.textContent = count + " pending";
-
+ 
     if (count === 0) {
         list.innerHTML = "<li class='booking_notif_empty'>No pending prescription requests.</li>";
     }
-
-    //Wire accept and decline buttons.
+ 
     setupRxRequestButtons();
 }
-
-
-//It attaches click handlers to the Accept/Decline buttons in the prescription request panel.
+ 
+ 
+//It wires the Review toggle and the Confirm/Decline buttons in the prescription request panel.
 function setupRxRequestButtons() {
-    var acceptBtns = document.querySelectorAll(".btn_rx_accept");
-    for (var i = 0; i < acceptBtns.length; i++) {
-        acceptBtns[i].addEventListener("click", function() {
-            handleRxRequestDecision(this.getAttribute("data-rxr-id"), "accepted");
+    //Review button toggles the detail panel for that row.
+    var reviewBtns = document.querySelectorAll(".btn_rx_review");
+    for (var i = 0; i < reviewBtns.length; i++) {
+        reviewBtns[i].addEventListener("click", function() {
+            var panelID = this.getAttribute("data-panel");
+            var panel   = document.getElementById(panelID);
+            if (!panel) return;
+            var isOpen = !panel.hidden;
+            //Close all other panels first.
+            var allPanels = document.querySelectorAll(".rx_review_panel");
+            for (var p = 0; p < allPanels.length; p++) {
+                allPanels[p].hidden = true;
+            }
+            var allBtns = document.querySelectorAll(".btn_rx_review");
+            for (var b = 0; b < allBtns.length; b++) {
+                allBtns[b].textContent = "Review";
+            }
+            //Toggle this one.
+            panel.hidden = isOpen;
+            this.textContent = isOpen ? "Review" : "Close";
         });
     }
+ 
+    //Confirm Prescription — validates the detail form then creates the prescription.
+    var confirmBtns = document.querySelectorAll(".btn_rx_confirm");
+    for (var i = 0; i < confirmBtns.length; i++) {
+        confirmBtns[i].addEventListener("click", function() {
+            var rxrID = this.getAttribute("data-rxr-id");
+            confirmRxRequest(rxrID);
+        });
+    }
+ 
+    //Decline.
     var declineBtns = document.querySelectorAll(".btn_rx_decline");
     for (var i = 0; i < declineBtns.length; i++) {
         declineBtns[i].addEventListener("click", function() {
-            handleRxRequestDecision(this.getAttribute("data-rxr-id"), "declined");
+            handleRxRequestDecision(this.getAttribute("data-rxr-id"), "declined", null, null, null, null);
         });
     }
 }
-
-
+ 
+ 
+//It reads the detail form for a given rxRequestID, validates it, then calls handleRxRequestDecision.
+function confirmRxRequest(rxRequestID) {
+    //Read each field using data-field + data-rxr attributes.
+    var selects = document.querySelectorAll('.rx_review_select[data-rxr="' + rxRequestID + '"]');
+    var input   = document.querySelector('.rx_review_input[data-rxr="' + rxRequestID + '"]');
+ 
+    var dosage       = "";
+    var frequency    = "";
+    var durationDays = 0;
+ 
+    for (var i = 0; i < selects.length; i++) {
+        var field = selects[i].getAttribute("data-field");
+        var val   = selects[i].value;
+        if (field === "dosage")    dosage = val;
+        if (field === "frequency") frequency = val;
+        if (field === "duration")  durationDays = Number(val);
+    }
+ 
+    var instructions = input ? input.value.trim() : "";
+    var errorEl = document.getElementById("rxErr_" + rxRequestID);
+ 
+    //Validate — all three dropdowns required.
+    if (!dosage || !frequency || !durationDays) {
+        if (errorEl) errorEl.hidden = false;
+        return;
+    }
+    if (errorEl) errorEl.hidden = true;
+ 
+    handleRxRequestDecision(rxRequestID, "accepted", dosage, frequency, durationDays, instructions);
+}
+ 
+ 
 //It processes the doctor's decision on a prescription request.
 //UPDATES: the prescription_requests record (status + decidedAt).
-//On accept: ADDS a new prescriptions record (same shape as the rx form).
+//On accept: ADDS a new prescriptions record with the doctor-chosen clinical values.
 //Side-effect: notifies guardian if patient is a child.
-function handleRxRequestDecision(rxRequestID, decision) {
+function handleRxRequestDecision(rxRequestID, decision, dosage, frequency, durationDays, instructions) {
     for (var i = 0; i < DDATA.prescriptionRequests.length; i++) {
         var req = DDATA.prescriptionRequests[i];
         if (req.rxRequestID !== rxRequestID) continue;
-
-        //UPDATE the request status.
+ 
+        //UPDATE the request record.
         req.status    = decision;
         req.decidedAt = Date.now();
         putRecord("prescription_requests", req);
-
+ 
+        //Look up medicine name for the notification message.
+        var med = null;
+        for (var k = 0; k < DDATA.medicines.length; k++) {
+            if (DDATA.medicines[k].medicineID === req.medicineID) { med = DDATA.medicines[k]; break; }
+        }
+        var medName = med ? med.name : "a medicine";
+ 
         if (decision === "accepted") {
-            //ADD a real prescription record — same shape as what setupRxForm creates.
+            //ADD a real prescription with the doctor-supplied clinical values.
             var newRx = {
                 prescriptionID: "rx" + Date.now(),
                 patientID:      req.patientID,
                 doctorID:       req.doctorID,
                 medicineID:     req.medicineID,
-                dosage:         "as directed",
-                frequency:      "as directed",
-                durationDays:   30,
+                dosage:         dosage,
+                frequency:      frequency,
+                durationDays:   durationDays,
                 dateIssued:     new Date().toISOString().slice(0, 10),
-                instructions:   "Issued following patient prescription request.",
+                instructions:   instructions || "",
                 status:         "active"
             };
             DDATA.prescriptions.push(newRx);
             putRecord("prescriptions", newRx);
-
-            //Notify guardian if this is a child patient.
-            var med = null;
-            for (var k = 0; k < DDATA.medicines.length; k++) {
-                if (DDATA.medicines[k].medicineID === req.medicineID) {
-                    med = DDATA.medicines[k];
-                    break;
-                }
-            }
-            var medName = med ? med.name : "a medicine";
+ 
             createNotificationForPatient(
-                req.patientID,
-                "rx",
+                req.patientID, "rx",
                 "Your prescription request for " + medName + " has been accepted."
             );
         } else {
-            //Notify guardian if declined too.
-            var med2 = null;
-            for (var m = 0; m < DDATA.medicines.length; m++) {
-                if (DDATA.medicines[m].medicineID === req.medicineID) {
-                    med2 = DDATA.medicines[m];
-                    break;
-                }
-            }
-            var medName2 = med2 ? med2.name : "a medicine";
             createNotificationForPatient(
-                req.patientID,
-                "rx",
-                "Your prescription request for " + medName2 + " was declined. Please book an appointment."
+                req.patientID, "rx",
+                "Your prescription request for " + medName + " was declined. Please book an appointment."
             );
         }
-
+ 
         break;
     }
-
+ 
     //Refresh the panel.
-    var doctor = getLoggedInDoctor();
-    showPrescriptionRequests(doctor);
+    showPrescriptionRequests(getLoggedInDoctor());
 }
