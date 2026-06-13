@@ -6,7 +6,7 @@
 function seedDatabase() {
     //Open DB from db.js.
     openDatabase(function() {
-        //It will check if data has been seeded.
+        //It will check if data has been seeded already.
         getAllRecords("patients", function(existingPatients) {
             if (existingPatients.length > 0) {
                 console.log("Database already seeded. Skipping phase...");
@@ -28,7 +28,7 @@ function seedDatabase() {
 
 //This will be used to generate usernames for everyone.
 function makeUsername(firstName, lastName) {
-    //Shared formula for all staff roles: firstname.lastname in lowercase, letters only.
+    //Shared formula for all roles: firstname.lastname in lowercase, letters only.
     return firstName.toLowerCase().replace(/[^a-z]/g, "")
         + "."
         + lastName.toLowerCase().replace(/[^a-z]/g, "");
@@ -44,10 +44,10 @@ function seedPatients() {
         })
         .then(function(patients) {
             if (!Array.isArray(patients)) { console.log("patients.json — expected an array."); return; }
- 
+
             for (var i = 0; i < patients.length; i++) {
                 var p = patients[i];
-                //Debugging purposes.
+
                 if (!p.patientID || !p.firstName || !p.lastName || !p.nhsNumber) {
                     console.log("Skipping patient at index " + i + " — missing required field.");
                     continue;
@@ -74,7 +74,7 @@ function seedPatients() {
                     });
                 })(p);
             }
- 
+
             console.log("Seeded " + patients.length + " patients and their login accounts.");
         })
         .catch(function(error) {
@@ -83,7 +83,6 @@ function seedPatients() {
 }
 
 //----DOCTORS SECTION----
-//This function fetches data from doctors.json.
 function seedDoctors() {
     fetch("data/doctors.json")
         .then(function(response) {
@@ -92,10 +91,10 @@ function seedDoctors() {
         })
         .then(function(doctors) {
             if (!Array.isArray(doctors)) { console.log("doctors.json — expected an array."); return; }
- 
+
             for (var i = 0; i < doctors.length; i++) {
                 var d = doctors[i];
- 
+
                 if (!d.doctorID || !d.firstName || !d.lastName || !d.gmcNumber) {
                     console.log("Skipping doctor at index " + i + " — missing required field.");
                     continue;
@@ -120,7 +119,7 @@ function seedDoctors() {
                     });
                 })(d);
             }
- 
+
             console.log("Seeded " + doctors.length + " doctor(s) and their login accounts.");
         })
         .catch(function(error) {
@@ -137,10 +136,10 @@ function seedNurses() {
         })
         .then(function(nurses) {
             if (!Array.isArray(nurses)) { console.log("nurses.json — expected an array."); return; }
- 
+
             for (var i = 0; i < nurses.length; i++) {
                 var n = nurses[i];
- 
+
                 if (!n.nurseID || !n.firstName || !n.lastName || !n.nmcNumber) {
                     console.log("Skipping nurse at index " + i + " — missing required field.");
                     continue;
@@ -162,7 +161,7 @@ function seedNurses() {
                     });
                 })(n);
             }
- 
+
             console.log("Seeded " + nurses.length + " nurse(s) and their login accounts.");
         })
         .catch(function(error) {
@@ -179,10 +178,10 @@ function seedReceptionists() {
         })
         .then(function(receptionists) {
             if (!Array.isArray(receptionists)) { console.log("receptionists.json — expected an array."); return; }
- 
+
             for (var i = 0; i < receptionists.length; i++) {
                 var r = receptionists[i];
- 
+
                 if (!r.receptionistID || !r.firstName || !r.lastName) {
                     console.log("Skipping receptionist at index " + i + " — missing required field.");
                     continue;
@@ -204,7 +203,7 @@ function seedReceptionists() {
                     });
                 })(r);
             }
- 
+
             console.log("Seeded " + receptionists.length + " receptionist(s) and their login accounts.");
         })
         .catch(function(error) {
@@ -221,10 +220,10 @@ function seedGuardians() {
         })
         .then(function(guardians) {
             if (!Array.isArray(guardians)) { console.log("guardians.json — expected an array."); return; }
- 
+
             for (var i = 0; i < guardians.length; i++) {
                 var g = guardians[i];
- 
+
                 if (!g.guardianID || !g.firstName || !g.lastName) {
                     console.log("Skipping guardian at index " + i + " — missing required field.");
                     continue;
@@ -246,14 +245,14 @@ function seedGuardians() {
                     });
                 })(g);
             }
- 
+
             console.log("Seeded " + guardians.length + " guardian(s) and their login accounts.");
         })
         .catch(function(error) {
             console.log("Could not seed guardians: " + error);
         });
 }
- 
+
 //----ADMINS SECTION----
 function seedAdmins() {
     fetch("data/admins.json")
@@ -263,10 +262,10 @@ function seedAdmins() {
         })
         .then(function(admins) {
             if (!Array.isArray(admins)) { console.log("admins.json — expected an array."); return; }
- 
+
             for (var i = 0; i < admins.length; i++) {
                 var a = admins[i];
- 
+
                 if (!a.adminID || !a.firstName || !a.lastName) {
                     console.log("Skipping admin at index " + i + " — missing required field.");
                     continue;
@@ -288,7 +287,7 @@ function seedAdmins() {
                     });
                 })(a);
             }
- 
+
             console.log("Seeded " + admins.length + " admin(s) and their login accounts.");
         })
         .catch(function(error) {
@@ -297,6 +296,7 @@ function seedAdmins() {
 }
 
 //----MEDICINES SECTION----
+//Medicines have no login accounts so no encryption needed here.
 function seedMedicines() {
     fetch("data/medicines.json")
         .then(function(response) {
@@ -304,10 +304,9 @@ function seedMedicines() {
         })
         .then(function(medicines) {
             for (var i = 0; i < medicines.length; i++) {
-                var med = medicines[i];
-                putRecord("medicines", med);
+                putRecord("medicines", medicines[i]);
             }
-           console.log("Seeded " + medicines.length + " medicine(s).");
+            console.log("Seeded " + medicines.length + " medicine(s).");
         })
         .catch(function(error) {
             console.log("Could not seed medicines: " + error);
@@ -315,6 +314,7 @@ function seedMedicines() {
 }
 
 //----NOTIFICATIONS SECTION----
+//Notifications have no passwords so no encryption needed here.
 function seedNotifications() {
     fetch("data/notifications.json")
         .then(function(response) {
@@ -323,23 +323,21 @@ function seedNotifications() {
         })
         .then(function(notifications) {
             if (!Array.isArray(notifications)) { console.log("notifications.json — expected an array."); return; }
- 
+
             for (var i = 0; i < notifications.length; i++) {
                 var n = notifications[i];
- 
-                //notificationID is the keyPath of the store, so it must be present.
+
                 if (!n.notificationID || !n.recipientID) {
                     console.log("Skipping notification at index " + i + " — missing required field.");
                     continue;
                 }
- 
+
                 putRecord("notifications", n);
             }
- 
+
             console.log("Seeded " + notifications.length + " notification(s).");
         })
         .catch(function(error) {
             console.log("Could not seed notifications: " + error);
         });
 }
- 

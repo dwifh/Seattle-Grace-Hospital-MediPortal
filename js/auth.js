@@ -247,7 +247,7 @@ function handleLogin(event) {
     }
 
     //attemptLogin does the actual credential check once we have a user record.
-    //It is called by both the IndexedDB path and the dummy-data fallback below.
+    //It is called by the IndexedDB path.
     function attemptLogin(matchedUser) {
         // If no user record was found, fail immediately.
         if (!matchedUser) {
@@ -324,11 +324,7 @@ function handleLogout() {
 
 // REGISTRATION ALGORITHM
 // Creates a NEW patient account from the registration form and writes it to IndexedDB.
-// Writes to the SAME stores and record shapes as seed.js, so a registered patient is
-// indistinguishable from a seeded one to auth.js and the dashboards.
-//
-// Patient-supplied fields are collected here. Clinically-assigned fields are NOT asked of the user.
-//  They default to null and are set later by an admin/clinician.
+// Writes to the SAME stores and record shapes as seed.js, so a registered patient is indistinguishable from a seeded one to auth.js and the dashboards.
 
 //Calculates age from a date-of-birth string, so we never store a stale age integer.
 function calculateAge(dob) {
@@ -458,17 +454,22 @@ function handleRegister(event) {
                     patientID: patientID
                 };
 
-                putRecord("patients", newPatient);
-                putRecord("users", newUser, function(saved) {
-                    if (!saved) {
-                        fail("Could not create your account. Please try again.");
-                        return;
-                    }
+            //Save the patient profile first. This has no sensitive fields
+            //that need encrypting at this stage.
+            putRecord("patients", newPatient);
 
-                    if (successBox) {
-                        successBox.textContent = "Account created. Signing you in…";
-                        successBox.hidden = false;
-                    }
+            //Save the login account with the encrypted password.
+            putRecord("users", newUser, function(saved) {
+                if (!saved) {
+                    fail("Could not create your account. Please try again.");
+                    return;
+                }
+
+                //Success, show message, then log the new patient straight in.
+                if (successBox) {
+                    successBox.textContent = "Account created. Signing you in…";
+                    successBox.hidden = false;
+                }
 
                     saveSession(newUser);
                     showDashboard("patient");
