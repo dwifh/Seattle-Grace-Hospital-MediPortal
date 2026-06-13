@@ -300,9 +300,9 @@ function handleLogin(event) {
                 //Found in IndexedDB, then use it.
                 attemptLogin(idbUser);
             } else {
-
-                attemptLogin(null);
-            }
+                //If not in IndexedDB, no fallback and login fails.
+            attemptLogin(null);
+        }
         });
     });
 }
