@@ -1,6 +1,6 @@
-//doctor.js, wired to IndexedDB (Tiana).
+//doctor.js wired to IndexedDB.
 
-//DDATA is the module-level cache for the doctor dashboard. It is filled once by loadDoctorData()
+//DDATA is the module-level cache for the doctor dashboard. It is filled once by loadDoctorData().
 var DDATA = {
     doctor: null,
     doctors: [],
@@ -10,19 +10,24 @@ var DDATA = {
     bookingRequests: [],
     prescriptions: [],
     medicines: [],
-    history: []
+    history: [],
+    prescriptionRequests: []
 };
 
-//loadStoreD fetches every record from one object store. If the store is empty (not seeded
-//yet) or the read fails, it hands back the dummy-data fallback array instead.
+//loadStoreD fetches every record from one object store. If the store is empty, it hands back the dummy-data fallback array instead.
 function loadStoreD(storeName, fallbackArray, callback) {
-    getAllRecords(storeName, function(records) {
-        if (records && records.length > 0) {
-            callback(records);
-        } else {
-            callback(fallbackArray);
-        }
-    });
+    try {
+        getAllRecords(storeName, function(records) {
+            if (records && records.length > 0) {
+                callback(records);
+            } else {
+                callback(fallbackArray);
+            }
+        });
+    } catch(e) {
+        console.log("loadStoreD: store '" + storeName + "' not available yet, using fallback. (" + e.message + ")");
+        callback(fallbackArray);
+    }
 }
 
 //findDoctorInDummy is the fallback lookup for the logged-in doctor.
@@ -60,7 +65,8 @@ function loadDoctorData(onReady) {
             ["booking_requests", BOOKING_REQUESTS, "bookingRequests"],
             ["prescriptions",    PRESCRIPTIONS,    "prescriptions"],
             ["medicines",        MEDICINES,        "medicines"],
-            ["medicalHistory",   MEDICAL_HISTORY,  "history"]
+            ["medicalHistory",   MEDICAL_HISTORY,  "history"],
+            ["prescription_requests", [],          "prescriptionRequests"]
         ];
 
         //Load every store in parallel and only continue once all have come back.
@@ -80,7 +86,7 @@ function loadDoctorData(onReady) {
 }
 
 //getLoggedInDoctor returns the cached doctor record. Used by the write handlers too.
-//If the cache isn't ready (called very early), it falls back to a synchronous dummy lookup.
+//If the cache isn't ready, it falls back to a synchronous dummy lookup.
 function getLoggedInDoctor() {
     if (DDATA.doctor) {
         return DDATA.doctor;
@@ -91,11 +97,7 @@ function getLoggedInDoctor() {
 }
 
 
-//----NOTIFICATION SIDE-EFFECTS (doctor → guardian)----
-//A notification comes When a doctor acts on a CHILD patient (one whose guardianID is not null)
-//Created for that patient's GUARDIAN, not the patient.
-//If the patient is an adult (guardianID is null), no guardian notification is created.
-
+//Guardian Notifications.
 //Builds a guardian's username with the same formula seed.js uses: firstname.lastname, letters only.
 function makeGuardianUsername(guardian) {
     return guardian.firstName.toLowerCase().replace(/[^a-z]/g, "")
@@ -164,6 +166,7 @@ function loadDoctorDashboard() {
             showTodayDate();
             showTodayAppointments(doctor);
             showBookingNotifications(doctor);
+            showPrescriptionRequests(doctor);
             showDoctorStats(doctor);
             showPatientList(doctor);
             fillMedicineDropdown();
@@ -355,8 +358,8 @@ function setupBookingButtons() {
 
 
 //It updates a booking request when the doctor accepts or declines it.
-//WRITES: updates the booking_requests record, and on "accepted".
-//Creates new appointments record. Both persist to IndexedDB so the patient sees the result on reload.
+//WRITES: updates the booking_requests record, and on "accepted" also creates a new appointments record. 
+//Both persist to IndexedDB so the patient sees the result on reload.
 function handleBookingDecision(requestID, decision) {
     //Find the request in the cached booking requests.
     for (var i = 0; i < DDATA.bookingRequests.length; i++) {
@@ -905,4 +908,168 @@ function setupPatientSearch() {
             }
         }
     });
+}
+
+
+//Prescription request panel.
+//Shows all pending prescription requests addressed to this doctor.
+//Accept: creates a real prescriptions record (same as the rx form) and notifies guardian.
+//Decline: updates the request status to "declined" and notifies guardian.
+
+//It shows prescription requests addressed to this doctor.
+function showPrescriptionRequests(doctor) {
+    var list = document.getElementById("rxRequestNotifList");
+    if (!list) return;
+
+    list.innerHTML = "";
+    var count = 0;
+
+    for (var i = 0; i < DDATA.prescriptionRequests.length; i++) {
+        var req = DDATA.prescriptionRequests[i];
+
+        //Only show requests for this doctor that are still pending.
+        if (req.doctorID !== doctor.doctorID || req.status !== "pending") continue;
+
+        count++;
+
+        //Find the patient who sent the request.
+        var patient = null;
+        for (var j = 0; j < DDATA.patients.length; j++) {
+            if (DDATA.patients[j].patientID === req.patientID) {
+                patient = DDATA.patients[j];
+                break;
+            }
+        }
+        var patientName = patient ? patient.firstName + " " + patient.lastName : "Unknown patient";
+
+        //Look up medicine name.
+        var med = null;
+        for (var k = 0; k < DDATA.medicines.length; k++) {
+            if (DDATA.medicines[k].medicineID === req.medicineID) {
+                med = DDATA.medicines[k];
+                break;
+            }
+        }
+        var medName = med ? med.name + " " + med.strength : "Unknown medicine";
+
+        //Format date.
+        var dateText = new Date(req.submittedAt).toLocaleDateString("en-GB", {
+            day: "2-digit", month: "short", year: "numeric"
+        });
+
+        var item = document.createElement("li");
+        item.className = "booking_notif_item";
+        item.setAttribute("data-rxr-id", req.rxRequestID);
+        item.innerHTML =
+            '<div class="booking_notif_body">' +
+                '<p class="booking_notif_name">' + patientName + '</p>' +
+                '<p class="booking_notif_meta">' + medName + ' · Requested ' + dateText +
+                    (req.notes ? ' · "' + req.notes + '"' : "") + '</p>' +
+            '</div>' +
+            '<div class="booking_notif_actions">' +
+                '<button type="button" class="btn_accept btn_rx_accept" data-rxr-id="' + req.rxRequestID + '">Accept</button>' +
+                '<button type="button" class="btn_decline btn_rx_decline" data-rxr-id="' + req.rxRequestID + '">Decline</button>' +
+            '</div>';
+
+        list.appendChild(item);
+    }
+
+    //Update count badge.
+    var countEl = document.getElementById("rxRequestNotifCount");
+    if (countEl) countEl.textContent = count + " pending";
+
+    if (count === 0) {
+        list.innerHTML = "<li class='booking_notif_empty'>No pending prescription requests.</li>";
+    }
+
+    //Wire accept and decline buttons.
+    setupRxRequestButtons();
+}
+
+
+//It attaches click handlers to the Accept/Decline buttons in the prescription request panel.
+function setupRxRequestButtons() {
+    var acceptBtns = document.querySelectorAll(".btn_rx_accept");
+    for (var i = 0; i < acceptBtns.length; i++) {
+        acceptBtns[i].addEventListener("click", function() {
+            handleRxRequestDecision(this.getAttribute("data-rxr-id"), "accepted");
+        });
+    }
+    var declineBtns = document.querySelectorAll(".btn_rx_decline");
+    for (var i = 0; i < declineBtns.length; i++) {
+        declineBtns[i].addEventListener("click", function() {
+            handleRxRequestDecision(this.getAttribute("data-rxr-id"), "declined");
+        });
+    }
+}
+
+
+//It processes the doctor's decision on a prescription request.
+//UPDATES: the prescription_requests record (status + decidedAt).
+//On accept: ADDS a new prescriptions record (same shape as the rx form).
+//Side-effect: notifies guardian if patient is a child.
+function handleRxRequestDecision(rxRequestID, decision) {
+    for (var i = 0; i < DDATA.prescriptionRequests.length; i++) {
+        var req = DDATA.prescriptionRequests[i];
+        if (req.rxRequestID !== rxRequestID) continue;
+
+        //UPDATE the request status.
+        req.status    = decision;
+        req.decidedAt = Date.now();
+        putRecord("prescription_requests", req);
+
+        if (decision === "accepted") {
+            //ADD a real prescription record — same shape as what setupRxForm creates.
+            var newRx = {
+                prescriptionID: "rx" + Date.now(),
+                patientID:      req.patientID,
+                doctorID:       req.doctorID,
+                medicineID:     req.medicineID,
+                dosage:         "as directed",
+                frequency:      "as directed",
+                durationDays:   30,
+                dateIssued:     new Date().toISOString().slice(0, 10),
+                instructions:   "Issued following patient prescription request.",
+                status:         "active"
+            };
+            DDATA.prescriptions.push(newRx);
+            putRecord("prescriptions", newRx);
+
+            //Notify guardian if this is a child patient.
+            var med = null;
+            for (var k = 0; k < DDATA.medicines.length; k++) {
+                if (DDATA.medicines[k].medicineID === req.medicineID) {
+                    med = DDATA.medicines[k];
+                    break;
+                }
+            }
+            var medName = med ? med.name : "a medicine";
+            createNotificationForPatient(
+                req.patientID,
+                "rx",
+                "Your prescription request for " + medName + " has been accepted."
+            );
+        } else {
+            //Notify guardian if declined too.
+            var med2 = null;
+            for (var m = 0; m < DDATA.medicines.length; m++) {
+                if (DDATA.medicines[m].medicineID === req.medicineID) {
+                    med2 = DDATA.medicines[m];
+                    break;
+                }
+            }
+            var medName2 = med2 ? med2.name : "a medicine";
+            createNotificationForPatient(
+                req.patientID,
+                "rx",
+                "Your prescription request for " + medName2 + " was declined. Please book an appointment."
+            );
+        }
+
+        break;
+    }
+
+    //Refresh the panel.
+    var doctor = getLoggedInDoctor();
+    showPrescriptionRequests(doctor);
 }

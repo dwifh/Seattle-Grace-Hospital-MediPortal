@@ -828,6 +828,154 @@
 .rx_item_note { font-size: 11px; color: var(--text-muted); font-style: italic; margin: 0; }
 
 
+/*PRESCRIPTION REQUEST FORM, shown/hidden by the Request Prescription button*/
+
+.rx_request_form {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rx_request_title {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.rx_request_subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.rx_request_field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rx_request_label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.rx_request_optional {
+    font-weight: 400;
+    font-style: italic;
+}
+
+.rx_request_select,
+.rx_request_input {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-size: 13px;
+    font-family: var(--font);
+    color: var(--text);
+    outline: none;
+}
+
+.rx_request_select:focus,
+.rx_request_input:focus {
+    border-color: var(--primary);
+}
+
+.rx_request_error { font-size: 12px; color: var(--danger); margin: 0; }
+.rx_request_ok    { font-size: 12px; color: var(--success); margin: 0; }
+
+.rx_request_submit {
+    align-self: flex-start;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.rx_request_submit:hover { opacity: 0.88; }
+
+
+/*PRESCRIPTION REQUEST STATUS LIST — below the form*/
+
+.rx_request_status {
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
+
+.rx_request_status_title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin: 0 0 8px 0;
+}
+
+#rxRequestStatusList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rx_req_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.rx_req_body  { flex: 1; }
+.rx_req_name  { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.rx_req_meta  { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+.rx_req_right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* request status pills */
+.rx_req_pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: capitalize;
+}
+
+.rx_req_pending  { background: #e2e8f0; color: var(--text-muted); }
+.rx_req_accepted { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+.rx_req_declined { background: rgba(225, 29, 72, 0.15);  color: var(--danger); }
+
+.rx_req_empty {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 8px 0;
+}
+
+
 /*BADGES — history and prescription status pills*/
 
 .badge_diagnosis, .badge_vaccination, .badge_test_result, .badge_active {
@@ -1205,7 +1353,7 @@
     box-shadow: 0 4px 10px rgba(225, 29, 72, 0.4);
 }
 
-/* Cancel booking button has the same shape as btn_accept/decline but muted grey, since cancelling a pending request is low-stakes and reversible */
+/* Cancel booking button — same shape as btn_accept/decline but muted grey since cancelling a pending request is low-stakes and reversible */
 .status_bar_cancel {
     border: none;
     border-radius: var(--radius-sm);
