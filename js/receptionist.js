@@ -1,70 +1,82 @@
 // receptionist.js — OWNED BY AYUSH
 
 function loadReceptionistDashboard() {
-    loadReceptionistStats();
-    loadTodaySchedule();
-    loadAllAppointments();
-    loadPatientDirectory();
+    openDatabase(function() {
+        getAllRecords('appointments', function(idbAppointments) {
+        getAllRecords('patients', function(idbPatients) {
+        getAllRecords('doctors', function(idbDoctors) {
+        getAllRecords('receptionists', function(idbReceptionists) {
+
+            var appointments = idbAppointments.length ? idbAppointments: APPOINTMENTS;
+            var patients= idbPatients.length ? idbPatients: PATIENTS;
+            var doctors = idbDoctors.length ? idbDoctors: DOCTORS;
+            var receptionists = idbReceptionists.length ? idbReceptionists: RECEPTIONISTS;
+
+            loadReceptionistStats(appointments);
+            loadTodaySchedule(appointments, patients, doctors);
+            loadAllAppointments(appointments, patients, doctors, receptionists);
+            loadPatientDirectory(patients, doctors);
+
+        });
+        });
+        });
+        });
+    });
 }
 
 // STATS
 
-function loadReceptionistStats() {
-    document.getElementById('receptionistTotalAppointments').textContent = APPOINTMENTS.length;
+function loadReceptionistStats(appointments) {
+    document.getElementById('receptionistTotalAppointments').textContent = appointments.length;
 
-    // Get today's date in YYYY-MM-DD format (ISO Format) to match dummy-data.js date strings
-    const today = new Date().toISOString().slice(0, 10);
+    // Get today's date in YYYY-MM-DD format (ISO Format) to match data date strings
+    var today = new Date().toISOString().slice(0, 10);
 
-    const todayAppointments = APPOINTMENTS.filter(function(a) {
+    var todayCount = appointments.filter(function(a) {
         return a.date === today;
-    });
+    }).length;
+    document.getElementById('receptionistTodayAppointments').textContent = todayCount;
 
-    document.getElementById('receptionistTodayAppointments').textContent = todayAppointments.length;
-
-    const checkedIn = APPOINTMENTS.filter(function(a) {
+    var checkedIn = appointments.filter(function(a) {
         return a.checkInStatus === 'checked_in';
     }).length;
     document.getElementById('receptionistCheckedIn').textContent = checkedIn;
 
-    const pending = APPOINTMENTS.filter(function(a) {
+    var pending = appointments.filter(function(a) {
         return a.checkInStatus === 'pending';
     }).length;
     document.getElementById('receptionistPending').textContent = pending;
 }
 
-// TODAY'S SCHEDULE 
+// TODAY'S SCHEDULE
 
-function loadTodaySchedule() {
-    const tbody = document.getElementById('receptionistTodayTbody');
+function loadTodaySchedule(appointments, patients, doctors) {
+    var tbody = document.getElementById('receptionistTodayTbody');
     tbody.innerHTML = '';
 
-    const today = new Date().toISOString().slice(0, 10);
+    var today = new Date().toISOString().slice(0, 10);
 
-    const todayAppointments = APPOINTMENTS.filter(function(a) {
+    var todayAppointments = appointments.filter(function(a) {
         return a.date === today;
     });
 
     if (todayAppointments.length === 0) {
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML = '<td colspan="6">No appointments scheduled for today.</td>';
         tbody.appendChild(row);
         return;
     }
 
     todayAppointments.forEach(function(appointment) {
-        const patient = PATIENTS.find(function(p) {
+        var patient = patients.find(function(p) {
             return p.patientID === appointment.patientID;
         });
 
-        const doctor = DOCTORS.find(function(d) {
+        var doctor = doctors.find(function(d) {
             return d.doctorID === appointment.doctorID;
         });
 
-        const receptionist = RECEPTIONISTS.find(function(r) {
-            return r.receptionistID === appointment.bookedBy;
-        });
-
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + appointment.appointmentID + '</td>' +
             '<td>' + (patient ? patient.firstName + ' ' + patient.lastName : appointment.patientID) + '</td>' +
@@ -79,34 +91,34 @@ function loadTodaySchedule() {
 
 // ALL APPOINTMENTS
 
-function loadAllAppointments() {
-    const tbody = document.getElementById('receptionistAppointmentsTbody');
+function loadAllAppointments(appointments, patients, doctors, receptionists) {
+    var tbody = document.getElementById('receptionistAppointmentsTbody');
     tbody.innerHTML = '';
 
-    APPOINTMENTS.forEach(function(appointment) {
-        const patient = PATIENTS.find(function(p) {
-            return p.patientID === appointment.patientID;
+    appointments.forEach(function(appointment) {
+        var patient = patients.find(function(patient) {
+            return patient.patientID === appointment.patientID;
         });
 
-        const doctor = DOCTORS.find(function(d) {
-            return d.doctorID === appointment.doctorID;
+        var doctor = doctors.find(function(doc) {
+            return doc.doctorID === appointment.doctorID;
         });
 
-        const receptionist = RECEPTIONISTS.find(function(r) {
-            return r.receptionistID === appointment.bookedBy;
+        var receptionist = receptionists.find(function(reception) {
+            return reception.receptionistID === appointment.bookedBy;
         });
 
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + appointment.appointmentID + '</td>' +
-            '<td>' + (patient ? patient.firstName + ' ' + patient.lastName : appointment.patientID) + '</td>' +
-            '<td>' + (doctor  ? doctor.title + ' ' + doctor.lastName : appointment.doctorID) + '</td>' +
+            '<td>' + (patient ? patient.firstName + ' ' + patient.lastName: appointment.patientID) + '</td>' +
+            '<td>' + (doctor ? doctor.title + ' ' + doctor.lastName: appointment.doctorID) + '</td>' +
             '<td>' + appointment.date + '</td>' +
             '<td>' + appointment.time + '</td>' +
             '<td>' + appointment.reason + '</td>' +
-            '<td><span class="badge badge--' + appointment.status + '">' + appointment.status + '</span></td>' +
+            '<td><span class="badge badge--' + appointment.status + '">' + appointment.status       + '</span></td>' +
             '<td><span class="badge badge--' + appointment.checkInStatus + '">' + appointment.checkInStatus + '</span></td>' +
-            '<td>' + (receptionist ? receptionist.firstName + ' ' + receptionist.lastName : appointment.bookedBy) + '</td>';
+            '<td>' + (receptionist ? receptionist.firstName + ' ' + receptionist.lastName: appointment.bookedBy) + '</td>';
 
         tbody.appendChild(row);
     });
@@ -114,16 +126,16 @@ function loadAllAppointments() {
 
 // PATIENT DIRECTORY
 
-function loadPatientDirectory() {
-    const tbody = document.getElementById('receptionistPatientsTbody');
+function loadPatientDirectory(patients, doctors) {
+    var tbody = document.getElementById('receptionistPatientsTbody');
     tbody.innerHTML = '';
 
-    PATIENTS.forEach(function(patient) {
-        const doctor = DOCTORS.find(function(d) {
+    patients.forEach(function(patient) {
+        var doctor = doctors.find(function(d) {
             return d.doctorID === patient.registeredDoctorID;
         });
 
-        const row = document.createElement('tr');
+        var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + patient.patientID + '</td>' +
             '<td>' + patient.firstName + ' ' + patient.lastName + '</td>' +

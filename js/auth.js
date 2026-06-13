@@ -48,8 +48,19 @@ function scrollToSection(id) {
 
 // SESSION SAVER - Tiana don't edit this, or else users will have to login everytime the tab is refreshed
 function saveSession(user) {
-    //Save the current user in the session storage as a JSON string
-    sessionStorage.setItem('currentUser', JSON.stringify(user));
+    // Never store the password (plain or encrypted) in sessionStorage.
+    // Only persist what is needed to restore the dashboard on refresh.
+    var sessionData = {
+        username: user.username,
+        role:     user.role
+    };
+    if (user.patientID)sessionData.patientID = user.patientID;
+    if (user.doctorID)sessionData.doctorID = user.doctorID;
+    if (user.nurseID)sessionData.nurseID = user.nurseID;
+    if (user.receptionistID) sessionData.receptionistID = user.receptionistID;
+    if (user.guardianID) sessionData.guardianID = user.guardianID;
+    if (user.adminID) sessionData.adminID = user.adminID;
+    sessionStorage.setItem('currentUser', JSON.stringify(sessionData));
 }
 
 function getSession() {
@@ -247,7 +258,25 @@ function handleLogin(event) {
             return;
         }
 
-        // Decrypt the stored password first, then compare against what the user typed.
+        // Passwords are currently stored as plaintext by seed.js.
+        // When crypto.js encryption is wired up for passwords, the stored value will be an object {iv, ciphertext}.
+        // This branch handles both cases so login keeps working through the transition.
+        if (typeof matchedUser.password === 'string') {
+            if (matchedUser.password !== password) {
+                recordFailedAttempt();
+                errorBox.hidden = false;
+                passwordInput.value = '';
+                passwordInput.focus();
+                return;
+            }
+            saveSession(matchedUser);
+            sessionStorage.removeItem("loginAttempts");
+            sessionStorage.removeItem("lockoutTime");
+            showDashboard(matchedUser.role);
+            return;
+        }
+
+        // Encrypted password path — used once crypto.js starts encrypting stored passwords
         decryptField(matchedUser.password).then(function(storedPassword) {
             if (storedPassword !== password) {
                 recordFailedAttempt();
@@ -257,7 +286,6 @@ function handleLogin(event) {
                 return;
             }
 
-            // Valid login — save session and route to dashboard
             saveSession(matchedUser);
             sessionStorage.removeItem("loginAttempts");
             sessionStorage.removeItem("lockoutTime");
@@ -272,11 +300,8 @@ function handleLogin(event) {
                 //Found in IndexedDB, then use it.
                 attemptLogin(idbUser);
             } else {
-                //Not in IndexedDB, fall back to the USERS array in dummy-data.js so the app still works.
-                const fallbackUser = USERS.find(function(user) {
-                    return user.username === username;
-                });
-                attemptLogin(fallbackUser);
+
+                attemptLogin(null);
             }
         });
     });
@@ -285,6 +310,11 @@ function handleLogin(event) {
 // LOGOUT LOGIC
 
 function handleLogout() {
+    // Stop the admin appointment poll if it is running
+    if (typeof _appointmentPollInterval !== 'undefined' && _appointmentPollInterval) {
+        clearInterval(_appointmentPollInterval);
+        _appointmentPollInterval = null;
+    }
     //clear user from current session
     clearSession();
     //force the login page
@@ -416,32 +446,33 @@ function handleRegister(event) {
                 guardianID: null            //adults only; minor registration is out of scope
             };
 
-            //Build the login account. Same shape as the users seeded by seed.js.
-            //NOTE: password is plaintext here.
-            var newUser = {
-                username: username,
-                password: password,
-                role: "patient",
-                patientID: patientID
-            };
+            //Encrypt NHS number and password before storing in IndexedDB.
+            encryptField(formattedNhs).then(function(encNhs) {
+                newPatient.nhsNumber = encNhs;
+                return encryptField(password);
+            }).then(function(encPass) {
+                var newUser = {
+                    username: username,
+                    password: encPass,
+                    role: "patient",
+                    patientID: patientID
+                };
 
-            //Persist both records.
-            putRecord("patients", newPatient);
-            putRecord("users", newUser, function(saved) {
-                if (!saved) {
-                    fail("Could not create your account. Please try again.");
-                    return;
-                }
+                putRecord("patients", newPatient);
+                putRecord("users", newUser, function(saved) {
+                    if (!saved) {
+                        fail("Could not create your account. Please try again.");
+                        return;
+                    }
 
-                //Success — show message, then log the new patient straight in.
-                if (successBox) {
-                    successBox.textContent = "Account created. Signing you in…";
-                    successBox.hidden = false;
-                }
+                    if (successBox) {
+                        successBox.textContent = "Account created. Signing you in…";
+                        successBox.hidden = false;
+                    }
 
-                //Auto-login: save session and route to the patient dashboard.
-                saveSession(newUser);
-                showDashboard("patient");
+                    saveSession(newUser);
+                    showDashboard("patient");
+                });
             });
         });
     });
@@ -475,9 +506,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check for existing session
     const existingSession = getSession();
     if (existingSession) {
-        showDashboard(existingSession.role);
+        // Open the DB before restoring the dashboard — getAllRecords inside loadAdminDashboard
+        // (and other role dashboards) needs db to be non-null before it can query any store.
+        openDatabase(function() {
+            showDashboard(existingSession.role);
+        });
     } else {
-        // If there are no active sessions, force login page
+        // If there are no active , force login page
         showLogin();
     }
 

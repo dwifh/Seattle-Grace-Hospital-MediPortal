@@ -1,5 +1,6 @@
-//seed.js fills IndexedDB with starter data. It fetches JSON files. It also generates login accounts.
-//NOTE: the passwords are plaintext in the file. This is exactly the data that Ayush's crypto.js will encrypt before storing in a later phase.
+//seed.js fills IndexedDB with starter data. It fetches JSON files and generates login accounts.
+//Passwords are encrypted with AES-256-GCM via encryptField() in crypto.js before being stored.
+//NHS numbers for patients are also encrypted before storage.
 
 //This function opens DB first and checks if data has been seeded. If not, it fetches and stores data.
 function seedDatabase() {
@@ -52,21 +53,26 @@ function seedPatients() {
                     continue;
                 }
  
-                //Store the patient records.
-                putRecord("patients", p);
- 
-                //Build login: firstInitial + lastName + last 4 digits of NHS number.
-                var nhsDigits = p.nhsNumber.replace(/\s/g, "");           
-                var nhsLast4  = nhsDigits.slice(-4);                      
-                var username  = makeUsername(p.firstName, p.lastName) + nhsLast4;                                  
-                var password  = "Patient" + nhsLast4;                     
- 
-                putRecord("users", {
-                    username:  username,
-                    password:  password,
-                    role:      "patient",
-                    patientID: p.patientID
-                });
+                //Derive nhsLast4 before encrypting, then encrypt nhsNumber and password.
+                (function(patient) {
+                    var nhsDigits = patient.nhsNumber.replace(/\s/g, "");
+                    var nhsLast4 = nhsDigits.slice(-4);
+                    var username = makeUsername(patient.firstName, patient.lastName) + nhsLast4;
+                    var password = "Patient" + nhsLast4;
+
+                    encryptField(patient.nhsNumber).then(function(encNhs) {
+                        patient.nhsNumber = encNhs;
+                        return encryptField(password);
+                    }).then(function(encPass) {
+                        putRecord("patients", patient);
+                        putRecord("users", {
+                            username: username,
+                            password: encPass,
+                            role: "patient",
+                            patientID: patient.patientID
+                        });
+                    });
+                })(p);
             }
  
             console.log("Seeded " + patients.length + " patients and their login accounts.");
@@ -95,19 +101,24 @@ function seedDoctors() {
                     continue;
                 }
  
-                putRecord("doctors", d);
- 
-                //Build login: firstname.lastname   password: "Doctor" + last 4 of GMC number.
-                var gmcLast4 = d.gmcNumber.slice(-4);                     
-                var username = makeUsername(d.firstName, d.lastName);   
-                var password = "Doctor" + gmcLast4;                       
- 
-                putRecord("users", {
-                    username: username,
-                    password: password,
-                    role:     "doctor",
-                    doctorID: d.doctorID
-                });
+                (function(doctor) {
+                    var gmcLast4 = doctor.gmcNumber.slice(-4);
+                    var username = makeUsername(doctor.firstName, doctor.lastName);
+                    var password = "Doctor" + gmcLast4;
+
+                    encryptField(doctor.gmcNumber).then(function(encGmc) {
+                        doctor.gmcNumber = encGmc;
+                        return encryptField(password);
+                    }).then(function(encPass) {
+                        putRecord("doctors", doctor);
+                        putRecord("users", {
+                            username: username,
+                            password: encPass,
+                            role: "doctor",
+                            doctorID: doctor.doctorID
+                        });
+                    });
+                })(d);
             }
  
             console.log("Seeded " + doctors.length + " doctor(s) and their login accounts.");
@@ -135,19 +146,21 @@ function seedNurses() {
                     continue;
                 }
  
-                putRecord("nurses", n);
- 
-                //Build login: firstname.lastname   password: "Nurse" + last 4 of NMC number.
-                var nmcLast4 = n.nmcNumber.slice(-4);                   
-                var username = makeUsername(n.firstName, n.lastName);    
-                var password = "Nurse" + nmcLast4;                      
- 
-                putRecord("users", {
-                    username: username,
-                    password: password,
-                    role:     "nurse",
-                    nurseID:  n.nurseID
-                });
+                (function(nurse) {
+                    var nmcLast4 = nurse.nmcNumber.slice(-4);
+                    var username = makeUsername(nurse.firstName, nurse.lastName);
+                    var password = "Nurse" + nmcLast4;
+
+                    putRecord("nurses", nurse);
+                    encryptField(password).then(function(encPass) {
+                        putRecord("users", {
+                            username: username,
+                            password: encPass,
+                            role: "nurse",
+                            nurseID:  nurse.nurseID
+                        });
+                    });
+                })(n);
             }
  
             console.log("Seeded " + nurses.length + " nurse(s) and their login accounts.");
@@ -175,19 +188,21 @@ function seedReceptionists() {
                     continue;
                 }
  
-                putRecord("receptionists", r);
- 
-                //Build login: firstname.lastname   password: "Reception" + numeric part of receptionistID.
-                var idNum    = r.receptionistID.replace(/[^0-9]/g, "");  
-                var username = makeUsername(r.firstName, r.lastName);     
-                var password = "Reception" + idNum;                     
- 
-                putRecord("users", {
-                    username:       username,
-                    password:       password,
-                    role:           "receptionist",
-                    receptionistID: r.receptionistID
-                });
+                (function(receptionist) {
+                    var idNum = receptionist.receptionistID.replace(/[^0-9]/g, "");
+                    var username = makeUsername(receptionist.firstName, receptionist.lastName);
+                    var password = "Reception" + idNum;
+
+                    putRecord("receptionists", receptionist);
+                    encryptField(password).then(function(encPass) {
+                        putRecord("users", {
+                            username: username,
+                            password: encPass,
+                            role: "receptionist",
+                            receptionistID: receptionist.receptionistID
+                        });
+                    });
+                })(r);
             }
  
             console.log("Seeded " + receptionists.length + " receptionist(s) and their login accounts.");
@@ -215,19 +230,21 @@ function seedGuardians() {
                     continue;
                 }
  
-                putRecord("guardians", g);
- 
-                //Build login: firstname.lastname   password: "Guardian" + numeric part of guardianID.
-                var idNum    = g.guardianID.replace(/[^0-9]/g, "");    
-                var username = makeUsername(g.firstName, g.lastName);    
-                var password = "Guardian" + idNum;                        
- 
-                putRecord("users", {
-                    username:   username,
-                    password:   password,
-                    role:       "guardian",
-                    guardianID: g.guardianID
-                });
+                (function(guardian) {
+                    var idNum = guardian.guardianID.replace(/[^0-9]/g, "");
+                    var username = makeUsername(guardian.firstName, guardian.lastName);
+                    var password = "Guardian" + idNum;
+
+                    putRecord("guardians", guardian);
+                    encryptField(password).then(function(encPass) {
+                        putRecord("users", {
+                            username: username,
+                            password: encPass,
+                            role: "guardian",
+                            guardianID: guardian.guardianID
+                        });
+                    });
+                })(g);
             }
  
             console.log("Seeded " + guardians.length + " guardian(s) and their login accounts.");
@@ -255,19 +272,21 @@ function seedAdmins() {
                     continue;
                 }
  
-                putRecord("admins", a);
- 
-                //Build login: firstname.lastname   password: "Admin" + numeric part of adminID.
-                var idNum    = a.adminID.replace(/[^0-9]/g, "");          
-                var username = makeUsername(a.firstName, a.lastName);     
-                var password = "Admin" + idNum;                          
- 
-                putRecord("users", {
-                    username: username,
-                    password: password,
-                    role:     "admin",
-                    adminID:  a.adminID
-                });
+                (function(admin) {
+                    var idNum = admin.adminID.replace(/[^0-9]/g, "");
+                    var username = makeUsername(admin.firstName, admin.lastName);
+                    var password = "Admin" + idNum;
+
+                    putRecord("admins", admin);
+                    encryptField(password).then(function(encPass) {
+                        putRecord("users", {
+                            username: username,
+                            password: encPass,
+                            role: "admin",
+                            adminID:  admin.adminID
+                        });
+                    });
+                })(a);
             }
  
             console.log("Seeded " + admins.length + " admin(s) and their login accounts.");
