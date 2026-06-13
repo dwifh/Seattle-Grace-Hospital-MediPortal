@@ -264,9 +264,12 @@ function handleLogin(event) {
                 //Found in IndexedDB, then use it.
                 attemptLogin(idbUser);
             } else {
-                //If user not found in IndexedDB, login fails.
-                attemptLogin(null);
-            }
+                //Not in IndexedDB,  fall back to the USERS array in dummy-data.js so the app still works.
+                const fallbackUser = USERS.find(function(user) {
+                return user.username === username && user.password === password;
+            });
+            attemptLogin(fallbackUser);
+        }
         });
     });
 }
