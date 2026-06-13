@@ -1843,13 +1843,15 @@
 #dashboard-patient .timeline_item_date  { font-size: 12px; text-align: center; }
 #dashboard-patient .rx_panel_header { justify-content: space-between; }
 #dashboard-patient .rx_panel_header h2 { font-size: 18px; text-align: left; }
-
+ 
 /* DOCTOR: Booking Notifications (left) + Today's Patients (right) */
-#dashboard-doctor .booking_notif_panel { grid-column: 1 / 9;  order: 2; }
-#dashboard-doctor .today_sidebar       { grid-column: 9 / 13; order: 3; }
-/* My Patients full width, then record viewer full width */
-#dashboard-doctor .patient_list_panel  { grid-column: 1 / -1; order: 4; text-align: center; }
-#dashboard-doctor .record_viewer       { grid-column: 1 / -1; order: 5; }
+#dashboard-doctor .booking_notif_panel  { grid-column: 1 / 9;  order: 2; }
+#dashboard-doctor .today_sidebar        { grid-column: 9 / 13; order: 3; }
+/* Prescription Requests (left) + My Patients (right) side by side */
+#dashboard-doctor #rxRequestNotifPanel  { grid-column: 7 / 13; order: 4; text-align: center;}
+#dashboard-doctor .patient_list_panel   { grid-column: 1 / 7;  order: 4; text-align: center; }
+/* Record viewer + forms full width below */
+#dashboard-doctor .record_viewer        { grid-column: 1 / -1; order: 5; }
 /* Add Clinical Note (left) + Issue Prescription (right) */
 #dashboard-doctor .note_card    { grid-column: 1 / 7;  order: 6; }
 #dashboard-doctor .rx_form_card { grid-column: 7 / 13; order: 7; }
