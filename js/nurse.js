@@ -12,16 +12,18 @@ function loadNurseDashboard() {
     openDatabase(function() {
         // Fetch the nurse's own record first to get assigned patient IDs
         getRecord('nurses', nurseID, function(idbNurse) {
-            var nurseRecord = idbNurse || NURSES.find(function(n) { return n.nurseID === nurseID; });
+            var nurseRecord = idbNurse || NURSES.find(function(nurse) { return nurse.nurseID === nurseID; });
 
+            // Error handling incase the record isnt found
             if (!nurseRecord) {
                 console.error('Nurse record not found:', nurseID);
                 return;
             }
 
+            // Each Nurse will only be able to look at information for their assigned patients
             var assignedPatientIDs = nurseRecord.registeredPatient;
 
-            // Load all required stores in sequence, fall back to dummy-data if empty
+            // Load all required stores in sequence
             getAllRecords('patients', function(idbPatients) {
             getAllRecords('doctors', function(idbDoctors) {
             getAllRecords('appointments', function(idbAppointments) {
@@ -42,6 +44,7 @@ function loadNurseDashboard() {
                 _nurseVitals = vitals;
                 _nursePatients = patients;
 
+                //Once all records are fetched, load the stat cards and tables
                 loadNurseStats(assignedPatientIDs, appointments, prescriptions);
                 loadNursePatientsTable(assignedPatientIDs, patients, doctors);
                 loadNurseVitalsTable(assignedPatientIDs, vitals, patients);
@@ -61,23 +64,21 @@ function loadNurseDashboard() {
 }
 
 // STATS
-
 function loadNurseStats(assignedPatientIDs, appointments, prescriptions) {
     document.getElementById('nurseAssignedCount').textContent = assignedPatientIDs.length;
 
-    var upcomingCount = appointments.filter(function(a) {
-        return assignedPatientIDs.includes(a.patientID) && a.status === 'booked';
+    var upcomingCount = appointments.filter(function(appointment) {
+        return assignedPatientIDs.includes(appointment.patientID) && appointment.status === 'booked';
     }).length;
     document.getElementById('nurseUpcomingAppointments').textContent = upcomingCount;
 
-    var activePrescriptionsCount = prescriptions.filter(function(p) {
-        return assignedPatientIDs.includes(p.patientID) && p.status === 'active';
+    var activePrescriptionsCount = prescriptions.filter(function(prescription) {
+        return assignedPatientIDs.includes(prescription.patientID) && prescription.status === 'active';
     }).length;
     document.getElementById('nurseActivePrescriptions').textContent = activePrescriptionsCount;
 }
 
 // ASSIGNED PATIENTS TABLE
-
 function loadNursePatientsTable(assignedPatientIDs, patients, doctors) {
     var tbody = document.getElementById('nursePatientsTbody');
     tbody.innerHTML = '';
@@ -113,13 +114,13 @@ function loadNurseVitalsTable(assignedPatientIDs, vitals, patients) {
     var tbody = document.getElementById('nurseVitalsTbody');
     tbody.innerHTML = '';
 
-    var assignedVitals = vitals.filter(function(v) {
-        return assignedPatientIDs.includes(v.patientID);
+    var assignedVitals = vitals.filter(function(vital) {
+        return assignedPatientIDs.includes(vital.patientID);
     });
 
     assignedVitals.forEach(function(vital) {
-        var patient = patients.find(function(p) {
-            return p.patientID === vital.patientID;
+        var patient = patients.find(function(patient) {
+            return patient.patientID === vital.patientID;
         });
 
         var row = document.createElement('tr');
@@ -142,17 +143,17 @@ function loadNurseAppointmentsTable(assignedPatientIDs, appointments, patients, 
     var tbody = document.getElementById('nurseAppointmentsTbody');
     tbody.innerHTML = '';
 
-    var assignedAppointments = appointments.filter(function(a) {
-        return assignedPatientIDs.includes(a.patientID);
+    var assignedAppointments = appointments.filter(function(app) {
+        return assignedPatientIDs.includes(app.patientID);
     });
 
     assignedAppointments.forEach(function(appointment) {
-        var patient = patients.find(function(p) {
-            return p.patientID === appointment.patientID;
+        var patient = patients.find(function(patient) {
+            return patient.patientID === appointment.patientID;
         });
 
-        var doctor = doctors.find(function(d) {
-            return d.doctorID === appointment.doctorID;
+        var doctor = doctors.find(function(doc) {
+            return doc.doctorID === appointment.doctorID;
         });
 
         var row = document.createElement('tr');
