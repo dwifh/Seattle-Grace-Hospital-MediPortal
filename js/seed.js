@@ -156,7 +156,7 @@ function seedNurses() {
                             username: username,
                             password: encPass,
                             role: "nurse",
-                            nurseID:  nurse.nurseID
+                            nurseID: nurse.nurseID
                         });
                     });
                 })(n);
