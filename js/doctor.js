@@ -14,67 +14,38 @@ var DDATA = {
     prescriptionRequests: []
 };
 
-//loadStoreD fetches every record from one object store. If the store is empty, it hands back the dummy-data fallback array instead.
-function loadStoreD(storeName, fallbackArray, callback) {
-    try {
-        getAllRecords(storeName, function(records) {
-            if (records && records.length > 0) {
-                callback(records);
-            } else {
-                callback(fallbackArray);
-            }
-        });
-    } catch(e) {
-        console.log("loadStoreD: store '" + storeName + "' not available yet, using fallback. (" + e.message + ")");
-        callback(fallbackArray);
-    }
-}
-
-//findDoctorInDummy is the fallback lookup for the logged-in doctor.
-function findDoctorInDummy(doctorID) {
-    for (var i = 0; i < DOCTORS.length; i++) {
-        if (DOCTORS[i].doctorID === doctorID) {
-            return DOCTORS[i];
-        }
-    }
-    //Demo fallback — Dr Priya Patel (d001).
-    for (var i = 0; i < DOCTORS.length; i++) {
-        if (DOCTORS[i].doctorID === "d001") {
-            return DOCTORS[i];
-        }
-    }
-    return null;
-}
-
-//loadDoctorData fills DDATA from IndexedDB (with dummy-data fallback), then calls onReady.
+//loadDoctorData fills DDATA from IndexedDB, then calls onReady.
 function loadDoctorData(onReady) {
-    //Work out the logged-in doctor's ID from the session object saved by auth.js.
     var session = getSession();
-    var doctorID = (session && session.doctorID) ? session.doctorID : "d001";
+    var doctorID = (session && session.doctorID) ? session.doctorID : null;
 
-    //Load the doctor profile — IndexedDB first, dummy-data fallback.
+    if (!doctorID) {
+        console.log("loadDoctorData: no doctorID in session.");
+        return;
+    }
+
     getRecord("doctors", doctorID, function(record) {
-        DDATA.doctor = record ? record : findDoctorInDummy(doctorID);
+        DDATA.doctor = record;
 
-        //Each job is [storeName, fallbackArray, keyInDDATA].
+        //Each job is [storeName, keyInDDATA].
+        //No fallback arrays — if a store is empty the dashboard shows empty state.
         var jobs = [
-            ["doctors",          DOCTORS,          "doctors"],
-            ["patients",         PATIENTS,         "patients"],
-            ["guardians",        GUARDIAN,         "guardians"],
-            ["appointments",     APPOINTMENTS,     "appointments"],
-            ["booking_requests", BOOKING_REQUESTS, "bookingRequests"],
-            ["prescriptions",    PRESCRIPTIONS,    "prescriptions"],
-            ["medicines",        MEDICINES,        "medicines"],
-            ["medicalHistory",   MEDICAL_HISTORY,  "history"],
-            ["prescription_requests", [],          "prescriptionRequests"]
+            ["doctors",               "doctors"],
+            ["patients",              "patients"],
+            ["guardians",             "guardians"],
+            ["appointments",          "appointments"],
+            ["booking_requests",      "bookingRequests"],
+            ["prescriptions",         "prescriptions"],
+            ["medicines",             "medicines"],
+            ["medicalHistory",        "history"],
+            ["prescription_requests", "prescriptionRequests"]
         ];
 
-        //Load every store in parallel and only continue once all have come back.
         var remaining = jobs.length;
         for (var i = 0; i < jobs.length; i++) {
             (function(job) {
-                loadStoreD(job[0], job[1], function(records) {
-                    DDATA[job[2]] = records;
+                getAllRecords(job[0], function(records) {
+                    DDATA[job[1]] = records;
                     remaining--;
                     if (remaining === 0) {
                         onReady();
@@ -85,18 +56,11 @@ function loadDoctorData(onReady) {
     });
 }
 
-//getLoggedInDoctor returns the cached doctor record. Used by the write handlers too.
-//If the cache isn't ready, it falls back to a synchronous dummy lookup.
+//getLoggedInDoctor returns the cached doctor record.
+//Used by the note form, prescription form and notification helpers.
 function getLoggedInDoctor() {
-    if (DDATA.doctor) {
-        return DDATA.doctor;
-    }
-    var session = getSession();
-    var doctorID = (session && session.doctorID) ? session.doctorID : "d001";
-    return findDoctorInDummy(doctorID);
+    return DDATA.doctor;
 }
-
-
 //Guardian Notifications.
 //Builds a guardian's username with the same formula seed.js uses: firstname.lastname, letters only.
 function makeGuardianUsername(guardian) {
@@ -150,7 +114,6 @@ function createNotificationForPatient(patientID, type, message) {
     putRecord("notifications", notification);
 }
 
-
 //loadDoctorDashboard opens the DB, loads all data, then renders every section.
 function loadDoctorDashboard() {
     openDatabase(function() {
@@ -192,7 +155,6 @@ function showTodayDate() {
     var formatted = today.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" });
     document.getElementById("todayDate").textContent = formatted;
 }
-
 
 //It will shows the list of today's patients in the sidebar.
 //For the doctor, status pill is toggleable, doctor clicks through waiting → in progress → done.
@@ -334,7 +296,6 @@ function showBookingNotifications(doctor) {
     setupBookingButtons();
 }
 
-
 //It attaches click handlers to every Accept and Decline button in the booking panel.
 function setupBookingButtons() {
     //Accept buttons.
@@ -355,7 +316,6 @@ function setupBookingButtons() {
         });
     }
 }
-
 
 //It updates a booking request when the doctor accepts or declines it.
 //WRITES: updates the booking_requests record, and on "accepted" also creates a new appointments record. 
@@ -400,7 +360,6 @@ function handleBookingDecision(requestID, decision) {
                     "An appointment was booked for " + apptDate + " at " + req.time + " (" + req.reason + ")."
                 );
             }
-
             break;
         }
     }
@@ -474,7 +433,6 @@ function setupStatusPills() {
     }
 }
 
-
 //It will display the 4 stat cards at the top of the dashboard.
 function showDoctorStats(doctor) {
     var today = new Date();
@@ -520,7 +478,6 @@ function showDoctorStats(doctor) {
     document.getElementById("statDoneCount").textContent = done;
     document.getElementById("statDoneSub").textContent = "Finished today";
 }
-
 
 //It will show the list of patients assigned to this doctor.
 function showPatientList(doctor) {
@@ -570,7 +527,6 @@ function showPatientList(doctor) {
     }
 }
 
-
 //This will open a record viewer for the patient ID.
 function openPatientRecord(patientID) {
     //Look for patient in the cached patients.
@@ -607,7 +563,6 @@ function openPatientRecord(patientID) {
     showRecordPrescriptions(patient);
 }
 
-
 //It will read patient ID and return patient object.
 function getSelectedPatient() {
     var patientID = document.getElementById("recordViewer").getAttribute("data-current-patient");
@@ -621,7 +576,6 @@ function getSelectedPatient() {
     }
     return null;
 }
-
 
 //It will fill in medical history of the record viewer.
 function showRecordHistory(patient) {
@@ -748,7 +702,6 @@ function fillMedicineDropdown() {
     }
 }
 
-
 //It sets up clinical note form submission
 //WRITES: a new medicalHistory record, persisted to IndexedDB.
 function setupNoteForm() {
@@ -779,7 +732,7 @@ function setupNoteForm() {
         }
 
         //Build a new history entry. historyID is the keyPath of the medicalHistory store,
-        //so it MUST be set or the record cannot be stored (this was missing before).
+        //so it MUST be set or the record cannot be stored.
         var newEntry = {
             historyID: "h" + Date.now(),
             patientID: patient.patientID,
@@ -810,7 +763,6 @@ function setupNoteForm() {
     });
 }
 
-
 //It will setup prescription form submission.
 //WRITES: a new prescriptions record, persisted to IndexedDB.
 function setupRxForm() {
@@ -838,7 +790,6 @@ function setupRxForm() {
             errorMsg.hidden = false;
             return;
         }
-
 
         //Build new prescription. prescriptionID is the keyPath of the prescriptions store,
         //so it MUST be set or the record cannot be stored (this was missing before).
@@ -883,7 +834,6 @@ function setupRxForm() {
     });
 }
 
-
 //It will setup a search box that will filter patient list as doctor will type.
 function setupPatientSearch() {
     var input = document.getElementById("docSearchInput");
@@ -910,12 +860,10 @@ function setupPatientSearch() {
     });
 }
 
-
 //Prescription request panel.
 //Shows all pending prescription requests addressed to this doctor.
 //Accept: creates a real prescriptions record (same as the rx form) and notifies guardian.
 //Decline: updates the request status to "declined" and notifies guardian.
-
 //It shows prescription requests addressed to this doctor.
 function showPrescriptionRequests(doctor) {
     var list = document.getElementById("rxRequestNotifList");
@@ -1075,7 +1023,6 @@ function showPrescriptionRequests(doctor) {
     setupRxRequestButtons();
 }
  
- 
 //It wires the Review toggle and the Confirm/Decline buttons in the prescription request panel.
 function setupRxRequestButtons() {
     //Review button toggles the detail panel for that row.
@@ -1083,7 +1030,7 @@ function setupRxRequestButtons() {
     for (var i = 0; i < reviewBtns.length; i++) {
         reviewBtns[i].addEventListener("click", function() {
             var panelID = this.getAttribute("data-panel");
-            var panel   = document.getElementById(panelID);
+            var panel = document.getElementById(panelID);
             if (!panel) return;
             var isOpen = !panel.hidden;
             //Close all other panels first.
@@ -1124,10 +1071,10 @@ function setupRxRequestButtons() {
 function confirmRxRequest(rxRequestID) {
     //Read each field using data-field + data-rxr attributes.
     var selects = document.querySelectorAll('.rx_review_select[data-rxr="' + rxRequestID + '"]');
-    var input   = document.querySelector('.rx_review_input[data-rxr="' + rxRequestID + '"]');
+    var input = document.querySelector('.rx_review_input[data-rxr="' + rxRequestID + '"]');
  
-    var dosage       = "";
-    var frequency    = "";
+    var dosage = "";
+    var frequency = "";
     var durationDays = 0;
  
     for (var i = 0; i < selects.length; i++) {
@@ -1177,15 +1124,15 @@ function handleRxRequestDecision(rxRequestID, decision, dosage, frequency, durat
             //ADD a real prescription with the doctor-supplied clinical values.
             var newRx = {
                 prescriptionID: "rx" + Date.now(),
-                patientID:      req.patientID,
-                doctorID:       req.doctorID,
-                medicineID:     req.medicineID,
-                dosage:         dosage,
-                frequency:      frequency,
-                durationDays:   durationDays,
-                dateIssued:     new Date().toISOString().slice(0, 10),
-                instructions:   instructions || "",
-                status:         "active"
+                patientID: req.patientID,
+                doctorID:  req.doctorID,
+                medicineID: req.medicineID,
+                dosage: dosage,
+                frequency: frequency,
+                durationDays: durationDays,
+                dateIssued: new Date().toISOString().slice(0, 10),
+                instructions: instructions || "",
+                status:"active"
             };
             DDATA.prescriptions.push(newRx);
             putRecord("prescriptions", newRx);
@@ -1203,7 +1150,6 @@ function handleRxRequestDecision(rxRequestID, decision, dosage, frequency, durat
  
         break;
     }
- 
     //Refresh the panel.
     showPrescriptionRequests(getLoggedInDoctor());
 }
