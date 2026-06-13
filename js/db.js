@@ -1,7 +1,8 @@
 //Name of database
 //version number means if structure of DB changes, the browser runs so that we can create or change object stores.
 var DB_NAME = "MedicalPortalDB";
-var DB_VERSION = 1;
+//Bumped to 2: adds the prescription_requests store (rxRequestID) for patient prescription requests.
+var DB_VERSION = 2;
 //global variable to hold the database connection.
 var db = null;
 
@@ -34,6 +35,7 @@ function openDatabase(callback) {
         createStore(thisDb, "medicalHistory", "historyID");
         createStore(thisDb, "notifications", "notificationID");
         createStore(thisDb, "vitals", "vitalID");
+        createStore(thisDb, "prescription_requests", "rxRequestID");
     };
  
     //onsuccess runs when DB opens correctly.
@@ -64,6 +66,11 @@ function createStore(thisDb, storeName, keyName) {
  
 //putRecord ADDS or UPDATES records and doesn't overwrite any existing ones.
 function putRecord(storeName, record, callback) {
+    if (!db || !db.objectStoreNames.contains(storeName)) {
+        console.log("putRecord: store '" + storeName + "' not found — skipping write.");
+        if (callback) { callback(false); }
+        return;
+    }
     var transaction = db.transaction(storeName, "readwrite");
     var store = transaction.objectStore(storeName);
     var request = store.put(record);
@@ -80,6 +87,11 @@ function putRecord(storeName, record, callback) {
 
 //getRecord fetches one record of its significant key and the result will come through the callback.
 function getRecord(storeName, key, callback) {
+    if (!db || !db.objectStoreNames.contains(storeName)) {
+        console.log("getRecord: store '" + storeName + "' not found — returning null.");
+        callback(null);
+        return;
+    }
     var transaction = db.transaction(storeName, "readonly");
     var store = transaction.objectStore(storeName);
     var request = store.get(key);
@@ -98,6 +110,14 @@ function getRecord(storeName, key, callback) {
 //getAllRecords will fetch all records and return them as an array through callback.
 //It will more useful in dropdowns for doctor dashboard.
 function getAllRecords(storeName, callback) {
+    //Guard: if the store doesn't exist in this DB version (e.g. DB hasn't been upgraded
+    //yet in this session), return an empty array instead of throwing a DOMException.
+    if (!db || !db.objectStoreNames.contains(storeName)) {
+        console.log("getAllRecords: store '" + storeName + "' not found — returning [].");
+        callback([]);
+        return;
+    }
+
     var transaction = db.transaction(storeName, "readonly");
     var store = transaction.objectStore(storeName);
     var request = store.getAll();
@@ -115,6 +135,11 @@ function getAllRecords(storeName, callback) {
  
 //deleteRecord will remove one record by its significant key zand return true or false through callback.
 function deleteRecord(storeName, key, callback) {
+    if (!db || !db.objectStoreNames.contains(storeName)) {
+        console.log("deleteRecord: store '" + storeName + "' not found — skipping.");
+        if (callback) { callback(false); }
+        return;
+    }
     var transaction = db.transaction(storeName, "readwrite");
     var store = transaction.objectStore(storeName);
     var request = store.delete(key);

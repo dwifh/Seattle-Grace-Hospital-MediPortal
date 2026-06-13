@@ -1,6 +1,7 @@
 //guardian.js wired to IndexedDB.
 
-//CONSENT_ITEMS is intentionally kept in code, not in a store: the schema models consent as a single guardian.consentGranted flag, not per-category
+//CONSENT_ITEMS is intentionally kept in code, not in a store:
+//The schema models consent as a single guardian.consentGranted flag, not per-category.
 var CONSENT_ITEMS = [
     { label: "Medical history",          grantable: true  },
     { label: "Active prescriptions",     grantable: true  },
@@ -12,7 +13,8 @@ var CONSENT_ITEMS = [
 ];
 
 //Hardcoded notifications kept ONLY as the dummy-data fallback for the guardian dashboard,
-//Used if the notifications store is empty/unseeded.
+//used if the notifications store is empty/unseeded. Live data comes from IndexedDB.
+//Shape mirrors the store: type, message, createdAt (date kept as an alias for old fallback).
 var NOTIFICATIONS = [
     { type: "result", message: "Liam's spirometry test result has been uploaded by Dr Khan.", createdAt: "2026-05-26", recipientID: "sinead.oconnor" },
     { type: "appt",   message: "Liam's asthma review has been moved to 25 May 2026 at 12:00.", createdAt: "2026-05-20", recipientID: "sinead.oconnor" },
@@ -22,6 +24,7 @@ var NOTIFICATIONS = [
 
 
 //GDATA is the module-level cache for the guardian dashboard, filled once by loadGuardianData()
+//before anything renders. Render functions read from here instead of the global arrays.
 var GDATA = {
     guardian: null,
     ward: null,
@@ -37,13 +40,18 @@ var GDATA = {
 
 //loadStoreG fetches every record from one store, or returns the dummy-data fallback if empty.
 function loadStoreG(storeName, fallbackArray, callback) {
-    getAllRecords(storeName, function(records) {
-        if (records && records.length > 0) {
-            callback(records);
-        } else {
-            callback(fallbackArray);
-        }
-    });
+    try {
+        getAllRecords(storeName, function(records) {
+            if (records && records.length > 0) {
+                callback(records);
+            } else {
+                callback(fallbackArray);
+            }
+        });
+    } catch(e) {
+        console.log("loadStoreG: store '" + storeName + "' not available yet, using fallback. (" + e.message + ")");
+        callback(fallbackArray);
+    }
 }
 
 //Fallback lookup for the logged-in guardian from the dummy-data GUARDIAN array.
@@ -83,8 +91,7 @@ function getWardForGuardian(guardian) {
     return null;
 }
 
-//loadGuardianData fills GDATA from IndexedDB (with dummy-data fallback), resolves the guardian
-//and their ward, then calls onReady.
+//loadGuardianData fills GDATA from IndexedDB (with dummy-data fallback), resolves the guardian and their ward, then calls onReady.
 function loadGuardianData(onReady) {
     var session = getSession();
     var guardianID = (session && session.guardianID) ? session.guardianID : "g001";
@@ -93,6 +100,8 @@ function loadGuardianData(onReady) {
     getRecord("guardians", guardianID, function(record) {
         GDATA.guardian = record ? record : findGuardianInDummy(guardianID);
 
+        //Note: db.js store names — patients, doctors, appointments, prescriptions,
+        //medicines, medicalHistory, vitals, notifications.
         var jobs = [
             ["patients",       PATIENTS,        "patients"],
             ["doctors",        DOCTORS,         "doctors"],
@@ -273,7 +282,7 @@ function showWardStats(ward) {
 
 
 //It shows the consent log and what the guardian is allowed to see.
-//Grantable rows reflect the real guardian.consentGranted flag; if consent is withdrawn, they flip to "Not granted". Non-grantable rows are fixed future-scope placeholders.
+//Grantable rows reflect the real guardian.consentGranted flag; if consent is withdrawn they flip to "Not granted".
 function showConsentLog(guardian) {
     var list = document.getElementById("consentList");
     list.innerHTML = "";

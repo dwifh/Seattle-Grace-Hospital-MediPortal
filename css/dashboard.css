@@ -583,6 +583,18 @@
     width: 160px;
 }
 
+.status_bar_table thead th:last-child {
+    text-align: center;
+    width: 120px;
+}
+
+/* Status column — fixed width so it stays centred regardless of pill text */
+.status_bar_table thead th:nth-child(2),
+.status_bar_table tbody td:nth-child(2) {
+    text-align: center;
+    width: 120px;
+}
+
 .status_bar_table tbody td {
     padding: 12px;
     border-bottom: 1px solid var(--bg);
@@ -789,20 +801,23 @@
     gap: 10px;
 }
 
+/*PRESCRIPTION CARD (patient dashboard)*/
+
 .rx_item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    background: var(--primary-soft);
-    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
 }
 
-.rx_item_pill {
-    font-size: 1.1rem;
-    width: 36px;
-    height: 36px;
-    background: var(--surface);
+.rx_item_icon {
+    font-size: 1.3rem;
+    width: 38px;
+    height: 38px;
+    background: var(--primary-soft);
     border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
@@ -810,10 +825,413 @@
     flex-shrink: 0;
 }
 
-.rx_item_body { flex: 1; }
-.rx_item_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
-.rx_item_dose { font-size: 11px; color: var(--text-muted); margin: 0 0 2px 0; }
-.rx_item_note { font-size: 11px; color: var(--text-muted); font-style: italic; margin: 0; }
+.rx_item_body  { flex: 1; min-width: 0; }
+
+.rx_item_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.rx_item_name {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* 2×2 grid of labelled detail rows */
+.rx_item_grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 16px;
+    margin-bottom: 8px;
+}
+
+.rx_item_detail {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.rx_item_detail_label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+}
+
+.rx_item_detail_value {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.rx_item_instructions {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 4px 0 0 0;
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+}
+
+
+/*PRESCRIPTION REQUEST REVIEW PANEL (doctor dashboard)*/
+
+#rxRequestNotifList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Each request is a card — compact row on top, expandable panel below */
+.rx_req_row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.rx_req_row_summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+}
+
+.rx_req_avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.rx_req_row_body { flex: 1; min-width: 0; }
+.rx_req_row_name { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.rx_req_row_meta { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+/* Review toggle button — same quiet style as the cancel button */
+.btn_rx_review {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    background: var(--bg);
+    color: var(--text-muted);
+    transition: border-color .15s, color .15s;
+    white-space: nowrap;
+}
+.btn_rx_review:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Expandable review panel */
+.rx_review_panel {
+    border-top: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: var(--bg);
+}
+
+/* Patient context block */
+.rx_review_context {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+}
+
+.rx_review_label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    margin: 0 0 6px 0;
+}
+
+.rx_review_active_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.rx_review_active_pill {
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: 999px;
+    padding: 2px 10px;
+}
+
+.rx_review_none {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.rx_review_note {
+    font-size: 12px;
+    color: var(--text);
+    font-style: italic;
+    margin: 0;
+}
+
+/* Prescription detail form inside the panel */
+.rx_review_form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rx_review_fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+}
+
+.rx_review_field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rx_review_field_label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.rx_review_optional {
+    font-weight: 400;
+    font-style: italic;
+}
+
+.rx_review_select,
+.rx_review_input {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-size: 12px;
+    font-family: var(--font);
+    color: var(--text);
+    outline: none;
+}
+.rx_review_select:focus,
+.rx_review_input:focus { border-color: var(--primary); }
+
+.rx_review_error {
+    font-size: 12px;
+    color: var(--danger);
+    margin: 0;
+}
+
+.rx_review_actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+/* Confirm Prescription — solid primary */
+.btn_rx_confirm {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    background: var(--primary);
+    color: #fff;
+    transition: opacity .15s;
+}
+.btn_rx_confirm:hover { opacity: .88; }
+
+/* Decline — matches btn_decline */
+.btn_rx_decline {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    background: var(--danger);
+    color: #fff;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn_rx_decline:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(225,29,72,.4);
+}
+
+
+/*PRESCRIPTION REQUEST FORM — shown/hidden by the Request Prescription button*/
+
+.rx_request_form {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--primary-soft);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rx_request_title {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.rx_request_subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.rx_request_field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rx_request_label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.rx_request_optional {
+    font-weight: 400;
+    font-style: italic;
+}
+
+.rx_request_select,
+.rx_request_input {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-size: 13px;
+    font-family: var(--font);
+    color: var(--text);
+    outline: none;
+}
+
+.rx_request_select:focus,
+.rx_request_input:focus {
+    border-color: var(--primary);
+}
+
+.rx_request_error { font-size: 12px; color: var(--danger); margin: 0; }
+.rx_request_ok    { font-size: 12px; color: var(--success); margin: 0; }
+
+.rx_request_submit {
+    align-self: flex-start;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.rx_request_submit:hover { opacity: 0.88; }
+
+
+/*PRESCRIPTION REQUEST STATUS LIST — below the form*/
+
+.rx_request_status {
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
+
+.rx_request_status_title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin: 0 0 8px 0;
+}
+
+#rxRequestStatusList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rx_req_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.rx_req_body  { flex: 1; }
+.rx_req_name  { font-size: 13px; font-weight: 600; margin: 0 0 2px 0; }
+.rx_req_meta  { font-size: 11px; color: var(--text-muted); margin: 0; }
+
+.rx_req_right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* request status pills */
+.rx_req_pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: capitalize;
+}
+
+.rx_req_pending  { background: #e2e8f0; color: var(--text-muted); }
+.rx_req_accepted { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+.rx_req_declined { background: rgba(225, 29, 72, 0.15);  color: var(--danger); }
+
+.rx_req_empty {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 8px 0;
+}
 
 
 /*BADGES — history and prescription status pills*/
@@ -1193,6 +1611,29 @@
     box-shadow: 0 4px 10px rgba(225, 29, 72, 0.4);
 }
 
+/* Cancel booking button — same shape as btn_accept/decline but muted grey,
+   since cancelling a pending request is low-stakes and reversible */
+.status_bar_cancel {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 6px 16px;
+    font-weight: 600;
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.status_bar_cancel:hover {
+    transform: translateY(-2px);
+    color: var(--danger);
+    border-color: var(--danger);
+    box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
+}
+
 
 /*GUARDIAN DASHBOARD — ward banner, consent log, notifications*/
 
@@ -1402,21 +1843,78 @@
 #dashboard-patient .timeline_item_date  { font-size: 12px; text-align: center; }
 #dashboard-patient .rx_panel_header { justify-content: space-between; }
 #dashboard-patient .rx_panel_header h2 { font-size: 18px; text-align: left; }
+ 
+/* DOCTOR GRID LAYOUT
+   Row 1: Booking Notifications (left) + Today's Patients (right)
+   Row 2: My Patients (left) + Prescription Requests (right)
+   Row 3: Record Viewer (full width)
+   Row 4: Clinical Note Form (left) + Issue Prescription Form (right) */
 
-/* DOCTOR: Booking Notifications (left) + Today's Patients (right) */
-#dashboard-doctor .booking_notif_panel { grid-column: 1 / 9;  order: 2; }
-#dashboard-doctor .today_sidebar       { grid-column: 9 / 13; order: 3; }
-/* My Patients full width, then record viewer full width */
-#dashboard-doctor .patient_list_panel  { grid-column: 1 / -1; order: 4; text-align: center; }
-#dashboard-doctor .record_viewer       { grid-column: 1 / -1; order: 5; }
-/* Add Clinical Note (left) + Issue Prescription (right) */
-#dashboard-doctor .note_card    { grid-column: 1 / 7;  order: 6; }
-#dashboard-doctor .rx_form_card { grid-column: 7 / 13; order: 7; }
+/* Row 1 */
+#dashboard-doctor .booking_notif_panel    { grid-column: 1 / 7;  order: 2; }
+#dashboard-doctor .today_sidebar          { grid-column: 7 / 13; order: 3; }
+/* Row 2 */
+#dashboard-doctor .patient_list_panel     { grid-column: 1 / 7;  order: 4; }
+#dashboard-doctor .prescription_notif_panel { grid-column: 7 / 13; order: 5; }
+/* Row 3 */
+#dashboard-doctor .record_viewer          { grid-column: 1 / -1; order: 6; }
+/* Row 4 */
+#dashboard-doctor .note_card              { grid-column: 1 / 7;  order: 7; }
+#dashboard-doctor .rx_form_card           { grid-column: 7 / 13; order: 8; }
 
 /* My Patients centred + bigger */
 #dashboard-doctor .patient_list_header { justify-content: center; flex-direction: column; gap: 4px; }
 #dashboard-doctor .patient_list_header h2 { font-size: 20px; }
 #dashboard-doctor .patient_item { justify-content: center; text-align: center; font-size: 15px; }
+
+/* Prescription Requests card — header row matches booking_notif_panel style */
+#dashboard-doctor .prescription_notif_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+#dashboard-doctor .prescription_notif_header h2 { font-size: 18px; font-weight: 700; margin: 0; }
+
+#dashboard-doctor .prescription_notif_header p {
+    font-size: 10px;
+    color: var(--warn);
+    background: var(--warn-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* Empty state — centred both ways inside the card body */
+#dashboard-doctor .prescription_notif_panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+#dashboard-doctor #rxRequestNotifList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#dashboard-doctor .prescription_notif_empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    list-style: none;
+    min-height: 80px;
+}
 
 /* GUARDIAN: ward banner full width */
 #dashboard-guardian .guardian_banner { grid-column: 1 / -1; }
