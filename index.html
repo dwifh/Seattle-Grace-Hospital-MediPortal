@@ -949,15 +949,6 @@
                     </div>
                 </section>
  
-                <!--Appointment sidebar, doctor click to cycle patient list-->
-                <section class="today_sidebar">
-                    <div class="today_sidebar_header">
-                        <h2>Today's Patients</h2>
-                        <p id="todayDate"></p>
-                    </div>
-                    <ul id="todayList"></ul>
-                </section>
- 
                 <!--Booking notifications, pending appointment requests from patients. Hardcoded for Phase 1-->
                 <section class="booking_notif_panel">
                     <div class="booking_notif_header">
@@ -967,13 +958,13 @@
                     <ul id="bookingNotifList"></ul>
                 </section>
 
-                 <!--Prescription request notifications; patient requests reviewed by doctor-->
-                <section class="prescription_notif_panel">
-                    <div class="prescription_notif_header">
-                        <h2>Prescription Requests</h2>
-                        <p id="rxRequestNotifCount"></p>
+                <!--Appointment sidebar, doctor click to cycle patient list-->
+                <section class="today_sidebar">
+                    <div class="today_sidebar_header">
+                        <h2>Today's Patients</h2>
+                        <p id="todayDate"></p>
                     </div>
-                    <ul id="rxRequestNotifList"></ul>
+                    <ul id="todayList"></ul>
                 </section>
 
                 <!--With patient list, doctor can click on their name to see details-->
@@ -983,6 +974,17 @@
                         <p id="patientCount"></p>
                     </div>
                     <ul id="patientList"></ul>
+                </section>
+
+                <!--Prescription request notifications; patient requests reviewed by doctor-->
+                <section class="prescription_notif_panel">
+                    <div class="prescription_notif_header">
+                        <h2>Prescription Requests</h2>
+                        <p id="rxRequestNotifCount">0 Pending Requests</p>
+                    </div>
+                    <ul id="rxRequestNotifList">
+                        <li class="prescription_notif_empty">No Prescription Requests</li>
+                    </ul>
                 </section>
  
                 <!--When clicked, patient details appear-->
