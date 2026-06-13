@@ -1,11 +1,12 @@
-//seed.js fills IndexedDB with starter data. It fetches JSON files. It also generates login accounts.
-//NOTE: the passwords are plaintext in the file. This is exactly the data that Ayush's crypto.js will encrypt before storing in a later phase.
+//seed.js fills IndexedDB with starter data. It fetches JSON files and stores them.
+//Passwords are now encrypted using encryptField() from crypto.js before being stored.
+//This means every login account in the users store has an encrypted password object instead of a plaintext string.
 
 //This function opens DB first and checks if data has been seeded. If not, it fetches and stores data.
 function seedDatabase() {
     //Open DB from db.js.
     openDatabase(function() {
-        //It will check if data has been seeded.
+        //It will check if data has been seeded already.
         getAllRecords("patients", function(existingPatients) {
             if (existingPatients.length > 0) {
                 console.log("Database already seeded. Skipping phase...");
@@ -27,7 +28,7 @@ function seedDatabase() {
 
 //This will be used to generate usernames for everyone.
 function makeUsername(firstName, lastName) {
-    //Shared formula for all staff roles: firstname.lastname in lowercase, letters only.
+    //Shared formula for all roles: firstname.lastname in lowercase, letters only.
     return firstName.toLowerCase().replace(/[^a-z]/g, "")
         + "."
         + lastName.toLowerCase().replace(/[^a-z]/g, "");
@@ -43,32 +44,41 @@ function seedPatients() {
         })
         .then(function(patients) {
             if (!Array.isArray(patients)) { console.log("patients.json — expected an array."); return; }
- 
+
             for (var i = 0; i < patients.length; i++) {
                 var p = patients[i];
-                //Debugging purposes.
+
                 if (!p.patientID || !p.firstName || !p.lastName || !p.nhsNumber) {
                     console.log("Skipping patient at index " + i + " — missing required field.");
                     continue;
                 }
- 
-                //Store the patient records.
+
+                //Store the patient profile record as-is. Profile fields like name are not encrypted here because they are needed for display.
+                //Sensitive field encryption (NHS, DOB, address) is handled in patient.js.
                 putRecord("patients", p);
- 
-                //Build login: firstInitial + lastName + last 4 digits of NHS number.
-                var nhsDigits = p.nhsNumber.replace(/\s/g, "");           
-                var nhsLast4  = nhsDigits.slice(-4);                      
-                var username  = makeUsername(p.firstName, p.lastName) + nhsLast4;                                  
-                var password  = "Patient" + nhsLast4;                     
- 
-                putRecord("users", {
-                    username:  username,
-                    password:  password,
-                    role:      "patient",
-                    patientID: p.patientID
-                });
+
+                //Build login credentials.
+                var nhsDigits = p.nhsNumber.replace(/\s/g, "");
+                var nhsLast4  = nhsDigits.slice(-4);
+                var username  = makeUsername(p.firstName, p.lastName) + nhsLast4;
+                var password  = "Patient" + nhsLast4;
+
+                //We use a closure here to capture the correct username, password and patientID for this loop iteration. 
+                //Without the closure, the loop would finish before encryption completes.
+                (function(uname, pwd, pid) {
+                    //encryptField returns a Promise, so putRecord goes inside .then()
+                    //and only runs once the encrypted password is ready.
+                    encryptField(pwd).then(function(encryptedPassword) {
+                        putRecord("users", {
+                            username:  uname,
+                            password:  encryptedPassword,
+                            role:      "patient",
+                            patientID: pid
+                        });
+                    });
+                })(username, password, p.patientID);
             }
- 
+
             console.log("Seeded " + patients.length + " patients and their login accounts.");
         })
         .catch(function(error) {
@@ -77,7 +87,6 @@ function seedPatients() {
 }
 
 //----DOCTORS SECTION----
-//This function fetches data from doctors.json.
 function seedDoctors() {
     fetch("data/doctors.json")
         .then(function(response) {
@@ -86,30 +95,34 @@ function seedDoctors() {
         })
         .then(function(doctors) {
             if (!Array.isArray(doctors)) { console.log("doctors.json — expected an array."); return; }
- 
+
             for (var i = 0; i < doctors.length; i++) {
                 var d = doctors[i];
- 
+
                 if (!d.doctorID || !d.firstName || !d.lastName || !d.gmcNumber) {
                     console.log("Skipping doctor at index " + i + " — missing required field.");
                     continue;
                 }
- 
+
                 putRecord("doctors", d);
- 
+
                 //Build login: firstname.lastname   password: "Doctor" + last 4 of GMC number.
-                var gmcLast4 = d.gmcNumber.slice(-4);                     
-                var username = makeUsername(d.firstName, d.lastName);   
-                var password = "Doctor" + gmcLast4;                       
- 
-                putRecord("users", {
-                    username: username,
-                    password: password,
-                    role:     "doctor",
-                    doctorID: d.doctorID
-                });
+                var gmcLast4 = d.gmcNumber.slice(-4);
+                var username = makeUsername(d.firstName, d.lastName);
+                var password = "Doctor" + gmcLast4;
+
+                (function(uname, pwd, did) {
+                    encryptField(pwd).then(function(encryptedPassword) {
+                        putRecord("users", {
+                            username: uname,
+                            password: encryptedPassword,
+                            role:     "doctor",
+                            doctorID: did
+                        });
+                    });
+                })(username, password, d.doctorID);
             }
- 
+
             console.log("Seeded " + doctors.length + " doctor(s) and their login accounts.");
         })
         .catch(function(error) {
@@ -126,30 +139,34 @@ function seedNurses() {
         })
         .then(function(nurses) {
             if (!Array.isArray(nurses)) { console.log("nurses.json — expected an array."); return; }
- 
+
             for (var i = 0; i < nurses.length; i++) {
                 var n = nurses[i];
- 
+
                 if (!n.nurseID || !n.firstName || !n.lastName || !n.nmcNumber) {
                     console.log("Skipping nurse at index " + i + " — missing required field.");
                     continue;
                 }
- 
+
                 putRecord("nurses", n);
- 
+
                 //Build login: firstname.lastname   password: "Nurse" + last 4 of NMC number.
-                var nmcLast4 = n.nmcNumber.slice(-4);                   
-                var username = makeUsername(n.firstName, n.lastName);    
-                var password = "Nurse" + nmcLast4;                      
- 
-                putRecord("users", {
-                    username: username,
-                    password: password,
-                    role:     "nurse",
-                    nurseID:  n.nurseID
-                });
+                var nmcLast4 = n.nmcNumber.slice(-4);
+                var username = makeUsername(n.firstName, n.lastName);
+                var password = "Nurse" + nmcLast4;
+
+                (function(uname, pwd, nid) {
+                    encryptField(pwd).then(function(encryptedPassword) {
+                        putRecord("users", {
+                            username: uname,
+                            password: encryptedPassword,
+                            role:     "nurse",
+                            nurseID:  nid
+                        });
+                    });
+                })(username, password, n.nurseID);
             }
- 
+
             console.log("Seeded " + nurses.length + " nurse(s) and their login accounts.");
         })
         .catch(function(error) {
@@ -166,30 +183,34 @@ function seedReceptionists() {
         })
         .then(function(receptionists) {
             if (!Array.isArray(receptionists)) { console.log("receptionists.json — expected an array."); return; }
- 
+
             for (var i = 0; i < receptionists.length; i++) {
                 var r = receptionists[i];
- 
+
                 if (!r.receptionistID || !r.firstName || !r.lastName) {
                     console.log("Skipping receptionist at index " + i + " — missing required field.");
                     continue;
                 }
- 
+
                 putRecord("receptionists", r);
- 
+
                 //Build login: firstname.lastname   password: "Reception" + numeric part of receptionistID.
-                var idNum    = r.receptionistID.replace(/[^0-9]/g, "");  
-                var username = makeUsername(r.firstName, r.lastName);     
-                var password = "Reception" + idNum;                     
- 
-                putRecord("users", {
-                    username:       username,
-                    password:       password,
-                    role:           "receptionist",
-                    receptionistID: r.receptionistID
-                });
+                var idNum    = r.receptionistID.replace(/[^0-9]/g, "");
+                var username = makeUsername(r.firstName, r.lastName);
+                var password = "Reception" + idNum;
+
+                (function(uname, pwd, rid) {
+                    encryptField(pwd).then(function(encryptedPassword) {
+                        putRecord("users", {
+                            username:       uname,
+                            password:       encryptedPassword,
+                            role:           "receptionist",
+                            receptionistID: rid
+                        });
+                    });
+                })(username, password, r.receptionistID);
             }
- 
+
             console.log("Seeded " + receptionists.length + " receptionist(s) and their login accounts.");
         })
         .catch(function(error) {
@@ -206,37 +227,41 @@ function seedGuardians() {
         })
         .then(function(guardians) {
             if (!Array.isArray(guardians)) { console.log("guardians.json — expected an array."); return; }
- 
+
             for (var i = 0; i < guardians.length; i++) {
                 var g = guardians[i];
- 
+
                 if (!g.guardianID || !g.firstName || !g.lastName) {
                     console.log("Skipping guardian at index " + i + " — missing required field.");
                     continue;
                 }
- 
+
                 putRecord("guardians", g);
- 
+
                 //Build login: firstname.lastname   password: "Guardian" + numeric part of guardianID.
-                var idNum    = g.guardianID.replace(/[^0-9]/g, "");    
-                var username = makeUsername(g.firstName, g.lastName);    
-                var password = "Guardian" + idNum;                        
- 
-                putRecord("users", {
-                    username:   username,
-                    password:   password,
-                    role:       "guardian",
-                    guardianID: g.guardianID
-                });
+                var idNum    = g.guardianID.replace(/[^0-9]/g, "");
+                var username = makeUsername(g.firstName, g.lastName);
+                var password = "Guardian" + idNum;
+
+                (function(uname, pwd, gid) {
+                    encryptField(pwd).then(function(encryptedPassword) {
+                        putRecord("users", {
+                            username:   uname,
+                            password:   encryptedPassword,
+                            role:       "guardian",
+                            guardianID: gid
+                        });
+                    });
+                })(username, password, g.guardianID);
             }
- 
+
             console.log("Seeded " + guardians.length + " guardian(s) and their login accounts.");
         })
         .catch(function(error) {
             console.log("Could not seed guardians: " + error);
         });
 }
- 
+
 //----ADMINS SECTION----
 function seedAdmins() {
     fetch("data/admins.json")
@@ -246,30 +271,34 @@ function seedAdmins() {
         })
         .then(function(admins) {
             if (!Array.isArray(admins)) { console.log("admins.json — expected an array."); return; }
- 
+
             for (var i = 0; i < admins.length; i++) {
                 var a = admins[i];
- 
+
                 if (!a.adminID || !a.firstName || !a.lastName) {
                     console.log("Skipping admin at index " + i + " — missing required field.");
                     continue;
                 }
- 
+
                 putRecord("admins", a);
- 
+
                 //Build login: firstname.lastname   password: "Admin" + numeric part of adminID.
-                var idNum    = a.adminID.replace(/[^0-9]/g, "");          
-                var username = makeUsername(a.firstName, a.lastName);     
-                var password = "Admin" + idNum;                          
- 
-                putRecord("users", {
-                    username: username,
-                    password: password,
-                    role:     "admin",
-                    adminID:  a.adminID
-                });
+                var idNum    = a.adminID.replace(/[^0-9]/g, "");
+                var username = makeUsername(a.firstName, a.lastName);
+                var password = "Admin" + idNum;
+
+                (function(uname, pwd, aid) {
+                    encryptField(pwd).then(function(encryptedPassword) {
+                        putRecord("users", {
+                            username: uname,
+                            password: encryptedPassword,
+                            role:     "admin",
+                            adminID:  aid
+                        });
+                    });
+                })(username, password, a.adminID);
             }
- 
+
             console.log("Seeded " + admins.length + " admin(s) and their login accounts.");
         })
         .catch(function(error) {
@@ -278,6 +307,7 @@ function seedAdmins() {
 }
 
 //----MEDICINES SECTION----
+//Medicines have no login accounts so no encryption needed here.
 function seedMedicines() {
     fetch("data/medicines.json")
         .then(function(response) {
@@ -285,10 +315,9 @@ function seedMedicines() {
         })
         .then(function(medicines) {
             for (var i = 0; i < medicines.length; i++) {
-                var med = medicines[i];
-                putRecord("medicines", med);
+                putRecord("medicines", medicines[i]);
             }
-           console.log("Seeded " + medicines.length + " medicine(s).");
+            console.log("Seeded " + medicines.length + " medicine(s).");
         })
         .catch(function(error) {
             console.log("Could not seed medicines: " + error);
@@ -296,6 +325,7 @@ function seedMedicines() {
 }
 
 //----NOTIFICATIONS SECTION----
+//Notifications have no passwords so no encryption needed here.
 function seedNotifications() {
     fetch("data/notifications.json")
         .then(function(response) {
@@ -304,23 +334,21 @@ function seedNotifications() {
         })
         .then(function(notifications) {
             if (!Array.isArray(notifications)) { console.log("notifications.json — expected an array."); return; }
- 
+
             for (var i = 0; i < notifications.length; i++) {
                 var n = notifications[i];
- 
-                //notificationID is the keyPath of the store, so it must be present.
+
                 if (!n.notificationID || !n.recipientID) {
                     console.log("Skipping notification at index " + i + " — missing required field.");
                     continue;
                 }
- 
+
                 putRecord("notifications", n);
             }
- 
+
             console.log("Seeded " + notifications.length + " notification(s).");
         })
         .catch(function(error) {
             console.log("Could not seed notifications: " + error);
         });
 }
- 
