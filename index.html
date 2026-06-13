@@ -542,6 +542,7 @@
                 <div class="nurseSection" id="nursePatients">
                     <div class="nurseSection-header">
                         <span class="nurseSection-title">Assigned Patients</span>
+                        <input class="adminSectionSearch" type="search" placeholder="Search patients…" oninput="filterSection(this, 'nursePatientsTbody')" />
                     </div>
                     <table class="data_table">
                         <thead>
@@ -564,6 +565,7 @@
                 <div class="nurseSection" id="nurseVitals">
                     <div class="nurseSection-header">
                         <span class="nurseSection-title">Vitals</span>
+                        <input class="adminSectionSearch" type="search" placeholder="Search vitals…" oninput="filterSection(this, 'nurseVitalsTbody')" />
                     </div>
                     <table class="data_table">
                         <thead>
@@ -574,6 +576,7 @@
                                 <th>Blood Pressure</th>
                                 <th>Heart Rate</th>
                                 <th>Last Updated</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="nurseVitalsTbody">
@@ -586,6 +589,7 @@
                 <div class="nurseSection" id="nurseAppointments">
                     <div class="nurseSection-header">
                         <span class="nurseSection-title">Appointments</span>
+                        <input class="adminSectionSearch" type="search" placeholder="Search appointments…" oninput="filterSection(this, 'nurseAppointmentsTbody')" />
                     </div>
                     <table class="data_table">
                         <thead>
@@ -610,6 +614,7 @@
                 <div class="nurseSection" id="nursePrescriptions">
                     <div class="nurseSection-header">
                         <span class="nurseSection-title">Active Prescriptions</span>
+                        <input class="adminSectionSearch" type="search" placeholder="Search prescriptions…" oninput="filterSection(this, 'nursePrescriptionsTbody')" />
                     </div>
                     <table class="data_table">
                         <thead>
@@ -633,6 +638,7 @@
                 <div class="nurseSection" id="nurseHistory">
                     <div class="nurseSection-header">
                         <span class="nurseSection-title">Medical History</span>
+                        <input class="adminSectionSearch" type="search" placeholder="Search history…" oninput="filterSection(this, 'nurseHistoryTbody')" />
                     </div>
                     <table class="data_table">
                         <thead>
@@ -651,7 +657,19 @@
                     </table>
                 </div>
             </div>
-        </div>   
+
+            <!-- NURSE MODAL OVERLAY- IM using the same class names as admin for the CSS-->
+            <div id="nurseModalOverlay" class="adminModal-overlay" hidden> 
+                <div class="adminModal">
+                    <div class="adminModal-header">
+                        <span class="adminModal-title" id="nurseModalTitle"></span>
+                        <button class="adminModal-closeBtn" onclick="closeNurseModal()">&times;</button>
+                    </div>
+                    <div class="adminModal-body" id="nurseModalBody"></div>
+                    <div class="adminModal-footer" id="nurseModalFooter"></div>
+                </div>
+            </div>
+        </div>
 
         <div id="dashboard-receptionist" hidden>
             <div class="receptionist_layout" id="receptionistDashboardTop">
