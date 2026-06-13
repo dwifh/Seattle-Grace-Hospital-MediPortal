@@ -153,9 +153,18 @@ function showDoctorCard(patient) {
     //Doctor details; first name and last name, speciality, and GMC number are shown in the doctor card on the dashboard.
     document.getElementById("doctorName").textContent = doctor.title + " " + doctor.firstName + " " + doctor.lastName;
     document.getElementById("doctorSpecialty").textContent = doctor.specialty;
-    document.getElementById("doctorGmc").textContent = doctor.gmcNumber.replace("GMC", "");
     document.getElementById("doctorEmail").textContent = doctor.email;
     document.getElementById("doctorInfo").textContent = doctor.information;
+
+    //gmcNumber is stored encrypted in IndexedDB as { iv, ciphertext }.
+    //decryptField() returns a Promise, so we put the display inside .then() so it only runs once the decrypted string is ready.
+    decryptField(doctor.gmcNumber).then(function(plainGmc) {
+        document.getElementById("doctorGmc").textContent = plainGmc.replace("GMC", "");
+    }).catch(function(error) {
+        //If decryption fails for any reason, show blank instead of crashing.
+        console.log("Could not decrypt gmcNumber: " + error);
+        document.getElementById("doctorGmc").textContent = "";
+    });
 }
 
 function showPatientStats(patient) {

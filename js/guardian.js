@@ -465,13 +465,31 @@ function showWardPrescriptions(ward) {
         var item = document.createElement("li");
         item.className = "rx_item";
         item.innerHTML =
-            '<div class="rx_item_pill">💊</div>' +
+            '<div class="rx_item_icon">💊</div>' +
             '<div class="rx_item_body">' +
-                '<p class="rx_item_name">' + medName + '</p>' +
-                '<p class="rx_item_dose">' + rx.dosage + ' · ' + rx.frequency + ' · ' + rx.durationDays + ' days</p>' +
-                '<p class="rx_item_note">' + rx.instructions + '</p>' +
-            '</div>' +
-            '<span class="badge_active">Active</span>';
+                '<div class="rx_item_header">' +
+                    '<p class="rx_item_name">' + medName + '</p>' +
+                '</div>' +
+                '<div class="rx_item_grid">' +
+                    '<div class="rx_item_detail">' +
+                        '<span class="rx_item_detail_label">Dosage: </span>' +
+                        '<span class="rx_item_detail_value">' + (rx.dosage || "—") + '</span>' +
+                    '</div>' +
+                    '<div class="rx_item_detail">' +
+                        '<span class="rx_item_detail_label">Frequency: </span>' +
+                        '<span class="rx_item_detail_value">' + (rx.frequency || "—") + '</span>' +
+                    '</div>' +
+                    '<div class="rx_item_detail">' +
+                        '<span class="rx_item_detail_label">Duration: </span>' +
+                        '<span class="rx_item_detail_value">' + (rx.durationDays || "—") + '</span>' +
+                    '</div>' +
+                '</div>' +
+                (rx.instructions
+                    ? '<p class="rx_item_instructions">' + (rx.instructions || "—") + '</p>'
+                    : "") +
+                '</div>' +
+                '<span class="badge_active">Active</span>';
+
         //Append new list to rx_item.
         list.appendChild(item);
     }
