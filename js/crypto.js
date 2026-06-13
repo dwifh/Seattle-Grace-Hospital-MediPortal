@@ -1,7 +1,11 @@
-// crypto.js — AES-256-GCM encryption module
+// crypto.js — AES-256-GCM encryption module (Symmetric encryption being applied with AES-256-GCM)
 // Owned by Ayush
+// In this file, I am making use of crypto.subtle which is the browser's built-in cryptography API
+/* All built-in functions used in this file are derived from WEB Crypto API, which is used by every modern browser
+   I have derived most of the codes used here from the following source: https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API */
 
-// Key is derived once via PBKDF2 (Password-Based Key Derivation Function) and cached. Never stored — re-derived on every page load.
+
+// Key is derived once via PBKDF2 (Password-Based Key Derivation Function) and cached. Never stored, but re-derived on every page load.
 // BTW, this is using a hardcoded passphrase and salt, so it follows the steps of PBKDF2, but just hardcoded for simplicity
 var _appKey = null;
 
@@ -13,10 +17,10 @@ function getAppKey() {
     var pbkdf2Salt = textEncoder.encode("SGH-CST2590-SALT");
 
     return crypto.subtle.importKey("raw",encryptionPassphrase,"PBKDF2",false,["deriveKey"]).then(function(keyMaterial) {
+        //https://developer.mozilla.org/docs/Web/API/SubtleCrypto/deriveKey
         return crypto.subtle.deriveKey(
             {name:"PBKDF2",salt:pbkdf2Salt,iterations:100000,hash:"SHA-256"},
-            keyMaterial,
-            { name:"AES-GCM", length: 256 },false,["encrypt", "decrypt"]
+            keyMaterial, { name:"AES-GCM", length: 256 },false,["encrypt", "decrypt"]
         );
 
     }).then(function(key) {
