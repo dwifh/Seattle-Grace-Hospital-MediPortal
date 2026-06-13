@@ -583,6 +583,18 @@
     width: 160px;
 }
 
+.status_bar_table thead th:last-child {
+    text-align: center;
+    width: 120px;
+}
+
+/* Status column — fixed width so it stays centred regardless of pill text */
+.status_bar_table thead th:nth-child(2),
+.status_bar_table tbody td:nth-child(2) {
+    text-align: center;
+    width: 120px;
+}
+
 .status_bar_table tbody td {
     padding: 12px;
     border-bottom: 1px solid var(--bg);
@@ -1191,6 +1203,28 @@
 .btn_decline:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(225, 29, 72, 0.4);
+}
+
+/* Cancel booking button has the same shape as btn_accept/decline but muted grey, since cancelling a pending request is low-stakes and reversible */
+.status_bar_cancel {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 6px 16px;
+    font-weight: 600;
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.status_bar_cancel:hover {
+    transform: translateY(-2px);
+    color: var(--danger);
+    border-color: var(--danger);
+    box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
 }
 
 

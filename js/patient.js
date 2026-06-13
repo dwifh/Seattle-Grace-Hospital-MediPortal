@@ -593,14 +593,20 @@ function showBookingStatus(patient) {
         if (req.status === "accepted") statusClass = "status_bar_accepted";
         if (req.status === "declined") statusClass = "status_bar_declined";
  
-        //Build the row: Booking column (reason, date, time, doctor) + Status column.
+        //A cancel button is only shown on pending requests. However, once a doctor has accepted or declined, the decision belongs to them, not the patient.
+        var cancelCell = req.status === "pending"
+            ? '<td><button type="button" class="status_bar_cancel" data-request-id="' + req.requestID + '">Cancel</button></td>'
+            : '<td></td>';
+ 
+        //Build the row: Booking column (reason, date, time, doctor) + Status column + Cancel column.
         var row = document.createElement("tr");
         row.innerHTML =
             '<td>' +
                 '<p class="status_bar_reason">' + req.reason + '</p>' +
                 '<p class="status_bar_meta">' + dateText + ' · ' + req.time + ' · ' + docName + '</p>' +
             '</td>' +
-            '<td><span class="status_bar_pill ' + statusClass + '">' + req.status + '</span></td>';
+            '<td><span class="status_bar_pill ' + statusClass + '">' + req.status + '</span></td>' +
+            cancelCell;
  
         tableBody.appendChild(row);
         shown++;
@@ -608,8 +614,33 @@ function showBookingStatus(patient) {
  
     //If nothing is visible, show a friendly empty row spanning both columns.
     if (shown === 0) {
-        tableBody.innerHTML = "<tr><td colspan='2' class='status_bar_empty'>No booking requests yet.</td></tr>";
+        tableBody.innerHTML = "<tr><td colspan='3' class='status_bar_empty'>No booking requests yet.</td></tr>";
     }
+ 
+    //Attach cancel listeners via delegation on the table body so they are always fresh after each re-render; no risk of double-binding from repeated calls.
+    tableBody.addEventListener("click", function(e) {
+        //Check if the clicked element is a cancel button.
+        if (e.target && e.target.classList.contains("status_bar_cancel")) {
+            var requestID = e.target.getAttribute("data-request-id");
+            cancelBookingRequest(requestID, patient);
+        }
+    });
+}
+ 
+ 
+//It cancels a pending booking request by deleting it from IndexedDB.  Also, removes it from the in-memory cache and refreshes the status bar.
+function cancelBookingRequest(requestID, patient) {
+    //Remove from IndexedDB first.
+    deleteRecord("booking_requests", requestID, function() {
+        //Keep the in-memory cache in sync so the table refreshes without a reload.
+        //filter() returns a new array that excludes the cancelled request.
+        PDATA.bookingRequests = PDATA.bookingRequests.filter(function(r) {
+            return r.requestID !== requestID;
+        });
+ 
+        //Rebuild the status bar; the cancelled row is now gone from both the cache and the store, so it won't appear on the next load either.
+        showBookingStatus(patient);
+    });
 }
  
  
