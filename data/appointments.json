@@ -1,0 +1,98 @@
+[
+  {
+    "appointmentID": "ap001",
+    "patientID": "p001",
+    "doctorID": "d001",
+    "receptionistID": "r001",
+    "date": "2026-06-14",
+    "time": "09:30",
+    "reason": "Routine check-up",
+    "status": "booked",
+    "notes": "",
+    "checkInStatus": "pending"
+  },
+  {
+    "appointmentID": "ap002",
+    "patientID": "p001",
+    "doctorID": "d001",
+    "receptionistID": "r002",
+    "date": "2026-05-12",
+    "time": "14:00",
+    "reason": "Sore throat, persistent cough",
+    "status": "completed",
+    "notes": "Mild throat infection. Prescribed amoxicillin 500mg, 7 days. Follow up if not improved.",
+    "checkInStatus": "checked_in"
+  },
+  {
+    "appointmentID": "ap003",
+    "patientID": "p002",
+    "doctorID": "d002",
+    "receptionistID": "r001",
+    "date": "2026-06-14",
+    "time": "11:00",
+    "reason": "Blood pressure review",
+    "status": "booked",
+    "notes": "",
+    "checkInStatus": "checked_in"
+  },
+  {
+    "appointmentID": "ap004",
+    "patientID": "p003",
+    "doctorID": "d003",
+    "receptionistID": "r002",
+    "date": "2026-06-14",
+    "time": "10:15",
+    "reason": "Asthma review",
+    "status": "booked",
+    "notes": "",
+    "checkInStatus": "pending"
+  },
+  {
+    "appointmentID": "ap005",
+    "patientID": "p004",
+    "doctorID": "d002",
+    "receptionistID": "r001",
+    "date": "2026-04-18",
+    "time": "15:30",
+    "reason": "Migraine episodes",
+    "status": "completed",
+    "notes": "Discussed triggers. Advised hydration log and OTC pain relief. Review in 4 weeks if no improvement.",
+    "checkInStatus": "checked_in"
+  },
+  {
+    "appointmentID": "ap006",
+    "patientID": "p005",
+    "doctorID": "d001",
+    "receptionistID": "r003",
+    "date": "2026-06-14",
+    "time": "13:45",
+    "reason": "Diabetes check",
+    "status": "booked",
+    "notes": "",
+    "checkInStatus": "no_show"
+  },
+  {
+    "appointmentID": "ap007",
+    "patientID": "p006",
+    "doctorID": "d003",
+    "receptionistID": "r003",
+    "date": "2026-06-14",
+    "time": "15:00",
+    "reason": "Annual check-up",
+    "status": "booked",
+    "notes": "",
+    "checkInStatus": "pending"
+  },
+  {
+    "appointmentID": "ap008",
+    "patientID": "p007",
+    "doctorID": "d002",
+    "receptionistID": "r002",
+    "date": "2026-06-10",
+    "time": "09:00",
+    "reason": "Hypertension review",
+    "status": "cancelled",
+    "notes": "",
+    "checkInStatus": "pending"
+  }
+]

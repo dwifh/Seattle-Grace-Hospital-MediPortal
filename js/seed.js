@@ -342,3 +342,32 @@ function seedNotifications() {
             console.log("Could not seed notifications: " + error);
         });
 }
+
+//----APPOINTMENTS SECTION----
+//Appointments have no passwords so the encryption and decrytion functions arent needed here.
+function seedAppointments() {
+    fetch("data/appointments.json")
+        .then(function(response) {
+            if (!response.ok) { throw new Error("HTTP " + response.status); }
+            return response.json();
+        })
+        .then(function(appointments) {
+            if (!Array.isArray(appointments)) { console.log("appointments.json — expected an array."); return; }
+
+            for (var i = 0; i < appointments.length; i++) {
+                var a = appointments[i];
+
+                if (!a.appointmentID || !a.patientID || !a.doctorID) {
+                    console.log("Skipping appointment at index " + i + " — missing required field.");
+                    continue;
+                }
+
+                putRecord("appointments", a);
+            }
+
+            console.log("Seeded " + appointments.length + " appointment(s).");
+        })
+        .catch(function(error) {
+            console.log("Could not seed appointments: " + error);
+        });
+}
