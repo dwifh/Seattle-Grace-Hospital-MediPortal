@@ -713,6 +713,7 @@
                     <th>Time</th>
                     <th>Reason</th>
                     <th>Check-in Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="receptionistTodayTbody">
@@ -720,11 +721,12 @@
             </tbody>
         </table>
     </div>
- 
+
     <!-- ALL APPOINTMENTS -->
     <div class="receptionistSection" id="receptionistAppointments">
         <div class="receptionistSection-header">
             <span class="receptionistSection-title">All Appointments</span>
+            <button class="adminAddBtn" onclick="openAddAppointmentModal()">+ Add Appointment</button>
         </div>
         <table class="data_table">
             <thead>
@@ -738,6 +740,7 @@
                     <th>Status</th>
                     <th>Check-in</th>
                     <th>Booked By</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="receptionistAppointmentsTbody">
@@ -767,6 +770,18 @@
         </table>
     </div>
  
+            <!-- RECEPTIONIST MODAL OVERLAY — reuses admin CSS classes for styling -->
+            <div id="receptionistModalOverlay" class="adminModal-overlay" hidden>
+                <div class="adminModal">
+                    <div class="adminModal-header">
+                        <span class="adminModal-title" id="receptionistModalTitle"></span>
+                        <button class="adminModal-closeBtn" onclick="closeReceptionistModal()">&times;</button>
+                    </div>
+                    <div class="adminModal-body" id="receptionistModalBody"></div>
+                    <div class="adminModal-footer" id="receptionistModalFooter"></div>
+                </div>
+            </div>
+
             </div>
         </div>
 
