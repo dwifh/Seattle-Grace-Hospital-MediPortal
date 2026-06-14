@@ -92,7 +92,7 @@ function actionButtons(type, id) {
         '<button class="adminDeleteBtn" onclick="openDeleteConfirm(\'' + type + '\', \'' + id + '\')">Delete</button>' +
         '</td>';
 }
-
+// Tables are loaded the same way, items fetched from indexDB, then appended into the table thats a placeholder in index.html
 function loadDoctorsTable(doctors, patients) {
     const tbody = document.getElementById('adminDoctorsTbody');
     tbody.innerHTML = '';
@@ -217,7 +217,7 @@ function filterSection(searchInput, tbodyId) {
 }
 
 // MODAL POPUP CORE
-
+// Same modal popup logic as all other dashboards from me(Ayush)
 function openAdminModal(title, bodyHtml, footerHtml) {
     document.getElementById('adminModalTitle').textContent = title;
     document.getElementById('adminModalBody').innerHTML = bodyHtml;
@@ -230,6 +230,7 @@ function closeAdminModal() {
 }
 
 // Clicking the dark backdrop (not the modal box itself) also closes it
+// facilitates closing
 document.addEventListener('click', function(e) {
     var overlay = document.getElementById('adminModalOverlay');
     if (overlay && !overlay.hasAttribute('hidden') && e.target === overlay) {
@@ -277,6 +278,7 @@ function infoBanner(messageHtml) {
 }
 
 // FORM BUILDERS - used for different modal popups
+// They all follow more or less the same logic
 function buildDoctorForm(doctor, isAddMode) {
     doctor = doctor || {};
     return '<div class="adminModal-grid">' +
@@ -368,7 +370,7 @@ function buildGuardianForm(guardian, isAddMode) {
 // EDIT MODAL 
 
 function openEditModal(type, id) {
-    // Shared footer builder — just needs the type and id wired into the save call
+    // Shared footer builder just needs the type and id wired into the save call
     var saveFooter = 
         '<button class="adminModal-saveBtn" onclick="saveEdit(\'' + type + '\', \'' + id + '\')">Save Changes</button>' +
         '<button class="adminModal-cancelBtn" onclick="closeAdminModal()">Cancel</button>';
@@ -402,7 +404,7 @@ function openEditModal(type, id) {
 
 // SAVE EDIT 
 
-// Reads the modal form values, mutates the in-memory record, persists to IndexedDB, and re-renders the table.
+// Reads the modal form values, updates the in-memory record, persists to IndexedDB, and renders the table again from scrratch
 function saveEdit(type, id) {
     if (type === 'doctor') {
         var doctor = _doctors.find(function(d) { return d.doctorID === id; });
@@ -466,7 +468,7 @@ function saveEdit(type, id) {
             ? allergiesRaw.split(',').map(function(a) { return a.trim(); }).filter(function(a) { return a; })
             : [];
 
-        // NHS number may have been edited — re-encrypt before storing, keep plaintext in cache
+        // NHS number may have been edited re-encrypt before storing, keep plaintext in cache
         var plainNhs = document.getElementById('mf_nhsNumber').value.trim();
         encryptField(plainNhs).then(function(encNhs) {
             patient.nhsNumber = plainNhs;
@@ -657,6 +659,7 @@ function addUser(type) {
 // CREDENTIALS DISPLAY 
 
 // Replaces the modal content with the generated credentials after a successful account creation.
+// this has to be here since admins are the only ones that can create accounts that are not patients
 function showCredentials(username, password) {
     document.getElementById('adminModalTitle').textContent = 'Account Created';
     document.getElementById('adminModalBody').innerHTML =
@@ -670,7 +673,7 @@ function showCredentials(username, password) {
 }
 
 //MODAL ERROR HELPERS 
-
+// Error handling functions to prevent memory leaks
 function showModalError(message) {
     var existing = document.getElementById('adminModalError');
     if (existing) { existing.textContent = message; return; }

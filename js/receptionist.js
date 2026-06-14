@@ -41,7 +41,7 @@ function loadReceptionistDashboard() {
 }
 
 // STATS
-
+// same concept as all other Ayush's dashboards with an addition to date to load up today's appointemnts
 function loadReceptionistStats(appointments) {
     document.getElementById('receptionistTotalAppointments').textContent = appointments.length;
 
@@ -64,6 +64,7 @@ function loadReceptionistStats(appointments) {
 }
 
 // TODAY'S SCHEDULE
+// All tables use indexDB to load in the data then appends it into the placeholder kept in index.html
 
 function loadTodaySchedule(appointments, patients, doctors) {
     var tbody = document.getElementById('receptionistTodayTbody');
@@ -166,7 +167,7 @@ function loadPatientDirectory(patients, doctors) {
 }
 
 // MODAL CORE
-
+// Receptionist modal is used to update current modals and add new appointments
 function openReceptionistModal(title, bodyHtml, footerHtml) {
     document.getElementById('receptionistModalTitle').textContent = title;
     document.getElementById('receptionistModalBody').innerHTML = bodyHtml;
@@ -177,7 +178,7 @@ function openReceptionistModal(title, bodyHtml, footerHtml) {
 function closeReceptionistModal() {
     document.getElementById('receptionistModalOverlay').setAttribute('hidden', '');
 }
-
+// e- pertains to "event" used throughout this project
 document.addEventListener('click', function(e) {
     var overlay = document.getElementById('receptionistModalOverlay');
     if (overlay && !overlay.hasAttribute('hidden') && e.target === overlay) {
@@ -186,7 +187,7 @@ document.addEventListener('click', function(e) {
 });
 
 // UPDATE APPOINTMENT MODAL
-
+// Once changes have been made, the HTMl has to be updated
 function openUpdateAppointmentModal(appointmentId) {
     var appointment = _receptionistAppointments.find(function(a) { return a.appointmentID === appointmentId; });
     if (!appointment) return;
@@ -237,7 +238,7 @@ function saveAppointmentUpdate(appointmentId) {
 }
 
 // ADD APPOINTMENT MODAL
-
+// This is used  so that receptionists can create new appointments for walk in patients
 function openAddAppointmentModal() {
     var patientOptions = _receptionistPatients.map(function(p) {
         return '<option value="' + p.patientID + '">' + p.firstName + ' ' + p.lastName + '</option>';
@@ -320,6 +321,7 @@ function saveNewAppointment() {
         checkInStatus:'pending'
     };
 
+// Loads the info into the DB
     putRecord('appointments', newAppointment, function() {
         _receptionistAppointments.push(newAppointment);
         loadReceptionistStats(_receptionistAppointments);
