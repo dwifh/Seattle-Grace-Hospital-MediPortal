@@ -258,7 +258,6 @@ function handleLogin(event) {
             return;
         }
 
-        // Passwords are currently stored as plaintext by seed.js.
         // When crypto.js encryption is wired up for passwords, the stored value will be an object {iv, ciphertext}.
         // This branch handles both cases so login keeps working through the transition.
         if (typeof matchedUser.password === 'string') {
