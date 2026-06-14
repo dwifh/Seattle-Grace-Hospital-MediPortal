@@ -53,7 +53,9 @@ function seedPatients() {
                     console.log("Skipping patient at index " + i + " — missing required field.");
                     continue;
                 }
- 
+
+                // ENCRYPTION FUNCTION - This part of seed.js for all sections within this file is made by Ayush
+                // The base function is the same throughout, the username is their firstname.lastname; the password is a mixture of the role + a number derived from a unique number
                 //Derive nhsLast4 before encrypting, then encrypt nhsNumber and password.
                 (function(patient) {
                     var nhsDigits = patient.nhsNumber.replace(/\s/g, "");
@@ -61,6 +63,7 @@ function seedPatients() {
                     var username = makeUsername(patient.firstName, patient.lastName) + nhsLast4;
                     var password = "Patient" + nhsLast4;
 
+                    // Once the username and password is derived, the password and unique number are encrypted.
                     encryptField(patient.nhsNumber).then(function(encNhs) {
                         patient.nhsNumber = encNhs;
                         return encryptField(password);

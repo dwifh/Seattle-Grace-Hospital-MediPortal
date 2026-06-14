@@ -64,6 +64,7 @@ function loadNurseDashboard() {
 }
 
 // STATS
+// fetched from IndexDB
 function loadNurseStats(assignedPatientIDs, appointments, prescriptions) {
     document.getElementById('nurseAssignedCount').textContent = assignedPatientIDs.length;
 
@@ -109,7 +110,7 @@ function loadNursePatientsTable(assignedPatientIDs, patients, doctors) {
 }
 
 // VITALS TABLE
-
+// I have updated the vitals table to include an "update" button so nurses can update the vitals of their assigned patients
 function loadNurseVitalsTable(assignedPatientIDs, vitals, patients) {
     var tbody = document.getElementById('nurseVitalsTbody');
     tbody.innerHTML = '';
@@ -138,7 +139,7 @@ function loadNurseVitalsTable(assignedPatientIDs, vitals, patients) {
 }
 
 // APPOINTMENTS TABLE
-
+// Nurses are not allowed to update appointments so there is no editing for this dashboard
 function loadNurseAppointmentsTable(assignedPatientIDs, appointments, patients, doctors) {
     var tbody = document.getElementById('nurseAppointmentsTbody');
     tbody.innerHTML = '';
@@ -172,7 +173,7 @@ function loadNurseAppointmentsTable(assignedPatientIDs, appointments, patients, 
 }
 
 // PRESCRIPTIONS TABLE
-
+// Not allowed to assign prescriptions. only used for monitoring
 function loadNursePrescriptionsTable(assignedPatientIDs, prescriptions, patients, medicines) {
     var tbody = document.getElementById('nursePrescriptionsTbody');
     tbody.innerHTML = '';
@@ -188,7 +189,7 @@ function loadNursePrescriptionsTable(assignedPatientIDs, prescriptions, patients
         var row = document.createElement('tr');
         row.innerHTML =
             '<td>' + prescription.prescriptionID + '</td>' +
-            '<td>' + (patient  ? patient.firstName + ' ' + patient.lastName : prescription.patientID) + '</td>' +
+            '<td>' + (patient ? patient.firstName + ' ' + patient.lastName : prescription.patientID) + '</td>' +
             '<td>' + (medicine ? medicine.name : prescription.medicineID) + '</td>' +
             '<td>' + prescription.dosage + '</td>' +
             '<td>' + prescription.frequency + '</td>' +
@@ -200,7 +201,7 @@ function loadNursePrescriptionsTable(assignedPatientIDs, prescriptions, patients
 }
 
 // MODAL CORE
-
+// Modal is being used for editing items in all my dashboards
 function openNurseModal(title, bodyHtml, footerHtml) {
     document.getElementById('nurseModalTitle').textContent = title;
     document.getElementById('nurseModalBody').innerHTML = bodyHtml;
@@ -222,7 +223,7 @@ document.addEventListener('click', function(e) {
 // UPDATE VITALS MODAL
 
 function openUpdateVitalsModal(vitalId) {
-    var vital = _nurseVitals.find(function(v) { return v.vitalID === vitalId; });
+    var vital = _nurseVitals.find(function(vit) { return vit.vitalID === vitalId; });
     if (!vital) return;
     var patient = _nursePatients.find(function(p) { return p.patientID === vital.patientID; });
     var patientName = patient ? patient.firstName + ' ' + patient.lastName : vital.patientID;
@@ -253,15 +254,16 @@ function openUpdateVitalsModal(vitalId) {
     openNurseModal('Update Vitals — ' + patientName, bodyHtml, footerHtml);
 }
 
+// adding  the new vitals to indexDB
 function saveVitalsUpdate(vitalId) {
-    var vital = _nurseVitals.find(function(v) { return v.vitalID === vitalId; });
+    var vital = _nurseVitals.find(function(vit) { return vit.vitalID === vitalId; });
     if (!vital) return;
 
-    vital.heightCm      = parseFloat(document.getElementById('nf_heightCm').value)    || vital.heightCm;
-    vital.weightKg      = parseFloat(document.getElementById('nf_weightKg').value)    || vital.weightKg;
-    vital.bloodPressure = document.getElementById('nf_bloodPressure').value.trim()    || vital.bloodPressure;
-    vital.heartRate     = parseInt(document.getElementById('nf_heartRate').value, 10) || vital.heartRate;
-    vital.lastUpdated   = new Date().toISOString().slice(0, 10);
+    vital.heightCm = parseFloat(document.getElementById('nf_heightCm').value) || vital.heightCm;
+    vital.weightKg = parseFloat(document.getElementById('nf_weightKg').value) || vital.weightKg;
+    vital.bloodPressure = document.getElementById('nf_bloodPressure').value.trim() || vital.bloodPressure;
+    vital.heartRate = parseInt(document.getElementById('nf_heartRate').value, 10) || vital.heartRate;
+    vital.lastUpdated = new Date().toISOString().slice(0, 10);
 
     putRecord('vitals', vital, function() {
         loadNurseVitalsTable(_nurseAssignedPatientIDs, _nurseVitals, _nursePatients);
@@ -270,18 +272,18 @@ function saveVitalsUpdate(vitalId) {
 }
 
 // MEDICAL HISTORY TABLE
-
+// medical history to check for allergies and prescriptions
 function loadNurseHistoryTable(assignedPatientIDs, history, patients) {
     var tbody = document.getElementById('nurseHistoryTbody');
     tbody.innerHTML = '';
 
-    var assignedHistory = history.filter(function(h) {
-        return assignedPatientIDs.includes(h.patientID);
+    var assignedHistory = history.filter(function(history) {
+        return assignedPatientIDs.includes(history.patientID);
     });
 
     assignedHistory.forEach(function(entry) {
-        var patient = patients.find(function(p) {
-            return p.patientID === entry.patientID;
+        var patient = patients.find(function(pat) {
+            return pat.patientID === entry.patientID;
         });
 
         var row = document.createElement('tr');
